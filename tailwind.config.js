@@ -4,7 +4,13 @@ module.exports = {
 	],
 	darkMode: false,
 	theme: {
-		extend: {}
+		extend: {
+			colors: {
+				blue: {
+					800: '#3c589f'
+				}
+			}
+		}
 	},
 	variants: {
 		extend: {}

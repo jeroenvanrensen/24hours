@@ -1,28 +1,17 @@
-<div class="bg-white w-full shadow py-4">
-    <div class="container mx-auto px-4 flex items-center justify-between">
-        <div class="flex items-center">
-            <!-- Brand -->
-            <a href="{{ url('/') }}" class="text-lg font-semibold focus:outline-none focus:underline">{{ config('app.name') }}</a>
+<nav class="py-4 px-12 flex items-center justify-between">
+    <a href="{{ route('boards.index') }}" class="font-serif focus:underline focus:outline-none tracking-wide text-xl w-0">24Hours</a>
 
-            <!-- Left side navbar -->
-            <ul class="ml-6 flex items-center">
-                @auth
-                    <x-layouts.nav-link url="{{ route('boards.index') }}">Home</x-layouts.nav-link>
-                @endauth
-            </ul>
-        </div>
-        
-        <div class="flex items-center">
-            <!-- Right side navbar -->
-            <ul class="flex items-center">
-                @auth
-                    <x-layouts.nav-link url="{{ route('account.edit') }}">My Account</x-layouts.nav-link>
-                    <x-layouts.nav-link wire:click="logout">Logout</x-layouts.nav-link>
-                @else
-                    <x-layouts.nav-link url="{{ route('login') }}">Login</x-layouts.nav-link>
-                    <x-button class="ml-4" link size="small" href="{{ route('register') }}">Register</x-button>
-                @endauth
-            </ul>
-        </div>
-    </div>
-</div>
+    <ul class="flex">
+        <li>
+            <a href="{{ route('boards.index') }}" class="flex items-center bg-blue-100 font-semibold py-2 px-4 rounded-full">
+                <svg class="mr-2 w-5 h-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+
+                <span class="text-blue-700">Home</span>
+            </a>
+        </li>
+    </ul>
+
+    &nbsp;
+</nav>

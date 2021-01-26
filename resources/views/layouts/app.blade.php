@@ -9,10 +9,10 @@
     <livewire:styles />
     <link rel="stylesheet" href="{{ asset('css/app.css') }}" />
 </head>
-<body class="bg-gray-100">
-    <livewire:layouts.navbar />
+<body>
+    @include('layouts.navbar')
 
-    <div class="container mx-auto px-4 my-8 md:my-20">
+    <div class="max-w-5xl mx-auto px-4 my-8 md:my-12">
         {{ $slot }}
     </div>
 

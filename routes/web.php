@@ -35,7 +35,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', Dashboard::class)->name('dashboard');
+    Route::get('/app', Dashboard::class)->name('dashboard');
 
     Route::get('/account', EditAccount::class)->name('account.edit');
 

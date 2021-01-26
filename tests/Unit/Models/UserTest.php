@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Models;
 
+use App\Models\Board;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -91,5 +92,19 @@ class UserTest extends TestCase
         ]);
 
         $this->assertNull($user->remember_token);
+    }
+
+    /** @test */
+    public function a_user_has_many_boards()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+
+        $board = Board::factory()->for($user)->create();
+
+        $this->assertCount(1, $user->boards);
+        $this->assertInstanceOf(Board::class, $user->boards[0]);
+        $this->assertEquals($board->id, $user->boards[0]->id);
     }
 }

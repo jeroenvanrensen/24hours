@@ -27,6 +27,6 @@ class Create extends Component
             'name' => $this->name
         ]);
 
-        return redirect()->route('dashboard');
+        return redirect()->route('boards.index');
     }
 }

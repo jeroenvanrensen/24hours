@@ -46,7 +46,7 @@ class CreateBoardTest extends TestCase
         Livewire::test(Create::class)
             ->set('name', 'My Board')
             ->call('create')
-            ->assertRedirect(route('boards.index'));
+            ->assertRedirect(route('boards.show', Board::first()));
 
         $this->assertCount(1, Board::all());
 

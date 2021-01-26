@@ -3,6 +3,7 @@
 use App\Http\Livewire\Account\Edit as EditAccount;
 use App\Http\Livewire\Boards\Create as CreateBoard;
 use App\Http\Livewire\Boards\Index as IndexBoards;
+use App\Http\Livewire\Boards\Show as ShowBoard;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,6 +24,7 @@ Route::get('/', function () {
 Route::middleware('auth')->prefix('app')->group(function () {
     Route::get('/', IndexBoards::class)->name('boards.index');
     Route::get('/boards/new', CreateBoard::class)->name('boards.create');
+    Route::get('/boards/{board:id}', ShowBoard::class)->name('boards.show');
 });
 
 Route::get('/account', EditAccount::class)->name('account.edit')->middleware('auth');

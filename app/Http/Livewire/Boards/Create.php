@@ -22,11 +22,11 @@ class Create extends Component
     {
         $this->validate();
 
-        Board::create([
+        $board = Board::create([
             'user_id' => auth()->id(),
             'name' => $this->name
         ]);
 
-        return redirect()->route('boards.index');
+        return redirect()->route('boards.show', $board);
     }
 }

@@ -7,7 +7,7 @@
             <!-- Left side navbar -->
             <ul class="ml-6 flex items-center">
                 @auth
-                    <x-layouts.nav-link url="{{ route('dashboard') }}">Dashboard</x-layouts.nav-link>
+                    <x-layouts.nav-link url="{{ route('boards.index') }}">Home</x-layouts.nav-link>
                 @endauth
             </ul>
         </div>

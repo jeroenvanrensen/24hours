@@ -8,6 +8,9 @@
         </svg>
     </button>
 
+    <!-- Show all links -->
+    <livewire:links.index :board="$board" />
+
     <!-- Add link modal -->
     <livewire:links.create :board="$board" />
 </div>

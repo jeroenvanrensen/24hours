@@ -51,4 +51,28 @@ class LinkTest extends TestCase
         $this->assertInstanceOf(Board::class, $link->board);
         $this->assertEquals($board->id, $link->board->id);
     }
+
+    /** @test */
+    public function a_link_has_a_host()
+    {
+        $this->withoutExceptionHandling();
+        
+        $link = Link::factory()->create([
+            'url' => 'https://tailwindcss.com/docs/guides/laravel'
+        ]);
+
+        $this->assertEquals('tailwindcss.com', $link->host);
+        
+        $link = Link::factory()->create([
+            'url' => 'https://play.tailwindcss.com/SEhypX52xg'
+        ]);
+
+        $this->assertEquals('play.tailwindcss.com', $link->host);
+        
+        $link = Link::factory()->create([
+            'url' => 'https://www.google.com/'
+        ]);
+
+        $this->assertEquals('google.com', $link->host);
+    }
 }

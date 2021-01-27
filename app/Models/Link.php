@@ -15,4 +15,9 @@ class Link extends Model
     {
         return $this->belongsTo(Board::class);
     }
+
+    public function getHostAttribute(): string
+    {
+        return str_replace('www.', '', parse_url($this->url)['host']);
+    }
 }

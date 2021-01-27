@@ -26,7 +26,8 @@ class SeeSingleBoardTest extends TestCase
         $this->get(route('boards.show', $board))
             ->assertStatus(200)
             ->assertSeeLivewire('boards.show')
-            ->assertSeeLivewire('links.create');
+            ->assertSeeLivewire('links.create')
+            ->assertSeeLivewire('links.index');
     }
 
     /** @test */

@@ -35,7 +35,7 @@ class Create extends Component
             'title' => $response->title
         ]);
 
-        $this->emitUp('createdLink');
+        $this->emit('createdLink');
         $this->reset('url');
     }
 }

@@ -2,7 +2,7 @@
     <ul class="grid grid-cols-3 gap-6">
         @foreach($links as $link)
             <li>
-                <a href="{{ $link->url }}" target="_blank" class="block group border border-gray-200 rounded-lg focus:outline-none">
+                <a href="{{ route('links.show', $link) }}" target="_blank" class="block group border border-gray-200 rounded-lg focus:outline-none">
                     <!-- Image -->
                     <div class="h-32 w-full bg-gray-200 group-hover:bg-gray-300 group-focus:bg-gray-300"></div>
 

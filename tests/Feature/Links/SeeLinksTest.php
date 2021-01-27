@@ -39,8 +39,8 @@ class SeeLinksTest extends TestCase
 
         $board = Board::factory()->for($user)->create();
 
-        $firstLink = Link::factory()->for($board)->create(['created_at' => now()->subWeek()]);
-        $lastLink = Link::factory()->for($board)->create(['created_at' => now()]);
+        $firstLink = Link::factory()->for($board)->create(['updated_at' => now()->subWeek()]);
+        $lastLink = Link::factory()->for($board)->create(['updated_at' => now()]);
 
         Livewire::test(Index::class, ['board' => $board])
             ->assertSeeInOrder([
@@ -59,9 +59,9 @@ class SeeLinksTest extends TestCase
 
         $board = Board::factory()->for($user)->create();
 
-        $firstLink = Link::factory()->for($board)->create(['created_at' => now()->subWeeks(2)]);
-        Link::factory()->for($board)->count(60)->create(['created_at' => now()->subWeek()]);
-        $lastLink = Link::factory()->for($board)->create(['created_at' => now()]);
+        $firstLink = Link::factory()->for($board)->create(['updated_at' => now()->subWeeks(2)]);
+        Link::factory()->for($board)->count(60)->create(['updated_at' => now()->subWeek()]);
+        $lastLink = Link::factory()->for($board)->create(['updated_at' => now()]);
 
         Livewire::test(Index::class, ['board' => $board])
             ->assertSee($lastLink->title)
@@ -78,9 +78,9 @@ class SeeLinksTest extends TestCase
 
         $board = Board::factory()->for($user)->create();
 
-        $firstLink = Link::factory()->for($board)->create(['created_at' => now()->subWeeks(2)]);
-        Link::factory()->for($board)->count(60)->create(['created_at' => now()->subWeek()]);
-        $lastLink = Link::factory()->for($board)->create(['created_at' => now()]);
+        $firstLink = Link::factory()->for($board)->create(['updated_at' => now()->subWeeks(2)]);
+        Link::factory()->for($board)->count(60)->create(['updated_at' => now()->subWeek()]);
+        $lastLink = Link::factory()->for($board)->create(['updated_at' => now()]);
 
         Livewire::test(Index::class, ['board' => $board])
             ->assertSee($lastLink->title)

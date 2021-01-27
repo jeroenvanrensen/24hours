@@ -10,7 +10,17 @@ class BoardPolicy
 {
     use HandlesAuthorization;
 
-    public function view(User $user, Board $board)
+    public function view(User $user, Board $board): bool
+    {
+        return $this->isOwner($user, $board);
+    }
+
+    public function visitLink(User $user, Board $board): bool
+    {
+        return $this->isOwner($user, $board);
+    }
+
+    protected function isOwner(User $user, Board $board): bool
     {
         return $user->id == $board->user->id;
     }

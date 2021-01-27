@@ -26,7 +26,7 @@ class Index extends Component
     protected function getLinks()
     {
         return $this->board->links()
-            ->orderBy('created_at', 'desc')
+            ->orderBy('updated_at', 'desc')
             ->take($this->numberToShow)
             ->get();
     }

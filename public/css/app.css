@@ -14199,6 +14199,66 @@ video {
   opacity: 1;
 }
 
+.group:focus .group-focus\:opacity-0 {
+  opacity: 0;
+}
+
+.group:focus .group-focus\:opacity-5 {
+  opacity: 0.05;
+}
+
+.group:focus .group-focus\:opacity-10 {
+  opacity: 0.1;
+}
+
+.group:focus .group-focus\:opacity-20 {
+  opacity: 0.2;
+}
+
+.group:focus .group-focus\:opacity-25 {
+  opacity: 0.25;
+}
+
+.group:focus .group-focus\:opacity-30 {
+  opacity: 0.3;
+}
+
+.group:focus .group-focus\:opacity-40 {
+  opacity: 0.4;
+}
+
+.group:focus .group-focus\:opacity-50 {
+  opacity: 0.5;
+}
+
+.group:focus .group-focus\:opacity-60 {
+  opacity: 0.6;
+}
+
+.group:focus .group-focus\:opacity-70 {
+  opacity: 0.7;
+}
+
+.group:focus .group-focus\:opacity-75 {
+  opacity: 0.75;
+}
+
+.group:focus .group-focus\:opacity-80 {
+  opacity: 0.8;
+}
+
+.group:focus .group-focus\:opacity-90 {
+  opacity: 0.9;
+}
+
+.group:focus .group-focus\:opacity-95 {
+  opacity: 0.95;
+}
+
+.group:focus .group-focus\:opacity-100 {
+  opacity: 1;
+}
+
 .focus-within\:opacity-0:focus-within {
   opacity: 0;
 }
@@ -44821,6 +44881,66 @@ video {
     opacity: 1;
   }
 
+  .group:focus .sm\:group-focus\:opacity-0 {
+    opacity: 0;
+  }
+
+  .group:focus .sm\:group-focus\:opacity-5 {
+    opacity: 0.05;
+  }
+
+  .group:focus .sm\:group-focus\:opacity-10 {
+    opacity: 0.1;
+  }
+
+  .group:focus .sm\:group-focus\:opacity-20 {
+    opacity: 0.2;
+  }
+
+  .group:focus .sm\:group-focus\:opacity-25 {
+    opacity: 0.25;
+  }
+
+  .group:focus .sm\:group-focus\:opacity-30 {
+    opacity: 0.3;
+  }
+
+  .group:focus .sm\:group-focus\:opacity-40 {
+    opacity: 0.4;
+  }
+
+  .group:focus .sm\:group-focus\:opacity-50 {
+    opacity: 0.5;
+  }
+
+  .group:focus .sm\:group-focus\:opacity-60 {
+    opacity: 0.6;
+  }
+
+  .group:focus .sm\:group-focus\:opacity-70 {
+    opacity: 0.7;
+  }
+
+  .group:focus .sm\:group-focus\:opacity-75 {
+    opacity: 0.75;
+  }
+
+  .group:focus .sm\:group-focus\:opacity-80 {
+    opacity: 0.8;
+  }
+
+  .group:focus .sm\:group-focus\:opacity-90 {
+    opacity: 0.9;
+  }
+
+  .group:focus .sm\:group-focus\:opacity-95 {
+    opacity: 0.95;
+  }
+
+  .group:focus .sm\:group-focus\:opacity-100 {
+    opacity: 1;
+  }
+
   .sm\:focus-within\:opacity-0:focus-within {
     opacity: 0;
   }
@@ -75362,6 +75482,66 @@ video {
   }
 
   .group:hover .md\:group-hover\:opacity-100 {
+    opacity: 1;
+  }
+
+  .group:focus .md\:group-focus\:opacity-0 {
+    opacity: 0;
+  }
+
+  .group:focus .md\:group-focus\:opacity-5 {
+    opacity: 0.05;
+  }
+
+  .group:focus .md\:group-focus\:opacity-10 {
+    opacity: 0.1;
+  }
+
+  .group:focus .md\:group-focus\:opacity-20 {
+    opacity: 0.2;
+  }
+
+  .group:focus .md\:group-focus\:opacity-25 {
+    opacity: 0.25;
+  }
+
+  .group:focus .md\:group-focus\:opacity-30 {
+    opacity: 0.3;
+  }
+
+  .group:focus .md\:group-focus\:opacity-40 {
+    opacity: 0.4;
+  }
+
+  .group:focus .md\:group-focus\:opacity-50 {
+    opacity: 0.5;
+  }
+
+  .group:focus .md\:group-focus\:opacity-60 {
+    opacity: 0.6;
+  }
+
+  .group:focus .md\:group-focus\:opacity-70 {
+    opacity: 0.7;
+  }
+
+  .group:focus .md\:group-focus\:opacity-75 {
+    opacity: 0.75;
+  }
+
+  .group:focus .md\:group-focus\:opacity-80 {
+    opacity: 0.8;
+  }
+
+  .group:focus .md\:group-focus\:opacity-90 {
+    opacity: 0.9;
+  }
+
+  .group:focus .md\:group-focus\:opacity-95 {
+    opacity: 0.95;
+  }
+
+  .group:focus .md\:group-focus\:opacity-100 {
     opacity: 1;
   }
 
@@ -105909,6 +106089,66 @@ video {
     opacity: 1;
   }
 
+  .group:focus .lg\:group-focus\:opacity-0 {
+    opacity: 0;
+  }
+
+  .group:focus .lg\:group-focus\:opacity-5 {
+    opacity: 0.05;
+  }
+
+  .group:focus .lg\:group-focus\:opacity-10 {
+    opacity: 0.1;
+  }
+
+  .group:focus .lg\:group-focus\:opacity-20 {
+    opacity: 0.2;
+  }
+
+  .group:focus .lg\:group-focus\:opacity-25 {
+    opacity: 0.25;
+  }
+
+  .group:focus .lg\:group-focus\:opacity-30 {
+    opacity: 0.3;
+  }
+
+  .group:focus .lg\:group-focus\:opacity-40 {
+    opacity: 0.4;
+  }
+
+  .group:focus .lg\:group-focus\:opacity-50 {
+    opacity: 0.5;
+  }
+
+  .group:focus .lg\:group-focus\:opacity-60 {
+    opacity: 0.6;
+  }
+
+  .group:focus .lg\:group-focus\:opacity-70 {
+    opacity: 0.7;
+  }
+
+  .group:focus .lg\:group-focus\:opacity-75 {
+    opacity: 0.75;
+  }
+
+  .group:focus .lg\:group-focus\:opacity-80 {
+    opacity: 0.8;
+  }
+
+  .group:focus .lg\:group-focus\:opacity-90 {
+    opacity: 0.9;
+  }
+
+  .group:focus .lg\:group-focus\:opacity-95 {
+    opacity: 0.95;
+  }
+
+  .group:focus .lg\:group-focus\:opacity-100 {
+    opacity: 1;
+  }
+
   .lg\:focus-within\:opacity-0:focus-within {
     opacity: 0;
   }
@@ -136453,6 +136693,66 @@ video {
     opacity: 1;
   }
 
+  .group:focus .xl\:group-focus\:opacity-0 {
+    opacity: 0;
+  }
+
+  .group:focus .xl\:group-focus\:opacity-5 {
+    opacity: 0.05;
+  }
+
+  .group:focus .xl\:group-focus\:opacity-10 {
+    opacity: 0.1;
+  }
+
+  .group:focus .xl\:group-focus\:opacity-20 {
+    opacity: 0.2;
+  }
+
+  .group:focus .xl\:group-focus\:opacity-25 {
+    opacity: 0.25;
+  }
+
+  .group:focus .xl\:group-focus\:opacity-30 {
+    opacity: 0.3;
+  }
+
+  .group:focus .xl\:group-focus\:opacity-40 {
+    opacity: 0.4;
+  }
+
+  .group:focus .xl\:group-focus\:opacity-50 {
+    opacity: 0.5;
+  }
+
+  .group:focus .xl\:group-focus\:opacity-60 {
+    opacity: 0.6;
+  }
+
+  .group:focus .xl\:group-focus\:opacity-70 {
+    opacity: 0.7;
+  }
+
+  .group:focus .xl\:group-focus\:opacity-75 {
+    opacity: 0.75;
+  }
+
+  .group:focus .xl\:group-focus\:opacity-80 {
+    opacity: 0.8;
+  }
+
+  .group:focus .xl\:group-focus\:opacity-90 {
+    opacity: 0.9;
+  }
+
+  .group:focus .xl\:group-focus\:opacity-95 {
+    opacity: 0.95;
+  }
+
+  .group:focus .xl\:group-focus\:opacity-100 {
+    opacity: 1;
+  }
+
   .xl\:focus-within\:opacity-0:focus-within {
     opacity: 0;
   }
@@ -166994,6 +167294,66 @@ video {
   }
 
   .group:hover .\32xl\:group-hover\:opacity-100 {
+    opacity: 1;
+  }
+
+  .group:focus .\32xl\:group-focus\:opacity-0 {
+    opacity: 0;
+  }
+
+  .group:focus .\32xl\:group-focus\:opacity-5 {
+    opacity: 0.05;
+  }
+
+  .group:focus .\32xl\:group-focus\:opacity-10 {
+    opacity: 0.1;
+  }
+
+  .group:focus .\32xl\:group-focus\:opacity-20 {
+    opacity: 0.2;
+  }
+
+  .group:focus .\32xl\:group-focus\:opacity-25 {
+    opacity: 0.25;
+  }
+
+  .group:focus .\32xl\:group-focus\:opacity-30 {
+    opacity: 0.3;
+  }
+
+  .group:focus .\32xl\:group-focus\:opacity-40 {
+    opacity: 0.4;
+  }
+
+  .group:focus .\32xl\:group-focus\:opacity-50 {
+    opacity: 0.5;
+  }
+
+  .group:focus .\32xl\:group-focus\:opacity-60 {
+    opacity: 0.6;
+  }
+
+  .group:focus .\32xl\:group-focus\:opacity-70 {
+    opacity: 0.7;
+  }
+
+  .group:focus .\32xl\:group-focus\:opacity-75 {
+    opacity: 0.75;
+  }
+
+  .group:focus .\32xl\:group-focus\:opacity-80 {
+    opacity: 0.8;
+  }
+
+  .group:focus .\32xl\:group-focus\:opacity-90 {
+    opacity: 0.9;
+  }
+
+  .group:focus .\32xl\:group-focus\:opacity-95 {
+    opacity: 0.95;
+  }
+
+  .group:focus .\32xl\:group-focus\:opacity-100 {
     opacity: 1;
   }
 

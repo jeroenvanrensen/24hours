@@ -20,4 +20,9 @@ class Link extends Model
     {
         return str_replace('www.', '', parse_url($this->url)['host']);
     }
+
+    public function getDefaultImageAttribute(): string
+    {
+        return asset('img/image-not-found.png');
+    }
 }

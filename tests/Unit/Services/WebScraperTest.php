@@ -14,7 +14,7 @@ class WebScraperTest extends TestCase
      * @test 
      * @dataProvider websitesProvider
     */
-    public function the_scraper_can_scrape_a_page($url, $title)
+    public function the_scraper_can_scrape_a_page($url, $title, $image)
     {
         $this->withoutExceptionHandling();
 
@@ -23,31 +23,18 @@ class WebScraperTest extends TestCase
         $response = $scraper->scrape($url);
 
         $this->assertEquals($title, $response->title);
-    }
-
-    /** @test */
-    public function the_scraper_can_scrape_a_page_without_a_title_tag()
-    {
-        $this->withoutExceptionHandling();
-
-        $url = config('app.url') . '/tests/test.html';
-
-        $scraper = new Scraper();
-        
-        $response = $scraper->scrape($url);
-
-        $this->assertEquals('Not found', $response->title);
+        $this->assertEquals($image, $response->image);
     }
 
     public function websitesProvider()
     {
         return [
-            ['http://example.com/', 'Example Domain'],
-            ['https://tailwindcss.com/', 'Tailwind CSS - Rapidly build modern websites without ever leaving your HTML.'],
-            ['https://github.com/alpinejs/alpine', 'GitHub - alpinejs/alpine: A rugged, minimal framework for composing JavaScript behavior in your markup.'],
-            ['https://laravel.com/', 'Laravel - The PHP Framework For Web Artisans'],
-            ['https://laravel-livewire.com/', 'Livewire | Laravel'],
-            ['https://www.404.org/', 'Not found'] // website does not exist
+            ['http://example.com/', 'Example Domain', null],
+            ['https://tailwindcss.com/', 'Tailwind CSS - Rapidly build modern websites without ever leaving your HTML.', 'https://tailwindcss.com/_next/static/media/sarah-dayan.a8ff3f1095a58085a82e3bb6aab12eb2.jpg'],
+            ['https://github.com/alpinejs/alpine', 'GitHub - alpinejs/alpine: A rugged, minimal framework for composing JavaScript behavior in your markup.', 'https://github.githubassets.com/images/search-key-slash.svg'],
+            ['https://laravel.com/', 'Laravel - The PHP Framework For Web Artisans', 'https://laravel.com/img/logomark.min.svg'],
+            ['https://laravel-livewire.com/', 'Livewire | Laravel', 'https://laravel.com/img/logotype.min.svg'],
+            ['https://www.404.org/', 'Not found', null] // website does not exist
         ];
     }
 }

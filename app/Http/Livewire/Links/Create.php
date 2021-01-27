@@ -32,7 +32,8 @@ class Create extends Component
         Link::create([
             'board_id' => $this->board->id,
             'url' => $this->url,
-            'title' => $response->title
+            'title' => $response->title,
+            'image' => $response->image
         ]);
 
         $this->emit('createdLink');

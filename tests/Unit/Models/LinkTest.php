@@ -36,6 +36,24 @@ class LinkTest extends TestCase
     }
 
     /** @test */
+    public function a_link_has_a_nullable_image()
+    {
+        $this->withoutExceptionHandling();
+        
+        $link = Link::factory()->create([
+            'image' => 'https://refactoringui.nyc3.cdn.digitaloceanspaces.com/tailwind-logo.svg'
+        ]);
+
+        $this->assertEquals('https://refactoringui.nyc3.cdn.digitaloceanspaces.com/tailwind-logo.svg', $link->image);
+
+        $link = Link::factory()->create([
+            'image' => null
+        ]);
+
+        $this->assertNull($link->image);
+    }
+
+    /** @test */
     public function a_link_belongs_to_a_board()
     {
         $this->withoutExceptionHandling();

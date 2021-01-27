@@ -13,6 +13,7 @@ class CreateLinksTable extends Migration
             $table->foreignId('board_id');
             $table->string('url');
             $table->string('title');
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

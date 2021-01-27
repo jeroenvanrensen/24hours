@@ -55,9 +55,26 @@ class SeeAllBoardsTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        $board = Board::factory()->create(); // other user
-
+        $board = Board::factory()->create(); // other use
         Livewire::test(Index::class)
             ->assertDontSee($board->name);
+    }
+
+    /** @test */
+    public function the_boards_are_ordered_by_date()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $firstBoard = Board::factory()->for($user)->create(['updated_at' => now()->subWeek()]);
+        $lastBoard = Board::factory()->for($user)->create(['updated_at' => now()]);
+
+        Livewire::test(Index::class)
+            ->assertSeeInOrder([
+                $lastBoard->name,
+                $firstBoard->name
+            ]);
     }
 }

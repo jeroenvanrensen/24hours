@@ -64,4 +64,24 @@ class SeeSingleBoardTest extends TestCase
         Livewire::test(Show::class,['board' => $board])
             ->assertSee($board->name);
     }
+
+    /** @test */
+    public function the_updated_at_timestamp_is_updated_after_visiting_the_page()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->for($user)->create(['updated_at' => now()->subWeek()]);
+
+        // Assert that the board was last updated longer than 60 seconds ago
+        $this->assertTrue($board->fresh()->updated_at->diffInSeconds() > 60);
+
+        Livewire::test(Show::class,['board' => $board])
+            ->assertSee($board->name);
+
+        // Assert that the board was last updated between now and 60 seconds ago
+        $this->assertTrue($board->fresh()->updated_at->diffInSeconds() < 60);
+    }
 }

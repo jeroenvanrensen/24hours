@@ -23,6 +23,8 @@ class Show extends Component
 
     public function render()
     {
+        $this->board->forceFill(['updated_at' => now()])->save();
+
         return view('boards.show');
     }
 

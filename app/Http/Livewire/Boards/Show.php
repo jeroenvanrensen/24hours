@@ -12,6 +12,10 @@ class Show extends Component
 
     public Board $board;
 
+    protected $listeners = [
+        'createdLink' => 'hideModal'
+    ];
+
     public function mount()
     {
         $this->authorize('view', $this->board);
@@ -20,5 +24,10 @@ class Show extends Component
     public function render()
     {
         return view('boards.show');
+    }
+
+    public function hideModal()
+    {
+        $this->emit('hideModal');
     }
 }

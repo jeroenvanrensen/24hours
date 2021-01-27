@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Board;
+use App\Models\Link;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -38,5 +39,19 @@ class BoardTest extends TestCase
 
         $this->assertInstanceOf(User::class, $board->user);
         $this->assertEquals($user->id, $board->user->id);
+    }
+
+    /** @test */
+    public function a_board_has_many_links()
+    {
+        $this->withoutExceptionHandling();
+        
+        $board = Board::factory()->create();
+
+        $link = Link::factory()->for($board)->create();
+
+        $this->assertCount(1, $board->links);
+        $this->assertInstanceOf(Link::class, $board->links[0]);
+        $this->assertEquals($link->id, $board->links[0]->id);
     }
 }

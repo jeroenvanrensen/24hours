@@ -5,19 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Board extends Model
+class Link extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
 
-    public function user()
+    public function board()
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function links()
-    {
-        return $this->hasMany(Link::class);
+        return $this->belongsTo(Board::class);
     }
 }

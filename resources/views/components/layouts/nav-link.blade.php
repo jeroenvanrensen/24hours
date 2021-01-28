@@ -3,11 +3,11 @@
     'active' => ($url ?? null) == url()->current()
 ])
 
-<li class="ml-4">
-    <a {{ $attributes->merge([
-        'href' => $url,
-        'class' => 'focus:outline-none hover:underline focus:underline ' . ($active ? '' : 'text-gray-500')
-    ]) }}>
-        {{ $slot }}
+<li>
+    <a href="{{ $url }}" class="flex items-center font-semibold py-2 px-4 rounded-full focus:outline-none {{ $active ? 'bg-blue-100 text-blue-600 focus:bg-blue-200' : 'hover:text-blue-600 focus:text-blue-600' }}">
+        <div class="mr-2">
+            {{ $icon }}
+        </div>
+        <span>{{ $slot }}</span>
     </a>
 </li>

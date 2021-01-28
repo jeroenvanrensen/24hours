@@ -3,6 +3,7 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Board;
+use App\Models\Link;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -106,5 +107,21 @@ class UserTest extends TestCase
         $this->assertCount(1, $user->boards);
         $this->assertInstanceOf(Board::class, $user->boards[0]);
         $this->assertEquals($board->id, $user->boards[0]->id);
+    }
+
+    /** @test */
+    public function a_user_has_many_links()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+
+        $board = Board::factory()->for($user)->create();
+
+        $link = Link::factory()->for($board)->create();
+
+        $this->assertCount(1, $user->links);
+        $this->assertInstanceOf(Link::class, $user->links[0]);
+        $this->assertEquals($link->id, $user->links[0]->id);
     }
 }

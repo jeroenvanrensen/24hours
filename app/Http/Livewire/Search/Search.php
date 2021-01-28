@@ -8,22 +8,24 @@ class Search extends Component
 {
     public $query;
 
-    public $results = [];
+    protected $results = [];
 
     public function render()
     {
-        return view('search.search');
+        return view('search.search', [
+            'results' => $this->results
+        ]);
     }
 
     public function updated()
     {
-        if($this->query == '') {
+        if ($this->query == '') {
             return $this->reset('results');
         }
 
-        $this->results = auth()->user()->boards()
-            ->where('name', 'like', '%' . $this->query . '%')
-            ->orderBy('updated_at', 'desc')
-            ->get();
+        $this->results = collect([auth()->user()->boards, auth()->user()->links])
+            ->flatten()
+            ->filter(fn($item) => stristr($item->name, $this->query) || stristr($item->title, $this->query))
+            ->sortByDesc('updated_at');
     }
 }

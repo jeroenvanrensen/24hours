@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Models\Board;
 use App\Models\Link;
+use App\Models\Note;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -53,5 +54,19 @@ class BoardTest extends TestCase
         $this->assertCount(1, $board->links);
         $this->assertInstanceOf(Link::class, $board->links[0]);
         $this->assertEquals($link->id, $board->links[0]->id);
+    }
+
+    /** @test */
+    public function a_board_has_many_notes()
+    {
+        $this->withoutExceptionHandling();
+        
+        $board = Board::factory()->create();
+
+        $note = Note::factory()->for($board)->create();
+
+        $this->assertCount(1, $board->notes);
+        $this->assertInstanceOf(Note::class, $board->notes[0]);
+        $this->assertEquals($note->id, $board->notes[0]->id);
     }
 }

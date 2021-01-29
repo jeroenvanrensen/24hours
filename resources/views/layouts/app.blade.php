@@ -15,7 +15,11 @@
     <script src="https://cdn.jsdelivr.net/gh/livewire/turbolinks@v0.1.x/dist/livewire-turbolinks.js" data-turbolinks-eval="false"></script>
 </head>
 <body>
-    @include('layouts.navbar')
+    @if($showNavbar ?? true)
+        @include('layouts.navbar')
+    @else
+        {{ $navbar }}
+    @endif
 
     <div class="max-w-5xl mx-auto px-4 my-8 md:my-12">
         {{ $slot }}

@@ -20,6 +20,11 @@ class BoardPolicy
         return $this->isOwner($user, $board);
     }
 
+    public function editNote(User $user, Board $board): bool
+    {
+        return $this->isOwner($user, $board);
+    }
+
     protected function isOwner(User $user, Board $board): bool
     {
         return $user->id == $board->user->id;

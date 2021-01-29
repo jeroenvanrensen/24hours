@@ -14,26 +14,6 @@ class CreateBoardTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function a_user_can_visit_the_create_new_board_page()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $this->get(route('boards.create'))
-            ->assertStatus(200)
-            ->assertSeeLivewire('boards.create');
-    }
-
-    /** @test */
-    public function guests_cannot_visit_the_create_new_board_page()
-    {
-        $this->get(route('boards.create'))
-            ->assertRedirect(route('login'));
-    }
-
-    /** @test */
     public function a_user_can_create_a_new_board()
     {
         $this->withoutExceptionHandling();

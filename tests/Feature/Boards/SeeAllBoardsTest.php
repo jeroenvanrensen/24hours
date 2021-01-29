@@ -23,7 +23,8 @@ class SeeAllBoardsTest extends TestCase
 
         $this->get(route('boards.index'))
             ->assertStatus(200)
-            ->assertSeeLivewire('boards.index');
+            ->assertSeeLivewire('boards.index')
+            ->assertSeeLivewire('boards.create');
     }
 
     /** @test */

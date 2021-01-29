@@ -25,7 +25,6 @@ Route::get('/', function () {
 
 Route::middleware('auth')->prefix('app')->group(function () {
     Route::get('/', IndexBoards::class)->name('boards.index');
-    Route::get('/boards/new', CreateBoard::class)->name('boards.create');
     Route::get('/boards/{board:id}', ShowBoard::class)->name('boards.show');
 
     Route::get('/links/{link:id}', ShowLink::class)->name('links.show');

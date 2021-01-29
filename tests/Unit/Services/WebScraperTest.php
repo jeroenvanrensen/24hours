@@ -30,10 +30,11 @@ class WebScraperTest extends TestCase
     {
         return [
             ['http://example.com/', 'Example Domain', null],
-            ['https://tailwindcss.com/', 'Tailwind CSS - Rapidly build modern websites without ever leaving your HTML.', 'https://tailwindcss.com/_next/static/media/sarah-dayan.a8ff3f1095a58085a82e3bb6aab12eb2.jpg'],
-            ['https://github.com/alpinejs/alpine', 'GitHub - alpinejs/alpine: A rugged, minimal framework for composing JavaScript behavior in your markup.', 'https://github.githubassets.com/images/search-key-slash.svg'],
+            ['https://invoker.dev/', 'Invoker - The Laravel Client', 'https://invoker.dev/assets/card.png'],
+            ['https://tailwindcss.com/', 'Tailwind CSS - Rapidly build modern websites without ever leaving your HTML.', 'https://tailwindcss.com/_next/static/media/twitter-large-card.85c0ff9e455da585949ff0aa50981857.jpg'],
+            ['https://github.com/alpinejs/alpine', 'GitHub - alpinejs/alpine: A rugged, minimal framework for composing JavaScript behavior in your markup.', 'https://avatars.githubusercontent.com/u/59030169?s=400&v=4'],
             ['https://laravel.com/', 'Laravel - The PHP Framework For Web Artisans', 'https://laravel.com/img/logomark.min.svg'],
-            ['https://laravel-livewire.com/', 'Livewire | Laravel', 'https://laravel.com/img/logotype.min.svg'],
+            ['https://laravel-livewire.com/', 'Livewire | Laravel', 'https://laravel-livewire.com/img/twitter.png'],
             ['https://www.404.org/', 'Not found', null] // website does not exist
         ];
     }

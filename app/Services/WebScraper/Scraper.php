@@ -39,12 +39,30 @@ class Scraper
     /** @return string|null */
     protected function getImage()
     {
+        if($image = $this->getImageFromMeta()) {
+            return $image;
+        }
+
+        return $this->getImageFromTag();
+    }
+
+    protected function getImageFromMeta()
+    {
+        return collect($this->crawler->filter('meta')->each(function ($node) {
+            if($node->attr('property') == 'og:image') {
+                return $node->attr('content');
+            }
+        }))->filter()->flatten()[0] ?? null;
+    }
+
+    protected function getImageFromTag()
+    {
         return $this->crawler->filter('img')->each(function ($node) {
             return $this->getAbsoluteImagePath($node->attr('src'), $this->url);
         })[0] ?? null;
     }
 
-    public function getAbsoluteImagePath($relative, $host): string
+    protected function getAbsoluteImagePath($relative, $host): string
     {
         // return if already absolute URL
         if (parse_url($relative, PHP_URL_SCHEME) != '') {

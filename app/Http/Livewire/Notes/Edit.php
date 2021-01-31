@@ -38,7 +38,9 @@ class Edit extends Component
     }
 
     protected function getTitle(): string
-    {
-        return $this->body == '' ? 'No Title' : $this->body;
+    {   
+        $title = strtok(strip_tags(str_replace('</', "\n</", $this->body)),"\n\t");
+
+        return $title == '' ? 'No Title' : explode('\n', wordwrap($title, 255, '\n'))[0];
     }
 }

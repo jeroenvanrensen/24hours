@@ -34,6 +34,7 @@
 
                 quill = new Quill($refs.quillEditor, {
                     theme: 'bubble',
+                    placeholder: 'Clean your head...',
                     modules: {
                         toolbar: toolbarOptions
                     }

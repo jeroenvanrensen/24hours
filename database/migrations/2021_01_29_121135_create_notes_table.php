@@ -12,7 +12,7 @@ class CreateNotesTable extends Migration
             $table->id();
             $table->foreignId('board_id');
             $table->string('title');
-            $table->text('body')->nullable();
+            $table->longText('body')->nullable();
             $table->timestamps();
         });
     }

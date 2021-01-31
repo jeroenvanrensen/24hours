@@ -8,11 +8,13 @@
 
     <livewire:styles />
     <link rel="stylesheet" href="{{ asset('css/app.css') }}" />
+    @stack('styles')
 
     <livewire:scripts />
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.0/dist/alpine.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.2.0/turbolinks.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/livewire/turbolinks@v0.1.x/dist/livewire-turbolinks.js" data-turbolinks-eval="false"></script>
+    @stack('scripts')
 </head>
 <body>
     @if($showNavbar ?? true)

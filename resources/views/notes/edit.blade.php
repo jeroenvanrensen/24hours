@@ -12,10 +12,40 @@
         </div>
     </x-slot>
 
-    <!-- Body -->
-    <x-forms.group>
-        <x-forms.label for="body">Body</x-forms.label>
-        <x-forms.input type="text" name="body" id="body" wire:model="body" />
-        <x-forms.error name="body" />
-    </x-forms.group>
+    @push('styles')
+        <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.bubble.css" />
+    @endpush
+
+    @push('scripts')
+        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    @endpush
+
+    <div wire:ignore class="max-w-2xl mx-auto">
+        <div
+            x-data="{}"
+            x-ref="quillEditor"
+            x-init="
+                toolbarOptions = [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'link', 'code'],
+                    ['image', 'blockquote', 'code-block'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }]
+                ];
+
+                quill = new Quill($refs.quillEditor, {
+                    theme: 'bubble',
+                    modules: {
+                        toolbar: toolbarOptions
+                    }
+                });
+
+                quill.on('text-change', function () {
+                    $dispatch('input', quill.root.innerHTML);
+                });
+            "
+            wire:model.debounce="body"
+        >
+            {!! $body !!}
+        </div>
+    </div>
 </div>

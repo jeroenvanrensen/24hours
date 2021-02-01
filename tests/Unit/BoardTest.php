@@ -69,4 +69,23 @@ class BoardTest extends TestCase
         $this->assertInstanceOf(Note::class, $board->notes[0]);
         $this->assertEquals($note->id, $board->notes[0]->id);
     }
+
+    /** @test */
+    public function a_board_has_many_items()
+    {
+        $this->withoutExceptionHandling();
+        
+        $board = Board::factory()->create();
+
+        $link = Link::factory()->for($board)->create();
+        $note = Note::factory()->for($board)->create();
+
+        $this->assertCount(2, $board->items);
+        
+        $this->assertInstanceOf(Note::class, $board->items[0]);
+        $this->assertEquals($note->id, $board->items[0]->id);
+        
+        $this->assertInstanceOf(Link::class, $board->items[1]);
+        $this->assertEquals($link->id, $board->items[1]->id);
+    }
 }

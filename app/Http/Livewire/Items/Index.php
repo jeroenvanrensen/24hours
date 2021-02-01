@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Links;
+namespace App\Http\Livewire\Items;
 
 use App\Models\Board;
 use Livewire\Component;
@@ -17,18 +17,17 @@ class Index extends Component
 
     public function render()
     {
-        return view('links.index', [
-            'links' => $this->getLinks(),
+        return view('items.index', [
+            'items' => $this->getItems(),
             'showButton' => $this->showLoadMoreButton()
         ]);
     }
 
-    protected function getLinks()
+    protected function getItems()
     {
-        return $this->board->links()
-            ->orderBy('updated_at', 'desc')
-            ->take($this->numberToShow)
-            ->get();
+        return $this->board->items
+            ->sortByDesc('updated_at')
+            ->take($this->numberToShow);
     }
 
     public function loadMore()

@@ -27,7 +27,7 @@ class SeeSingleBoardTest extends TestCase
             ->assertStatus(200)
             ->assertSeeLivewire('boards.show')
             ->assertSeeLivewire('links.create')
-            ->assertSeeLivewire('links.index');
+            ->assertSeeLivewire('items.index');
     }
 
     /** @test */

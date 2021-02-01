@@ -1,8 +1,8 @@
 <div x-data="{ showDropup: false, showModal: false }" x-init="$wire.on('hideModal', () => {showModal = false});">
     <x-heading>{{ $board->name }}</x-heading>
 
-    <!-- Show all links -->
-    <livewire:links.index :board="$board" />
+    <!-- Show all items -->
+    <livewire:items.index :board="$board" />
 
     <!-- Add link dropup -->
     <button x-show="showDropup" @click="showModal = true" class="fixed bottom-48 right-12 p-4 bg-gray-400 hover:bg-gray-500 rounded-full transition transform focus:outline-none focus:bg-gray-600 text-white" x-transition:enter="delay-300 ease-out duration-300" x-transition:enter-start="opacity-0 scale-50" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-out duration-300" x-transition:leave-start="opaicty-100 scale-100" x-transition:leave-end="opacity-0 scale-50">

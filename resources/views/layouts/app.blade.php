@@ -23,12 +23,12 @@
 <body x-data="{ showModal: false }">
     @if($showNavbar ?? true)
         @include('layouts.navbar')
-    @else
-        {{ $navbar }}
-    @endif
 
-    <div class="max-w-5xl mx-auto px-4 my-8 md:my-12">
+        <div class="max-w-5xl mx-auto px-4 my-8 md:my-12">
+            {{ $slot }}
+        </div>
+    @else
         {{ $slot }}
-    </div>
+    @endif
 </body>
 </html>

@@ -19,6 +19,8 @@ class Edit extends Component
     {
         $this->authorize('editNote', $this->note->board);
         $this->body = $this->note->body;
+
+        $this->note->update(['updated_at' => now()]);
     }
 
     public function render()

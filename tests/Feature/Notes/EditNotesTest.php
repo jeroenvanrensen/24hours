@@ -53,6 +53,28 @@ class EditNotesTest extends TestCase
     }
 
     /** @test */
+    public function the_updated_at_column_is_updated_after_editing_a_note()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->for($user)->create();
+        $note = Note::factory()->for($board)->create(['updated_at' => now()->subWeek()]);
+
+        // Assert that the note was last updated longer than 60 seconds ago
+        $this->assertTrue($note->fresh()->updated_at->diffInSeconds() > 60);
+
+        $this->get(route('notes.edit', $note))
+            ->assertStatus(200)
+            ->assertSeeLivewire('notes.edit');
+
+        // Assert that the note was last updated between now and 60 seconds ago
+        $this->assertTrue($note->fresh()->updated_at->diffInSeconds() < 60);
+    }
+
+    /** @test */
     public function a_user_can_edit_a_note()
     {
         $this->withoutExceptionHandling();

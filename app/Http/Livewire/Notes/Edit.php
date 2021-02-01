@@ -45,4 +45,11 @@ class Edit extends Component
 
         return $title == '' ? 'No Title' : explode('\n', wordwrap($title, 255, '\n'))[0];
     }
+
+    public function destroy()
+    {
+        $this->note->delete();
+        
+        return redirect()->route('boards.show', $this->note->board);
+    }
 }

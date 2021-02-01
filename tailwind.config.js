@@ -17,7 +17,8 @@ module.exports = {
 	},
 	variants: {
 		extend: {
-			opacity: ['group-focus']
+			opacity: ['group-focus'],
+			backgroundColor: ['group-focus']
 		}
 	},
 	plugins: []

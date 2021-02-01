@@ -23,9 +23,9 @@ class Search extends Component
             return $this->reset('results');
         }
 
-        $this->results = collect([auth()->user()->boards, auth()->user()->links])
+        $this->results = collect([auth()->user()->boards, auth()->user()->links, auth()->user()->notes])
             ->flatten()
-            ->filter(fn($item) => stristr($item->name, $this->query) || stristr($item->title, $this->query))
+            ->filter(fn($item) => stristr($item->name, $this->query) || stristr($item->title, $this->query) || stristr($item->body, $this->query))
             ->sortByDesc('updated_at');
     }
 }

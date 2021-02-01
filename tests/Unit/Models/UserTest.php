@@ -4,6 +4,7 @@ namespace Tests\Unit\Models;
 
 use App\Models\Board;
 use App\Models\Link;
+use App\Models\Note;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -123,5 +124,21 @@ class UserTest extends TestCase
         $this->assertCount(1, $user->links);
         $this->assertInstanceOf(Link::class, $user->links[0]);
         $this->assertEquals($link->id, $user->links[0]->id);
+    }
+
+    /** @test */
+    public function a_user_has_many_notes()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+
+        $board = Board::factory()->for($user)->create();
+
+        $note = Note::factory()->for($board)->create();
+
+        $this->assertCount(1, $user->notes);
+        $this->assertInstanceOf(Note::class, $user->notes[0]);
+        $this->assertEquals($note->id, $user->notes[0]->id);
     }
 }

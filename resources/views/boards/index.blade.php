@@ -1,5 +1,5 @@
 <div x-data="{ showModal: false }">
-    <p class="mb-3 text-center text-gray-600">{{ today()->format('l, F d') }}</p>
+    <p class="mb-3 text-center text-gray-600">{{ today()->format('l, F j') }} (Week {{ str_replace('0', '', today()->format('W')) }})</p>
     <x-heading>Welcome back, {{ auth()->user()->name }}</x-heading>
 
     <div class="mb-8 flex items-center justify-between">

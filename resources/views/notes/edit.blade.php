@@ -12,14 +12,6 @@
         </div>
     </x-slot>
 
-    @push('styles')
-        <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.bubble.css" />
-    @endpush
-
-    @push('scripts')
-        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-    @endpush
-
     <div wire:ignore class="max-w-2xl mx-auto">
         <div
             x-data="{}"

@@ -30,7 +30,7 @@ class WebScraperTest extends TestCase
     {
         return [
             ['http://example.com/', 'Example Domain', null],
-            ['https://invoker.dev/', 'Invoker', 'https://invoker.dev/assets/card.png'],
+            ['https://beyondco.de/', 'We create software tools and video-courses for web developers – Beyond Code', 'https://beyondco.de/img/web/homepage-helo.png'],
             ['https://tailwindcss.com/', 'Tailwind CSS - Rapidly build modern websites without ever leaving your HTML.', 'https://tailwindcss.com/_next/static/media/twitter-large-card.85c0ff9e455da585949ff0aa50981857.jpg'],
             ['https://github.com/alpinejs/alpine', 'GitHub - alpinejs/alpine: A rugged, minimal framework for composing JavaScript behavior in your markup.', 'https://avatars.githubusercontent.com/u/59030169?s=400&v=4'],
             ['https://laravel.com/', 'Laravel - The PHP Framework For Web Artisans', 'https://laravel.com/img/logomark.min.svg'],

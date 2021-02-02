@@ -56,7 +56,8 @@ class SeeAllBoardsTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        $board = Board::factory()->create(); // other use
+        $board = Board::factory()->create(); // other user
+
         Livewire::test(Index::class)
             ->assertDontSee($board->name);
     }

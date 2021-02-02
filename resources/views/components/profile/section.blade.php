@@ -15,9 +15,7 @@
 
         <!-- Right -->
         <div class="col-span-2">
-            <div class="shadow rounded-md bg-white p-6">
-                {{ $card }}
-            </div>
+            {{ $card }}
         </div>
     </div>
 </div>

@@ -34,4 +34,14 @@ class Edit extends Component
 
         return redirect()->route('boards.show', $this->board);
     }
+
+    public function destroy()
+    {
+        $this->board->links()->delete();
+        $this->board->notes()->delete();
+
+        $this->board->delete();
+
+        return redirect()->route('boards.index');
+    }
 }

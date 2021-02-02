@@ -1,6 +1,6 @@
 <div x-data="{ showModal: false }">
     <p class="mb-3 text-center text-gray-600">{{ today()->format('l, F j') }} (Week {{ str_replace('0', '', today()->format('W')) }})</p>
-    <x-heading>Welcome back, {{ auth()->user()->name }}</x-heading>
+    <x-heading>Welcome back, {{ auth()->user()->first_name }}</x-heading>
 
     <div class="mb-8 flex items-center justify-between">
         <h2 class="text-3xl font-serif">My Boards</h2>

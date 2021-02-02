@@ -21,6 +21,11 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime'
     ];
 
+    public function getFirstNameAttribute(): string
+    {
+        return explode(' ', $this->name)[0];
+    }
+
     public function boards()
     {
         return $this->hasMany(Board::class);

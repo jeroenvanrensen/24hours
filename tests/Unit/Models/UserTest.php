@@ -96,6 +96,29 @@ class UserTest extends TestCase
         $this->assertNull($user->remember_token);
     }
 
+    /** 
+     * @test
+     * @dataProvider namesProvider
+     */
+    public function a_user_has_a_first_name($fullName, $firstName)
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create(['name' => $fullName]);
+
+        $this->assertEquals($firstName, $user->first_name);
+    }
+
+    public function namesProvider()
+    {
+        return [
+            ['John', 'John'],
+            ['John Doe', 'John'],
+            ['Sylvia G. Smith', 'Sylvia'],
+            ['Jeroen van Rensen', 'Jeroen']
+        ];
+    }
+
     /** @test */
     public function a_user_has_many_boards()
     {

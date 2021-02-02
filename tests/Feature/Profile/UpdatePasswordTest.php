@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Feature\Account;
+namespace Tests\Feature\Profile;
 
-use App\Http\Livewire\Account\Password;
+use App\Http\Livewire\Profile\Password;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;

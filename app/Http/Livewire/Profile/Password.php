@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Account;
+namespace App\Http\Livewire\Profile;
 
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
@@ -44,7 +44,7 @@ class Password extends Component
      */
     public function render()
     {
-        return view('account.password');
+        return view('profile.password');
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Links\Show as ShowLink;
-use App\Http\Livewire\Account\Edit as EditAccount;
+use App\Http\Livewire\Profile\Edit as EditProfile;
 use App\Http\Livewire\Boards\Edit as EditBoard;
 use App\Http\Livewire\Boards\Index as IndexBoards;
 use App\Http\Livewire\Boards\Show as ShowBoard;
@@ -34,8 +34,8 @@ Route::middleware('auth')->prefix('app')->group(function () {
     Route::get('/notes/{note:id}', EditNote::class)->name('notes.edit');
     
     Route::get('/search', Search::class)->name('search');
+    
+    Route::get('/profile', EditProfile::class)->name('profile.edit');
 });
-
-Route::get('/account', EditAccount::class)->name('account.edit')->middleware('auth');
 
 require __DIR__ . '/auth.php';

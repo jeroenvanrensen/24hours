@@ -23,5 +23,9 @@
         @endforeach
     </ul>
 
+    @if(count($boards) == 0)
+        <p>No Boards Found.</p>
+    @endif
+
     <livewire:boards.create />
 </div>

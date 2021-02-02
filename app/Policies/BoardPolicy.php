@@ -15,6 +15,11 @@ class BoardPolicy
         return $this->isOwner($user, $board);
     }
 
+    public function edit(User $user, Board $board): bool
+    {
+        return $this->isOwner($user, $board);
+    }
+
     public function visitLink(User $user, Board $board): bool
     {
         return $this->isOwner($user, $board);

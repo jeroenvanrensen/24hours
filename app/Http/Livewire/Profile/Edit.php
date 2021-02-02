@@ -11,4 +11,11 @@ class Edit extends Component
         return view('profile.edit')
             ->layout('layouts.app', ['title' => 'My Account']);
     }
+
+    public function logout()
+    {
+        auth()->logout();
+
+        return redirect()->route('login');
+    }
 }

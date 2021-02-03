@@ -25,7 +25,7 @@
     <x-modal>
         <x-slot name="title">Delete Board</x-slot>
 
-        <p class="mb-6">Are you sure you want to delete this board?</p>
+        <p class="mb-6">Are you sure you want to delete this board? This will delete all notes and links that belong to this board too.</p>
         <p class="mb-6"><strong>{{ $board->name }}</strong></p>
 
         <div class="flex items-center justify-end">

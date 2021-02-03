@@ -6,4 +6,5 @@
 
     <livewire:profile.profile-info />
     <livewire:profile.password />
+    <livewire:profile.delete-account />
 </div>

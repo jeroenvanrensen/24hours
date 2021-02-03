@@ -22,7 +22,8 @@ class VisitProfilePageTest extends TestCase
             ->assertStatus(200)
             ->assertSeeLivewire('profile.edit')
             ->assertSeeLivewire('profile.profile-info')
-            ->assertSeeLivewire('profile.password');
+            ->assertSeeLivewire('profile.password')
+            ->assertSeeLivewire('profile.delete-account');
     }
 
     /** @test */

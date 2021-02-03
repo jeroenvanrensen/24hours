@@ -133,24 +133,4 @@ class EditNotesTest extends TestCase
         return '<h1>My Note</h1>
         <p>Note Content</p>';
     }
-
-    /** @test */
-    public function a_user_can_delete_a_note()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create();
-        $note = Note::factory()->for($board)->create();
-
-        $this->assertTrue($note->exists());
-
-        Livewire::test(Edit::class, ['note' => $note])
-            ->call('destroy')
-            ->assertRedirect(route('boards.show', $board));
-        
-        $this->assertFalse($note->exists());
-    }
 }

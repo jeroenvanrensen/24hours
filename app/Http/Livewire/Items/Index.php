@@ -3,6 +3,8 @@
 namespace App\Http\Livewire\Items;
 
 use App\Models\Board;
+use App\Models\Link;
+use App\Models\Note;
 use Livewire\Component;
 
 class Index extends Component
@@ -42,5 +44,19 @@ class Index extends Component
         }
 
         return true;
+    }
+
+    public function deleteNote(Note $note)
+    {
+        $note->delete();
+
+        return redirect()->route('boards.show', $this->board);
+    }
+
+    public function deleteLink(Link $link)
+    {
+        $link->delete();
+
+        return redirect()->route('boards.show', $this->board);
     }
 }

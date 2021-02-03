@@ -1,14 +1,10 @@
-<x-items.type newTab>
+<x-items.type newTab :item="$item">
     <x-slot name="url">
         {{ route('links.show', $item) }}
     </x-slot>
 
     <x-slot name="image">
         <img src="{{ $item->image ?? $item->default_image }}" class="h-40 object-cover w-full" />
-    </x-slot>
-
-    <x-slot name="title">
-        {{ $item->title }}
     </x-slot>
 
     <x-slot name="meta">

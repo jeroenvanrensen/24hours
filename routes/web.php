@@ -5,6 +5,7 @@ use App\Http\Livewire\Profile\Edit as EditProfile;
 use App\Http\Livewire\Boards\Edit as EditBoard;
 use App\Http\Livewire\Boards\Index as IndexBoards;
 use App\Http\Livewire\Boards\Show as ShowBoard;
+use App\Http\Livewire\Home;
 use App\Http\Livewire\Notes\Edit as EditNote;
 use App\Http\Livewire\Search\Search;
 use Illuminate\Support\Facades\Route;
@@ -20,9 +21,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', Home::class)->name('home')->middleware('guest');
 
 Route::middleware('auth')->prefix('app')->group(function () {
     Route::get('/', IndexBoards::class)->name('boards.index');
@@ -30,7 +29,6 @@ Route::middleware('auth')->prefix('app')->group(function () {
     Route::get('/boards/{board:id}/edit', EditBoard::class)->name('boards.edit');
 
     Route::get('/links/{link:id}', ShowLink::class)->name('links.show');
-    
     Route::get('/notes/{note:id}', EditNote::class)->name('notes.edit');
     
     Route::get('/search', Search::class)->name('search');

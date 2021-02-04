@@ -1,8 +1,8 @@
 <div>
     <!-- Navbar -->
-    <nav class="py-8 px-12 flex items-center justify-between">
+    <nav class="py-4 md:py-8 px-6 md:px-12 flex items-center justify-between">
         <div class="flex items-center">
-            <a href="{{ route('boards.show', $note->board) }}" class="block mr-5 p-2 rounded-full bg-gray-100 hover:bg-gray-300 focus:outline-none focus:bg-gray-300">
+            <a href="{{ route('boards.show', $note->board) }}" class="block mr-2 md:mr-5 p-2 rounded-full bg-gray-100 hover:bg-gray-300 focus:outline-none focus:bg-gray-300">
                 <svg class="w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
@@ -35,7 +35,7 @@
     </x-modal>
 
     <!-- Editor -->
-    <div wire:ignore class="max-w-2xl mx-auto px-4 my-8 md:my-12">
+    <div wire:ignore class="max-w-2xl mx-auto px-6 my-8 md:my-12">
         <div
             x-data="{}"
             x-ref="quillEditor"

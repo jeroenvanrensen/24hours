@@ -8,7 +8,7 @@
 @if($secondary)
 
 <{{ $link ? 'a' : 'button' }} {{ $attributes->merge([
-    'class' => 'py-2 px-6 bg-gray-100 rounded transition hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:ring-2 ring-blue-400',
+    'class' => 'py-2 px-6 bg-gray-100 rounded transition hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:ring-2 ring-' . $color . '-400',
     'wire:loading.class' => 'opacity-50 pointer-events-none',
     'wire:target' => $loading
 ]) }}>
@@ -23,7 +23,7 @@
 @else
 
 <{{ $link ? 'a' : 'button' }} {{ $attributes->merge([
-    'class' => 'py-2 px-6 bg-' . $color . '-800 rounded text-white transition hover:bg-' . $color . '-900 focus:bg-' . $color . '-900 focus:outline-none focus:ring-2 ring-blue-400',
+    'class' => 'py-2 px-6 bg-' . $color . '-800 rounded text-white transition hover:bg-' . $color . '-900 focus:bg-' . $color . '-900 focus:outline-none focus:ring-2 ring-' . $color . '-400',
     'wire:loading.class' => 'opacity-50 pointer-events-none',
     'wire:target' => $loading
 ]) }}>

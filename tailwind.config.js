@@ -1,7 +1,15 @@
 module.exports = {
-	purge: [
-		'./resources/**/*.blade.php'
-	],
+	purge: {
+		content: ['./resources/**/*.blade.php'],
+		options: {
+			safelist: [
+				'bg-blue-800', 'bg-red-800',
+				'hover:bg-blue-900', 'hover:bg-red-900',
+				'focus:bg-blue-900', 'focus:bg-red-900',
+				'ring-blue-400', 'ring-red-400'
+			]
+		}
+	},
 	darkMode: 'media',
 	theme: {
 		extend: {

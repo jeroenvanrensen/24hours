@@ -24,7 +24,7 @@
     @if($showNavbar ?? true)
         @include('layouts.navbar')
 
-        <div class="max-w-5xl mx-auto px-4 my-8 md:my-12">
+        <div class="max-w-5xl mx-auto px-6 my-8 md:my-12">
             {{ $slot }}
         </div>
     @else

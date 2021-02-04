@@ -1,4 +1,4 @@
-<nav class="py-4 px-12 flex items-center justify-between">
+<nav class="py-4 px-6 md:px-12 flex items-center justify-between">
     <a href="{{ auth()->check() ? route('boards.index') : route('home') }}" class="font-serif focus:underline focus:outline-none tracking-wide text-xl w-0">24Hours</a>
 
     <ul class="flex">
@@ -31,7 +31,5 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
         </a>
-    @else
-        &nbsp;
     @endauth
 </nav>

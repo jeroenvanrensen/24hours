@@ -34,7 +34,7 @@
         <!-- Submit Button -->
         <div class="flex justify-end items-center">
             @if(session()->has('success'))
-                <span class="text-gray-600">{{ session()->get('success') }}</span>
+                <span class="text-gray-600 dark:text-gray-300">{{ session()->get('success') }}</span>
             @endif
 
             <x-button class="ml-4" wire:click="update" loading="update">Save</x-button>

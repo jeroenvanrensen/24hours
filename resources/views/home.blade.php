@@ -1,11 +1,11 @@
-<div class="bg-gray-200 w-full min-h-screen">
+<div class="bg-gray-200 dark:bg-gray-900 w-full min-h-screen">
     @include('layouts.navbar')
 
     <!-- Hero -->
     <div class="mt-8 md:mt-32 max-w-6xl mx-auto px-6">
         <div class="text-center">
             <h1 class="text-3xl md:text-5xl font-bold">Lorem ipsum dolor sit amet.</h1>
-            <p class="mt-4 mb-8 md:mt-8 md:mb-10 text-gray-700 text-lg max-w-4xl mx-auto">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ut, esse. Odio voluptas, labore repellat accusantium totam perspiciatis quis voluptate, praesentium ducimus et quisquam. Alias molestiae harum, nisi quam sit laborum.</p>
+            <p class="mt-4 mb-8 md:mt-8 md:mb-10 text-gray-700 dark:text-gray-400 text-lg max-w-4xl mx-auto">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ut, esse. Odio voluptas, labore repellat accusantium totam perspiciatis quis voluptate, praesentium ducimus et quisquam. Alias molestiae harum, nisi quam sit laborum.</p>
             <x-button link href="{{ route('register') }}" class="py-3">Sign up for free</x-button>
         </div>
         
@@ -18,8 +18,8 @@
     <!-- Features -->
     <div class="py-12 md:py-24 max-w-5xl mx-auto px-6">
         <div class="mb-8 md:mb-16 md:text-center">
-            <h2 class="text-blue-800 font-semibold uppercase tracking-wide">Lorem, ipsum</h2>
-            <p class="mt-2 mb-4 md:mt-4 text-3xl leading-8 font-bold tracking-tight text-gray-900">Lorem ipsum dolor sit amet consectetur.</p>
+            <h2 class="text-blue-800 dark:text-blue-400 font-semibold uppercase tracking-wide">Lorem, ipsum</h2>
+            <p class="mt-2 mb-4 md:mt-4 text-3xl leading-8 font-bold tracking-tight text-gray-900 dark:text-white">Lorem ipsum dolor sit amet consectetur.</p>
         </div>
 
         <div class="md:grid grid-cols-2 gap-8 lg:gap-6">
@@ -102,7 +102,7 @@
     </div>
 
     <!-- Footer -->
-    <div class="py-8 md:py-6 lg:py-8 bg-gray-300">
+    <div class="py-8 md:py-6 lg:py-8 bg-gray-300 dark:bg-gray-800">
         <div class="max-w-6xl mx-auto px-6">
             &copy; Copyright {{ date('Y') }} by <a href="https://www.jeroenvanrensen.nl/" class="underline focus:text-gray-500 focus:outline-none" target="_blank">Jeroen van Rensen</a>
         </div>

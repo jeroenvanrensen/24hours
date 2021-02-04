@@ -3,7 +3,7 @@
         <!-- Left -->
         <div class="mb-4 md:mb-0 col-span-1">
             <div class="flex items-center mb-2">
-                <div class="w-6 h-6 mr-2 text-gray-600">
+                <div class="w-6 h-6 mr-2 text-gray-600 dark:text-gray-400">
                     {{ $icon }}
                 </div>
 

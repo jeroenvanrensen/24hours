@@ -18,7 +18,7 @@
 
         <!-- Submit Button -->
         <div class="flex justify-end items-center">
-            <a href="{{ route('password.request') }}" class="text-sm text-gray-600 underline hover:text-gray-800 focus:text-black outline-none">Forgot your password?</a>
+            <a href="{{ route('password.request') }}" class="text-sm text-gray-600 underline hover:text-gray-800 focus:text-black dark:text-gray-400 dark:hover:text-gray-200 dark:focus:text-white outline-none">Forgot your password?</a>
             <x-button class="ml-4" wire:click="login" loading="login">Sign In</x-button>
         </div>
     </x-auth.card>

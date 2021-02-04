@@ -1,4 +1,4 @@
-<div class="mb-4 flex">
+<div class="mb-8 md:mb-2 lg:mb-4 flex">
     <div>
         <div class="p-3 rounded-md bg-gray-700 text-white shadow-xl">
             {{ $icon }}

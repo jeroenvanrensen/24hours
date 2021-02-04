@@ -1,6 +1,6 @@
 @props(['name' => 'showModal'])
 
-<div x-show="{{ $name }}" class="fixed w-full h-screen inset-0 flex items-center justify-center z-50" style="display: none;" id="add-link-modal">
+<div x-show="{{ $name }}" class="px-6 fixed w-full h-screen inset-0 flex items-center justify-center z-50" style="display: none;" id="add-link-modal">
     <div @click="{{ $name }} = false" class="absolute w-full h-full bg-black opacity-25"></div>
 
     <div class="p-8 z-10 bg-white rounded-lg shadow-lg max-w-xl w-full">

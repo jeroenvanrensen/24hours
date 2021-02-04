@@ -22,13 +22,6 @@ class Login extends Component
     public $password;
 
     /**
-     * Whether to remember the user.
-     *
-     * @var bool
-     */
-    public $rememberMe;
-
-    /**
      * Render the page.
      *
      * @return  \Illuminate\Contracts\View\View
@@ -46,7 +39,7 @@ class Login extends Component
      */
     public function login()
     {
-        $success = auth()->attempt(['email' => $this->email, 'password' => $this->password], $this->rememberMe);
+        $success = auth()->attempt(['email' => $this->email, 'password' => $this->password], true);
 
         if ($success) {
             return redirect()->to(RouteServiceProvider::HOME);

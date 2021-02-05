@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', Home::class)->name('home')->middleware('guest');
 
-Route::middleware('auth')->prefix('app')->group(function () {
+Route::middleware(['auth', 'verified'])->prefix('app')->group(function () {
     Route::get('/', IndexBoards::class)->name('boards.index');
     Route::get('/boards/{board:id}', ShowBoard::class)->name('boards.show');
     Route::get('/boards/{board:id}/edit', EditBoard::class)->name('boards.edit');

@@ -8,7 +8,7 @@
 
         <x-slot name="title">Delete your account</x-slot>
 
-        <x-slot name="description">This action cannot be undone. This will permanently delete your account, all, your boards, all your notes and all your links. Please type your email and password to confirm.</x-slot>
+        <x-slot name="description">This action cannot be undone. This will permanently delete your account, all your boards, all your notes and all your links. Please type your email and password to confirm.</x-slot>
 
         <x-slot name="card">
             <!-- Email -->

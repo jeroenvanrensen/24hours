@@ -28,7 +28,8 @@ class AddLinkTest extends TestCase
 
         Livewire::test(Create::class, ['board' => $board])
             ->set('url', 'https://tailwindcss.com/')
-            ->call('add');
+            ->call('add')
+            ->assertRedirect(route('boards.show', $board));
 
         $this->assertCount(1, Link::all());
 

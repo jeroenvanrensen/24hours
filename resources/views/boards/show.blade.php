@@ -1,4 +1,4 @@
-<div x-data="{ showDropup: false, showModal: false }" x-init="$wire.on('hideModal', () => {showModal = false});">
+<div x-data="{ showDropup: false, showModal: false }">
     <x-heading>
         {{ $board->name }}
         <a href="{{ route('boards.edit', $board) }}" class="mt-2 md:opacity-0 md:w-0 group-hover:opacity-100 group-hover:w-auto focus:opacity-100 focus:w-auto ml-2 text-sm text-gray-500 focus:text-gray-700 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 dark:focus:text-white underline font-sans focus:outline-none">Edit</a>

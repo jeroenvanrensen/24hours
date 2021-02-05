@@ -36,7 +36,6 @@ class Create extends Component
             'image' => $response->image
         ]);
 
-        $this->emit('createdLink');
-        $this->reset('url');
+        return redirect()->route('boards.show', $this->board);
     }
 }

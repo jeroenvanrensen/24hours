@@ -13,10 +13,6 @@ class Show extends Component
 
     public Board $board;
 
-    protected $listeners = [
-        'createdLink' => 'hideModal'
-    ];
-
     public function mount()
     {
         $this->authorize('view', $this->board);
@@ -27,11 +23,6 @@ class Show extends Component
         $this->board->forceFill(['updated_at' => now()])->save();
 
         return view('boards.show');
-    }
-
-    public function hideModal()
-    {
-        $this->emit('hideModal');
     }
 
     public function createNote()

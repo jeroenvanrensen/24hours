@@ -36,7 +36,7 @@
     }
 
     .ql-editor p {
-        @apply mb-6 !important;
+        @apply mb-1 !important;
     }
 
     .ql-editor img {
@@ -44,7 +44,11 @@
     }
 
     .ql-editor ul, .ql-editor ol {
-        @apply mb-6 !important;
+        @apply mb-6 pl-0 !important;
+    }
+
+    .ql-editor li {
+        @apply mb-1 !important;
     }
 
     .ql-editor blockquote {

@@ -39,17 +39,30 @@ class Scraper
     /** @return string|null */
     protected function getImage()
     {
-        if($image = $this->getImageFromMeta()) {
+        if($image = $this->getImageFromMetaProperty()) {
+            return $image;
+        }
+        
+        if($image = $this->getImageFromMetaName()) {
             return $image;
         }
 
         return $this->getImageFromTag();
     }
 
-    protected function getImageFromMeta()
+    protected function getImageFromMetaProperty()
     {
         return collect($this->crawler->filter('meta')->each(function ($node) {
             if($node->attr('property') == 'og:image') {
+                return $node->attr('content');
+            }
+        }))->filter()->flatten()[0] ?? null;
+    }
+
+    protected function getImageFromMetaName()
+    {
+        return collect($this->crawler->filter('meta')->each(function ($node) {
+            if($node->attr('name') == 'og:image') {
                 return $node->attr('content');
             }
         }))->filter()->flatten()[0] ?? null;

@@ -4,6 +4,7 @@ namespace Tests\Feature\Links;
 
 use App\Models\Board;
 use App\Models\Link;
+use App\Models\Membership;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -28,6 +29,38 @@ class VisitLinksTest extends TestCase
     }
 
     /** @test */
+    public function members_can_visit_a_link()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        
+        $board = Board::factory()->for($user)->create();
+        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+        $link = Link::factory()->for($board)->create();
+
+        $this->get(route('links.show', $link))
+            ->assertRedirect($link->url);
+    }
+
+    /** @test */
+    public function viewers_can_visit_a_link()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        
+        $board = Board::factory()->for($user)->create();
+        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
+        $link = Link::factory()->for($board)->create();
+
+        $this->get(route('links.show', $link))
+            ->assertRedirect($link->url);
+    }
+
+    /** @test */
     public function guests_cannot_visit_a_link()
     {
         $link = Link::factory()->create();
@@ -37,7 +70,7 @@ class VisitLinksTest extends TestCase
     }
 
     /** @test */
-    public function non_owners_cannot_visit_a_link_they_dont_own()
+    public function other_users_cannot_visit_a_link_they_dont_own()
     {
         $user = User::factory()->create();
         $this->actingAs($user);

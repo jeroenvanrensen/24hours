@@ -1,4 +1,4 @@
-<x-items.type :item="$item">
+<x-items.type :item="$item" :board="$board">
     <x-slot name="url">
         {{ route('notes.edit', $item) }}
     </x-slot>

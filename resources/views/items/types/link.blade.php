@@ -1,4 +1,4 @@
-<x-items.type newTab :item="$item">
+<x-items.type newTab :item="$item" :board="$board">
     <x-slot name="url">
         {{ route('links.show', $item) }}
     </x-slot>

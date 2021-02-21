@@ -5,10 +5,13 @@ namespace App\Http\Livewire\Items;
 use App\Models\Board;
 use App\Models\Link;
 use App\Models\Note;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Index extends Component
 {
+    use AuthorizesRequests;
+
     public Board $board;
 
     protected $numberToShow = 50;
@@ -55,6 +58,8 @@ class Index extends Component
 
     public function deleteLink(Link $link)
     {
+        $this->authorize('manageItems', $this->board);
+
         $link->delete();
 
         return redirect()->route('boards.show', $this->board);

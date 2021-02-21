@@ -1,7 +1,7 @@
 <div>
     <ul class="grid grid-cols-1 md:grid-cols-3 gap-6">
         @foreach($items as $item)
-            @include('items.types.' . strtolower(class_basename($item)))
+            @include('items.types.' . strtolower(class_basename($item)), ['board' => $board])
         @endforeach
     </ul>
 

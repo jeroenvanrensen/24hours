@@ -31,6 +31,11 @@ class Board extends Model
         return $this->hasMany(Invitation::class);
     }
 
+    public function memberships()
+    {
+        return $this->hasMany(Membership::class);
+    }
+
     public function getItemsAttribute()
     {
         return $this->notes->push($this->links)->flatten();

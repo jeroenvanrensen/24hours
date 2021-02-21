@@ -5,6 +5,7 @@ namespace Tests\Unit\Models;
 use App\Models\Board;
 use App\Models\Invitation;
 use App\Models\Link;
+use App\Models\Membership;
 use App\Models\Note;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -102,5 +103,19 @@ class BoardTest extends TestCase
         $this->assertCount(1, $board->invitations);
         $this->assertInstanceOf(Invitation::class, $board->invitations[0]);
         $this->assertEquals($invitation->id, $board->invitations[0]->id);
+    }
+
+    /** @test */
+    public function a_board_has_many_memberships()
+    {
+        $this->withoutExceptionHandling();
+        
+        $board = Board::factory()->create();
+
+        $membership = Membership::factory()->for($board)->create();
+
+        $this->assertCount(1, $board->memberships);
+        $this->assertInstanceOf(Membership::class, $board->memberships[0]);
+        $this->assertEquals($membership->id, $board->memberships[0]->id);
     }
 }

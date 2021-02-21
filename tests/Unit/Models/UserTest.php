@@ -4,6 +4,7 @@ namespace Tests\Unit\Models;
 
 use App\Models\Board;
 use App\Models\Link;
+use App\Models\Membership;
 use App\Models\Note;
 use App\Models\User;
 use Illuminate\Database\QueryException;
@@ -163,5 +164,19 @@ class UserTest extends TestCase
         $this->assertCount(1, $user->notes);
         $this->assertInstanceOf(Note::class, $user->notes[0]);
         $this->assertEquals($note->id, $user->notes[0]->id);
+    }
+
+    /** @test */
+    public function a_user_has_many_memberships()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+
+        $membership = Membership::factory()->for($user)->create();
+
+        $this->assertCount(1, $user->memberships);
+        $this->assertInstanceOf(Membership::class, $user->memberships[0]);
+        $this->assertEquals($membership->id, $user->memberships[0]->id);
     }
 }

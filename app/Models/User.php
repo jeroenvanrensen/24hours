@@ -40,4 +40,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasManyThrough(Note::class, Board::class);
     }
+
+    public function memberships()
+    {
+        return $this->hasMany(Membership::class);
+    }
 }

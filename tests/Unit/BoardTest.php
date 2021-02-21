@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Board;
+use App\Models\Invitation;
 use App\Models\Link;
 use App\Models\Note;
 use App\Models\User;
@@ -87,5 +88,19 @@ class BoardTest extends TestCase
         
         $this->assertInstanceOf(Link::class, $board->items[1]);
         $this->assertEquals($link->id, $board->items[1]->id);
+    }
+
+    /** @test */
+    public function a_board_has_many_invitations()
+    {
+        $this->withoutExceptionHandling();
+        
+        $board = Board::factory()->create();
+
+        $invitation = Invitation::factory()->for($board)->create();
+
+        $this->assertCount(1, $board->invitations);
+        $this->assertInstanceOf(Invitation::class, $board->invitations[0]);
+        $this->assertEquals($invitation->id, $board->invitations[0]->id);
     }
 }

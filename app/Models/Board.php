@@ -26,6 +26,11 @@ class Board extends Model
         return $this->hasMany(Note::class);
     }
 
+    public function invitations()
+    {
+        return $this->hasMany(Invitation::class);
+    }
+
     public function getItemsAttribute()
     {
         return $this->notes->push($this->links)->flatten();

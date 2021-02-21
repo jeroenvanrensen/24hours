@@ -10,7 +10,7 @@ You can click the button below to join the board.
 
 If you don't want to join this board, you can ignore this email.
 
-@component('mail::button', ['url' => route('invitations.accept', $invitation)])
+@component('mail::button', ['url' => route('members.store', $invitation)])
 Join {{ $invitation->board->name }}
 @endcomponent
 

@@ -17,7 +17,7 @@ class Edit extends Component
 
     public function mount()
     {
-        $this->authorize('manageItems', $this->note->board);
+        $this->authorize('view', $this->note->board);
         $this->body = $this->note->body;
 
         $this->note->update(['updated_at' => now()]);
@@ -31,6 +31,8 @@ class Edit extends Component
 
     public function updated()
     {
+        $this->authorize('manageItems', $this->note->board);
+
         $this->validate(['body' => ['nullable', 'string']]);
 
         $this->note->update([
@@ -48,6 +50,8 @@ class Edit extends Component
 
     public function destroy()
     {
+        $this->authorize('manageItems', $this->note->board);
+        
         $this->note->delete();
         
         return redirect()->route('boards.show', $this->note->board);

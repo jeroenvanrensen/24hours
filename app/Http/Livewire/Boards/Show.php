@@ -27,6 +27,8 @@ class Show extends Component
 
     public function createNote()
     {
+        $this->authorize('manageItems', $this->board);
+
         $note = Note::create([
             'board_id' => $this->board->id,
             'title' => 'No Title',

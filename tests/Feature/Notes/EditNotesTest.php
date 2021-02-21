@@ -4,6 +4,7 @@ namespace Tests\Feature\Notes;
 
 use App\Http\Livewire\Notes\Edit;
 use App\Models\Board;
+use App\Models\Membership;
 use App\Models\Note;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -31,6 +32,40 @@ class EditNotesTest extends TestCase
     }
 
     /** @test */
+    public function members_can_visit_the_notes_page()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create();
+        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+        $note = Note::factory()->for($board)->create();
+
+        $this->get(route('notes.edit', $note))
+            ->assertStatus(200)
+            ->assertSeeLivewire('notes.edit');
+    }
+
+    /** @test */
+    public function viewers_can_visit_the_notes_page()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create();
+        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
+        $note = Note::factory()->for($board)->create();
+
+        $this->get(route('notes.edit', $note))
+            ->assertStatus(200)
+            ->assertSeeLivewire('notes.edit');
+    }
+
+    /** @test */
     public function guests_cannot_visit_the_notes_page()
     {
         $note = Note::factory()->create();
@@ -40,7 +75,7 @@ class EditNotesTest extends TestCase
     }
 
     /** @test */
-    public function non_owners_cannot_visit_the_notes_page()
+    public function other_users_cannot_visit_the_notes_page()
     {
         $user = User::factory()->create();
         $this->actingAs($user);
@@ -91,6 +126,43 @@ class EditNotesTest extends TestCase
             ->set('body', 'My Note');
 
         $this->assertEquals('My Note', $note->fresh()->body);
+    }
+
+    /** @test */
+    public function members_can_edit_a_note()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create();
+        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+        $note = Note::factory()->for($board)->create();
+
+        $this->assertNotEquals('My Note', $note->fresh()->body);
+
+        Livewire::test(Edit::class, ['note' => $note])
+            ->set('body', 'My Note');
+
+        $this->assertEquals('My Note', $note->fresh()->body);
+    }
+
+    /** @test */
+    public function viewers_can_edit_a_note()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create();
+        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
+        $note = Note::factory()->for($board)->create();
+
+        Livewire::test(Edit::class, ['note' => $note])
+            ->set('body', 'My Note')
+            ->assertStatus(403);
+
+        $this->assertNotEquals('My Note', $note->fresh()->body);
     }
 
     /** 

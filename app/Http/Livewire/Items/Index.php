@@ -51,6 +51,8 @@ class Index extends Component
 
     public function deleteNote(Note $note)
     {
+        $this->authorize('manageItems', $this->board);
+        
         $note->delete();
 
         return redirect()->route('boards.show', $this->board);

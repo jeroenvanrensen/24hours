@@ -6,6 +6,7 @@ use App\Http\Livewire\Members\Create;
 use App\Mail\Members\InvitationMail;
 use App\Models\Board;
 use App\Models\Invitation;
+use App\Models\Membership;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
@@ -44,6 +45,63 @@ class InviteMembersTest extends TestCase
             'email' => $userToBeInvited->email,
             'role' => 'member'
         ]);
+    }
+
+    /** @test */
+    public function a_user_cannot_be_invited_twice()
+    {
+        $this->withoutExceptionHandling();
+
+        Mail::fake();
+
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $userToBeInvited = User::factory()->create();
+
+        $board = Board::factory()->for($user)->create();
+        
+        $invitation = Invitation::create([
+            'board_id' => $board->id,
+            'email' => $userToBeInvited->email,
+            'role' => 'member'
+        ]);
+
+        $this->assertCount(1, Invitation::all());
+    
+        Livewire::test(Create::class, ['board' => $board])
+            ->set('email', $userToBeInvited->email)
+            ->set('role', 'viewer')
+            ->call('invite')
+            ->assertHasErrors('email');
+
+        $this->assertCount(1, Invitation::all());
+
+        Mail::assertNothingQueued();
+    }
+
+    /** @test */
+    public function users_who_are_already_members_cannot_be_invited_again()
+    {
+        $this->withoutExceptionHandling();
+
+        Mail::fake();
+
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->for($user)->create();
+
+        $otherUser = User::factory()->create();
+        $membership = Membership::factory()->create(['board_id' => $board->id, 'user_id' => $otherUser->id]);
+    
+        Livewire::test(Create::class, ['board' => $board])
+            ->set('email', $otherUser->email)
+            ->set('role', 'viewer')
+            ->call('invite')
+            ->assertHasErrors('email');
+
+        Mail::assertNothingQueued();
     }
 
     /** @test */

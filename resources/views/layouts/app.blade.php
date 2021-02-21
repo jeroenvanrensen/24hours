@@ -24,14 +24,14 @@
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 </head>
 <body x-data="{ showModal: false }" class="dark:bg-gray-800 dark:text-white">
-    @if($showNavbar ?? true)
-        @include('layouts.navbar')
-
-        <div class="max-w-5xl mx-auto px-6 my-6 md:my-12">
-            {{ $slot }}
-        </div>
+    @if($defaultNavbar ?? true)
+        @include('layouts.default-navbar')
     @else
-        {{ $slot }}
+        @include('layouts.custom-navbar', ['backLink' => $backLink])
     @endif
+
+    <div class="max-w-5xl mx-auto px-6 my-6 md:my-12">
+        {{ $slot }}
+    </div>
 </body>
 </html>

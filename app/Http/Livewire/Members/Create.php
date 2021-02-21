@@ -18,7 +18,7 @@ class Create extends Component
     public Board $board;
 
     protected $rules = [
-        'email' => ['required', 'exists:users', 'max:255'],
+        'email' => ['required', 'email', 'max:255'],
         'role' => ['required', 'in:member,viewer', 'max:255']
     ];
 
@@ -68,7 +68,7 @@ class Create extends Component
     {
         return Membership::query()
             ->where('board_id', $this->board->id)
-            ->where('user_id', User::where('email', $this->email)->first()->id)
+            ->where('user_id', User::where('email', $this->email)->first()->id ?? null)
             ->first();
     }
 }

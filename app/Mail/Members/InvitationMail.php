@@ -3,6 +3,7 @@
 namespace App\Mail\Members;
 
 use App\Models\Invitation;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -21,7 +22,8 @@ class InvitationMail extends Mailable
 
     public function build()
     {
-        return $this->markdown('emails.members.invitation')
-            ->subject('You have been invited to ' . $this->invitation->board->name . ' - 24Hours');
+        return $this->markdown('emails.members.invitation', [
+            'username' => User::where('email', $this->invitation->email)->first()->name ?? $this->invitation->email
+        ])->subject('You have been invited to ' . $this->invitation->board->name . ' - 24Hours');
     }
 }

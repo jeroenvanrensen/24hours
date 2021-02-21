@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Members;
+namespace Tests\Feature\Invitations;
 
 use App\Http\Livewire\Members\Create;
 use App\Mail\Members\InvitationMail;
@@ -105,7 +105,7 @@ class InviteMembersTest extends TestCase
     }
 
     /** @test */
-    public function an_invitation_requires_an_existing_email()
+    public function non_existing_users_can_be_invited_too()
     {
         $this->withoutExceptionHandling();
 
@@ -115,12 +115,22 @@ class InviteMembersTest extends TestCase
         $this->actingAs($user);
 
         $board = Board::factory()->for($user)->create();
+
+        $this->assertCount(0, Invitation::all());
         
         Livewire::test(Create::class, ['board' => $board])
             ->set('email', 'john@example.org') // does not exists
             ->set('role', 'member')
             ->call('invite')
-            ->assertHasErrors('email');
+            ->assertHasNoErrors('email');
+
+        $this->assertCount(1, Invitation::all());
+
+        $this->assertDatabaseHas('invitations', [
+            'board_id' => $board->id,
+            'email' => 'john@example.org',
+            'role' => 'member'
+        ]);
     }
 
     /** @test */
@@ -180,60 +190,5 @@ class InviteMembersTest extends TestCase
         Mail::assertQueued(function(InvitationMail $mail) use ($userToBeInvited) {
             return $mail->hasTo($userToBeInvited->email);
         });
-    }
-
-    /** @test */
-    public function a_user_can_accept_an_invitation()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create();
-        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
-
-        $this->assertTrue($invitation->exists());
-        $this->assertCount(0, Membership::all());
-
-        $this->get(route('members.store', $invitation))
-            ->assertRedirect(route('boards.show', $board));
-
-        $this->assertFalse($invitation->exists());
-        $this->assertCount(1, Membership::all());
-
-        $this->assertDatabaseHas('memberships', [
-            'user_id' => $user->id,
-            'board_id' => $board->id
-        ]);
-    }
-
-    /** @test */
-    public function a_user_cannot_accept_an_other_invitation()
-    {
-        $user = User::factory()->create();
-
-        $otherUser = User::factory()->create();
-        $this->actingAs($otherUser);
-
-        $board = Board::factory()->create();
-        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
-
-        $this->get(route('members.store', $invitation))
-            ->assertStatus(403);
-    }
-
-    /** @test */
-    public function guests_cannot_accept_an_invitation()
-    {
-        $user = User::factory()->create();
-
-        $board = Board::factory()->create();
-        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
-
-        $this->assertTrue($invitation->exists());
-
-        $this->get(route('members.store', $invitation))
-            ->assertRedirect(route('login'));
     }
 }

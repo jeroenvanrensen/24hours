@@ -1,12 +1,13 @@
 <?php
 
+use App\Http\Controllers\Invitations\CheckForInvitations;
 use App\Http\Controllers\Links\Show as ShowLink;
-use App\Http\Controllers\Members\Store as StoreMember;
 use App\Http\Livewire\Profile\Edit as EditProfile;
 use App\Http\Livewire\Boards\Edit as EditBoard;
 use App\Http\Livewire\Boards\Index as IndexBoards;
 use App\Http\Livewire\Boards\Show as ShowBoard;
 use App\Http\Livewire\Home;
+use App\Http\Livewire\Invitations\Show as ShowInvitation;
 use App\Http\Livewire\Members\Index as IndexMembers;
 use App\Http\Livewire\Notes\Edit as EditNote;
 use App\Http\Livewire\Search\Search;
@@ -30,7 +31,9 @@ Route::middleware(['auth', 'verified'])->prefix('app')->group(function () {
     Route::get('/boards/{board:id}', ShowBoard::class)->name('boards.show');
     Route::get('/boards/{board:id}/edit', EditBoard::class)->name('boards.edit');
 
-    Route::get('/invitations/{invitation:id}', StoreMember::class)->name('members.store');
+    Route::get('/invitations/check', CheckForInvitations::class)->name('invitations.check');
+    Route::get('/invitations/{invitation:id}', ShowInvitation::class)->name('invitations.show')->withoutMiddleware(['auth', 'verified']);
+
     Route::get('/boards/{board:id}/members', IndexMembers::class)->name('members.index');
 
     Route::get('/links/{link:id}', ShowLink::class)->name('links.show');

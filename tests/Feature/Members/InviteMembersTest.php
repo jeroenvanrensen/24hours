@@ -194,11 +194,18 @@ class InviteMembersTest extends TestCase
         $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
 
         $this->assertTrue($invitation->exists());
+        $this->assertCount(0, Membership::all());
 
         $this->get(route('members.store', $invitation))
             ->assertRedirect(route('boards.show', $board));
 
         $this->assertFalse($invitation->exists());
+        $this->assertCount(1, Membership::all());
+
+        $this->assertDatabaseHas('memberships', [
+            'user_id' => $user->id,
+            'board_id' => $board->id
+        ]);
     }
 
     /** @test */

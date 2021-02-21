@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Members;
 
 use App\Models\Invitation;
+use App\Models\Membership;
+use App\Models\User;
 
 class Store
 {
@@ -11,6 +13,12 @@ class Store
         if (auth()->user()->email != $invitation->email) {
             abort(403);
         }
+
+        Membership::create([
+            'board_id' => $invitation->board->id,
+            'user_id' => User::where('email', $invitation->email)->firstOrFail()->id,
+            'role' => $invitation->role
+        ]);
 
         $invitation->delete();
 

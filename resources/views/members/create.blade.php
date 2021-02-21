@@ -1,6 +1,10 @@
 <x-modal name="newMemberModal">
     <x-slot name="title">Add member</x-slot>
 
+    @if(session()->has('success'))
+        <p class="mb-6 font-semibold text-green-600 dark:text-green-300">{{ session()->get('success') }}</p>
+    @endif
+
     <!-- Email -->
     <x-forms.group>
         <x-forms.label for="email">Email</x-forms.label>

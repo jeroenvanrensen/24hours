@@ -28,7 +28,7 @@ class Create extends Component
 
     public function render()
     {
-        return view('memberships.create');
+        return view('members.create');
     }
 
     public function invite()
@@ -50,6 +50,8 @@ class Create extends Component
         ]);
 
         Mail::to($this->email)->queue(new InvitationMail($invitation));
+
+        session()->flash('success', $this->email . ' has been invited to this board!');
 
         $this->reset(['email', 'role']);
     }

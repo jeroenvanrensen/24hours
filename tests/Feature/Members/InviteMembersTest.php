@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Feature\Memberships;
+namespace Tests\Feature\Members;
 
-use App\Http\Livewire\Memberships\Create;
+use App\Http\Livewire\Members\Create;
 use App\Mail\Members\InvitationMail;
 use App\Models\Board;
 use App\Models\Invitation;

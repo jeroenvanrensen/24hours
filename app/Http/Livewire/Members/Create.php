@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Memberships;
+namespace App\Http\Livewire\Members;
 
 use App\Mail\Members\InvitationMail;
 use App\Models\Board;

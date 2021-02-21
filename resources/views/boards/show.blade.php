@@ -1,7 +1,13 @@
 <div x-data="{ showDropup: false, showModal: false }">
     <x-heading>
         {{ $board->name }}
-        <a href="{{ route('boards.edit', $board) }}" class="mt-2 md:opacity-0 md:w-0 group-hover:opacity-100 group-hover:w-auto focus:opacity-100 focus:w-auto ml-2 text-sm text-gray-500 focus:text-gray-700 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 dark:focus:text-white underline font-sans focus:outline-none">Edit</a>
+
+        <!-- Edit button -->
+        <a href="{{ route('boards.edit', $board) }}" class="block ml-4 p-2 bg-gray-200 hover:bg-gray-300 focus:bg-gray-300 focus:outline-none rounded-full">
+            <svg class="w-4 h-4 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>
+        </a>
     </x-heading>
 
     <!-- Show all items -->

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Links\Show as ShowLink;
+use App\Http\Controllers\Members\Store;
 use App\Http\Livewire\Profile\Edit as EditProfile;
 use App\Http\Livewire\Boards\Edit as EditBoard;
 use App\Http\Livewire\Boards\Index as IndexBoards;
@@ -27,6 +28,8 @@ Route::middleware(['auth', 'verified'])->prefix('app')->group(function () {
     Route::get('/', IndexBoards::class)->name('boards.index');
     Route::get('/boards/{board:id}', ShowBoard::class)->name('boards.show');
     Route::get('/boards/{board:id}/edit', EditBoard::class)->name('boards.edit');
+
+    Route::get('/invitations/{invitation:id}', Store::class)->name('members.store');
 
     Route::get('/links/{link:id}', ShowLink::class)->name('links.show');
     Route::get('/notes/{note:id}', EditNote::class)->name('notes.edit');

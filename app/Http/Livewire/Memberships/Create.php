@@ -2,8 +2,10 @@
 
 namespace App\Http\Livewire\Memberships;
 
+use App\Mail\Members\InvitationMail;
 use App\Models\Board;
 use App\Models\Invitation;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
 class Create extends Component
@@ -27,10 +29,12 @@ class Create extends Component
     {
         $this->validate();
 
-        Invitation::create([
+        $invitation = Invitation::create([
             'board_id' => $this->board->id,
             'email' => $this->email,
             'role' => $this->role
         ]);
+
+        Mail::to($this->email)->queue(new InvitationMail($invitation));
     }
 }

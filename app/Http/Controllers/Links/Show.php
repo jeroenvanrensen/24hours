@@ -11,7 +11,7 @@ class Show
 
     public function __invoke(Link $link)
     {
-        $this->authorize('visitLink', $link->board);
+        $this->authorize('view', $link->board);
 
         $link->update(['updated_at' => now()]);
 

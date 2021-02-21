@@ -5,10 +5,13 @@ namespace App\Http\Livewire\Links;
 use App\Models\Board;
 use App\Models\Link;
 use App\Services\WebScraper\Scraper;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Create extends Component
 {
+    use AuthorizesRequests;
+
     public Board $board;
 
     public $url;
@@ -24,6 +27,8 @@ class Create extends Component
 
     public function add()
     {
+        $this->authorize('manageItems', $this->board);
+
         $this->validate();
 
         $scraper = new Scraper();

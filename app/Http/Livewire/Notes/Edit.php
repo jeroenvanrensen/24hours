@@ -17,7 +17,7 @@ class Edit extends Component
 
     public function mount()
     {
-        $this->authorize('editNote', $this->note->board);
+        $this->authorize('manageItems', $this->note->board);
         $this->body = $this->note->body;
 
         $this->note->update(['updated_at' => now()]);

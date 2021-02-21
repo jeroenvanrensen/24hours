@@ -13,7 +13,7 @@ class BoardPolicy
 
     public function view(User $user, Board $board): bool
     {
-        return $this->hasPermission($user, $board, ['member', 'viewer']);
+        return $this->hasPermission($user, $board, ['owner', 'member', 'viewer']);
     }
 
     public function edit(User $user, Board $board): bool
@@ -21,14 +21,9 @@ class BoardPolicy
         return $this->hasPermission($user, $board, []);
     }
 
-    public function visitLink(User $user, Board $board): bool
+    public function manageItems(User $user, Board $board): bool
     {
-        return $this->hasPermission($user, $board, []);
-    }
-
-    public function editNote(User $user, Board $board): bool
-    {
-        return $this->hasPermission($user, $board, []);
+        return $this->hasPermission($user, $board, ['owner', 'member']);
     }
 
     protected function hasPermission(User $user, Board $board, array $allowedRoles): bool

@@ -5,15 +5,22 @@
     </div>
 
     <ul>
-        <li>
+        <li class="mb-6">
             <strong class="block">{{ $board->user->name }}</strong>
             <span>Owner</span>
         </li>
 
         @foreach($board->memberships as $membership)
-            <li>
+            <li class="mb-6">
                 <strong class="block">{{ $membership->user->name }}</strong>
                 <span>{{ ucfirst($membership->role) }}</span>
+            </li>
+        @endforeach
+
+        @foreach($board->invitations as $invitation)
+            <li class="mb-6 text-gray-500">
+                <strong class="block">{{ $invitation->email }}</strong>
+                <span>Invited - {{ ucfirst($invitation->role) }}</span>
             </li>
         @endforeach
     </ul>

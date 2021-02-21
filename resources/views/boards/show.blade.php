@@ -4,12 +4,17 @@
 
         <!-- Edit button -->
         @can('edit', $board)
-            <a href="{{ route('boards.edit', $board) }}" class="block ml-4 p-2 bg-gray-200 hover:bg-gray-300 focus:bg-gray-300 focus:outline-none rounded-full">
-                <svg class="w-4 h-4 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
+            <a title="Edit this board" href="{{ route('boards.edit', $board) }}" class="block ml-6 p-2 bg-gray-200 hover:bg-gray-300 focus:bg-gray-300 focus:outline-none rounded-full">
+            <svg class="w-4 h-4 text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+</svg>
             </a>
         @endcan
+        <a title="View members" href="{{ route('members.index', $board) }}" class="block ml-2 p-2 bg-gray-200 hover:bg-gray-300 focus:bg-gray-300 focus:outline-none rounded-full">
+        <svg class="w-4 h-4 text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+</svg>
+        </a>
     </x-heading>
 
     <!-- Show all items -->

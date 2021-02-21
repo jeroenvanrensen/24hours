@@ -4,6 +4,7 @@ namespace Tests\Feature\Boards;
 
 use App\Http\Livewire\Boards\Edit;
 use App\Models\Board;
+use App\Models\Membership;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -38,12 +39,38 @@ class EditBoardsTest extends TestCase
     }
 
     /** @test */
-    public function non_owners_cannot_visit_the_edit_board_page()
+    public function other_users_cannot_visit_the_edit_board_page()
     {
         $user = User::factory()->create();
         $this->actingAs($user);
 
         $board = Board::factory()->create(); // other user
+
+        $this->get(route('boards.edit', $board))
+            ->assertStatus(403);
+    }
+
+    /** @test */
+    public function members_cannot_visit_the_edit_page()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create();
+        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+
+        $this->get(route('boards.edit', $board))
+            ->assertStatus(403);
+    }
+
+    /** @test */
+    public function viewer_cannot_visit_the_edit_page()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create();
+        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
 
         $this->get(route('boards.edit', $board))
             ->assertStatus(403);

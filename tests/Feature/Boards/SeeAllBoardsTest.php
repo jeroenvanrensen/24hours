@@ -4,6 +4,7 @@ namespace Tests\Feature\Boards;
 
 use App\Http\Livewire\Boards\Index;
 use App\Models\Board;
+use App\Models\Membership;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -61,6 +62,36 @@ class SeeAllBoardsTest extends TestCase
         Livewire::test(Index::class)
             ->assertDontSee($board->name);
     }
+
+    /** @test */
+    public function users_can_see_all_boards_where_they_are_member()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create(['name' => 'A really long name so nothing resembles this name!']);
+        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+
+        Livewire::test(Index::class)
+            ->assertSee($board->name);
+    }
+
+    /** @test */
+    public function users_can_see_all_boards_where_they_are_viewer()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create(['name' => 'A really long name so nothing resembles this name!']);
+        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
+
+        Livewire::test(Index::class)
+            ->assertSee($board->name);
+    } 
 
     /** @test */
     public function the_boards_are_ordered_by_date()

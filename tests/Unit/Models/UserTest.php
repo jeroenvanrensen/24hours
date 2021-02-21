@@ -3,6 +3,7 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Board;
+use App\Models\Invitation;
 use App\Models\Link;
 use App\Models\Membership;
 use App\Models\Note;
@@ -178,5 +179,25 @@ class UserTest extends TestCase
         $this->assertCount(1, $user->memberships);
         $this->assertInstanceOf(Membership::class, $user->memberships[0]);
         $this->assertEquals($membership->id, $user->memberships[0]->id);
+    }
+
+    /** @test */
+    public function a_user_has_visible_boards()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+
+        $firstBoard = Board::factory()->for($user)->create(); // owner - visible
+        $secondBoard = Board::factory()->create(); // member - visible
+        $membership = Membership::factory()->for($user)->for($secondBoard)->create();
+        $thirdBoard = Board::factory()->create(); // invited - not visible
+        $invitation = Invitation::factory()->for($thirdBoard)->create(['email' => $user->email]);
+        $fourthBoard = Board::factory()->create(); // nothing - not visible
+
+        $this->assertCount(2, $user->visibleBoards());
+
+        $this->assertEquals($firstBoard->id, $user->visibleBoards()[1]->id);
+        $this->assertEquals($secondBoard->id, $user->visibleBoards()[0]->id);
     }
 }

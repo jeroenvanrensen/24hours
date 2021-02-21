@@ -45,4 +45,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Membership::class);
     }
+
+    public function visibleBoards()
+    {
+        return $this->memberships->map(function($membership) {
+            return $membership->board;
+        })->merge($this->boards)->sortByDesc('updated_at');
+    }
 }

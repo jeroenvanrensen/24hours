@@ -4,6 +4,7 @@ namespace Tests\Feature\Boards;
 
 use App\Http\Livewire\Boards\Show;
 use App\Models\Board;
+use App\Models\Membership;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -40,7 +41,43 @@ class SeeSingleBoardTest extends TestCase
     }
 
     /** @test */
-    public function non_owners_cannot_visit_a_single_board_page()
+    public function members_can_visit_a_single_board_page()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create();
+        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+
+        $this->get(route('boards.show', $board))
+            ->assertStatus(200)
+            ->assertSeeLivewire('boards.show')
+            ->assertSeeLivewire('links.create')
+            ->assertSeeLivewire('items.index');
+    }
+
+    /** @test */
+    public function viewers_can_visit_a_single_board_page()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create();
+        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
+
+        $this->get(route('boards.show', $board))
+            ->assertStatus(200)
+            ->assertSeeLivewire('boards.show')
+            ->assertSeeLivewire('links.create')
+            ->assertSeeLivewire('items.index');
+    }
+
+    /** @test */
+    public function other_users_cannot_visit_a_single_board_page()
     {
         $user = User::factory()->create();
         $this->actingAs($user);

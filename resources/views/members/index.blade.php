@@ -1,7 +1,10 @@
 <div x-data="{ newMemberModal: false }" class="max-w-2xl mx-auto">
     <div class="mb-8 flex items-center justify-between">
         <h2 class="text-2xl md:text-3xl font-serif">Members</h2>
-        <x-button @click="newMemberModal = true">Add member</x-button>
+
+        @can('edit', $board)
+            <x-button @click="newMemberModal = true">Add member</x-button>
+        @endcan
     </div>
 
     <ul>

@@ -18,7 +18,7 @@ class InviteMembersTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function a_user_can_invite_a_member()
+    public function a_board_owner_can_invite_a_member()
     {
         $this->withoutExceptionHandling();
 
@@ -45,6 +45,42 @@ class InviteMembersTest extends TestCase
             'email' => $userToBeInvited->email,
             'role' => 'member'
         ]);
+    }
+
+    /** @test */
+    public function members_cannot_invite_a_user()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create();
+        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+
+        Livewire::test(Create::class, ['board' => $board])
+            ->set('email', 'john@example.org')
+            ->set('role', 'member')
+            ->call('invite')
+            ->assertStatus(403);
+
+        $this->assertCount(0, Invitation::all());
+    }
+
+    /** @test */
+    public function viewers_cannot_invite_a_user()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create();
+        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
+
+        Livewire::test(Create::class, ['board' => $board])
+            ->set('email', 'john@example.org')
+            ->set('role', 'member')
+            ->call('invite')
+            ->assertStatus(403);
+
+        $this->assertCount(0, Invitation::all());
     }
 
     /** @test */

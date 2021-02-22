@@ -7,11 +7,14 @@ use App\Models\Board;
 use App\Models\Invitation;
 use App\Models\Membership;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
 class Create extends Component
 {
+    use AuthorizesRequests;
+
     public $email;
     public $role = 'member';
 
@@ -33,6 +36,8 @@ class Create extends Component
 
     public function invite()
     {
+        $this->authorize('edit', $this->board);
+
         $this->validate();
 
         if($this->invitationExists()) {

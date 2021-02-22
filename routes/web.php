@@ -28,19 +28,18 @@ Route::get('/', Home::class)->name('home')->middleware('guest');
 
 Route::middleware(['auth', 'verified'])->prefix('app')->group(function () {
     Route::get('/', IndexBoards::class)->name('boards.index');
-    Route::get('/boards/{board:id}', ShowBoard::class)->name('boards.show');
-    Route::get('/boards/{board:id}/edit', EditBoard::class)->name('boards.edit');
+    Route::get('/boards/{board:uuid}', ShowBoard::class)->name('boards.show');
+    Route::get('/boards/{board:uuid}/edit', EditBoard::class)->name('boards.edit');
 
     Route::get('/invitations/check', CheckForInvitations::class)->name('invitations.check');
-    Route::get('/invitations/{invitation:id}', ShowInvitation::class)->name('invitations.show')->withoutMiddleware(['auth', 'verified']);
+    Route::get('/invitations/{invitation:uuid}', ShowInvitation::class)->name('invitations.show')->withoutMiddleware(['auth', 'verified']);
 
-    Route::get('/boards/{board:id}/members', IndexMembers::class)->name('members.index');
+    Route::get('/boards/{board:uuid}/members', IndexMembers::class)->name('members.index');
 
-    Route::get('/links/{link:id}', ShowLink::class)->name('links.show');
-    Route::get('/notes/{note:id}', EditNote::class)->name('notes.edit');
+    Route::get('/links/{link:uuid}', ShowLink::class)->name('links.show');
+    Route::get('/notes/{note:uuid}', EditNote::class)->name('notes.edit');
     
     Route::get('/search', Search::class)->name('search');
-    
     Route::get('/profile', EditProfile::class)->name('profile.edit');
 });
 

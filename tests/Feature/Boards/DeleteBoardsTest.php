@@ -35,7 +35,7 @@ class DeleteBoardsTest extends TestCase
     }
 
     /** @test */
-    public function deleting_a_board_delets_all_its_links_too()
+    public function deleting_a_board_deletes_all_its_links_too()
     {
         $this->withoutExceptionHandling();
         
@@ -55,7 +55,7 @@ class DeleteBoardsTest extends TestCase
     }
 
     /** @test */
-    public function deleting_a_board_delets_all_its_notes_too()
+    public function deleting_a_board_deletes_all_its_notes_too()
     {
         $this->withoutExceptionHandling();
         

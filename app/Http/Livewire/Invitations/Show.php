@@ -51,7 +51,7 @@ class Show extends Component
 
         $this->invitation->delete();
 
-        return redirect()->route('invitations.check');
+        return redirect()->route('boards.show', $this->invitation->board);
     }
 
     public function deny()

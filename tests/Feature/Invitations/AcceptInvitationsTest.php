@@ -86,7 +86,7 @@ class AcceptInvitationsTest extends TestCase
 
         Livewire::test(Show::class, ['invitation' => $invitation])
             ->call('accept')
-            ->assertRedirect(route('invitations.check'));
+            ->assertRedirect(route('boards.show', $board));
             
         $this->assertCount(0, Invitation::all());
         $this->assertCount(1, Membership::all());

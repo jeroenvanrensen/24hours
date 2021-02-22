@@ -1,5 +1,5 @@
 <div class="bg-gray-200 dark:bg-gray-900 w-full min-h-screen">
-    @include('layouts.navbar')
+    @include('layouts.default-navbar')
 
     <!-- Hero -->
     <div class="mt-8 md:mt-32 max-w-6xl mx-auto px-6">

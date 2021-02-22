@@ -26,11 +26,7 @@ class Edit extends Component
     public function render()
     {
         return view('notes.edit')
-            ->layout('layouts.app', [
-                'defaultNavbar' => false,
-                'backLink' => route('boards.show', $this->note->board),
-                'backText' => $this->note->title
-            ]);
+            ->layout('layouts.app', ['showNavbar' => false]);
     }
 
     public function updated()

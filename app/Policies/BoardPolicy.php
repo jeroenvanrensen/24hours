@@ -18,7 +18,7 @@ class BoardPolicy
 
     public function edit(User $user, Board $board): bool
     {
-        return $this->hasPermission($user, $board, []);
+        return $this->hasPermission($user, $board, ['owner']);
     }
 
     public function manageItems(User $user, Board $board): bool
@@ -26,9 +26,14 @@ class BoardPolicy
         return $this->hasPermission($user, $board, ['owner', 'member']);
     }
 
+    public function leave(User $user, Board $board)
+    {
+        return $this->hasPermission($user, $board, ['member', 'viewer']);
+    }
+
     protected function hasPermission(User $user, Board $board, array $allowedRoles): bool
     {
-        if($user->id == $board->user->id) {
+        if(in_array('owner', $allowedRoles) && $user->id == $board->user->id) {
             return true;
         }
 

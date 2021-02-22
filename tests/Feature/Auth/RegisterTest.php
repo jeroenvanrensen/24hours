@@ -50,7 +50,7 @@ class RegisterTest extends TestCase
             ->set('password', 'password')
             ->set('password_confirmation', 'password')
             ->call('register')
-            ->assertRedirect(RouteServiceProvider::HOME);
+            ->assertRedirect(route('invitations.check'));
 
         $this->assertCount(1, User::all());
 
@@ -72,8 +72,7 @@ class RegisterTest extends TestCase
             ->set('email', 'john@example.org')
             ->set('password', 'password')
             ->set('password_confirmation', 'password')
-            ->call('register')
-            ->assertRedirect(RouteServiceProvider::HOME);
+            ->call('register');
 
         $this->assertTrue(auth()->check());
     }
@@ -92,8 +91,7 @@ class RegisterTest extends TestCase
             ->set('email', 'john@example.org')
             ->set('password', 'password')
             ->set('password_confirmation', 'password')
-            ->call('register')
-            ->assertRedirect(RouteServiceProvider::HOME);
+            ->call('register');
 
         Notification::assertSentTo(
             [User::first()], VerifyEmail::class

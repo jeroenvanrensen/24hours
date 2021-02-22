@@ -7,42 +7,22 @@ use Livewire\Component;
 
 class Login extends Component
 {
-    /**
-     * The user's email.
-     *
-     * @var string
-     */
     public $email;
 
-    /**
-     * The user's password.
-     *
-     * @var string
-     */
     public $password;
 
-    /**
-     * Render the page.
-     *
-     * @return  \Illuminate\Contracts\View\View
-     */
     public function render()
     {
         return view('auth.login')
-            ->layout('layouts.app', ['title' => 'Login']);
+            ->layout('layouts.app');
     }
 
-    /**
-     * Log the user in.
-     *
-     * @return  \Illuminate\Http\RedirectResponse|void
-     */
     public function login()
     {
         $success = auth()->attempt(['email' => $this->email, 'password' => $this->password], true);
 
         if ($success) {
-            return redirect()->to(RouteServiceProvider::HOME);
+            return redirect()->to(route('invitations.check'));
         }
 
         $this->addError('email', 'These credentials do not match our records.');

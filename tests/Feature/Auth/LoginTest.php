@@ -51,7 +51,7 @@ class LoginTest extends TestCase
             ->set('email', 'john@example.org')
             ->set('password', 'password')
             ->call('login')
-            ->assertRedirect(RouteServiceProvider::HOME);
+            ->assertRedirect(route('invitations.check'));
 
         $this->assertTrue(auth()->check());
     }

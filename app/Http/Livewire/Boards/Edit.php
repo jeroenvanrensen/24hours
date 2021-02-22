@@ -2,8 +2,10 @@
 
 namespace App\Http\Livewire\Boards;
 
+use App\Mail\Boards\BoardDeletedMail;
 use App\Models\Board;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
 class Edit extends Component
@@ -42,8 +44,14 @@ class Edit extends Component
 
     public function destroy()
     {
+        foreach($this->board->memberships as $membership) {
+            Mail::to($membership->user->email)->queue(new BoardDeletedMail($membership, $this->board));
+        }
+
         $this->board->links()->delete();
         $this->board->notes()->delete();
+        $this->board->memberships()->delete();
+        $this->board->invitations()->delete();
 
         $this->board->delete();
 

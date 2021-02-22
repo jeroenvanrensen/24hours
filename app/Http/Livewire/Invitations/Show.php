@@ -2,9 +2,12 @@
 
 namespace App\Http\Livewire\Invitations;
 
+use App\Mail\InvitationAcceptedMail;
+use App\Mail\NewMemberMail;
 use App\Models\Invitation;
 use App\Models\Membership;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
 class Show extends Component
@@ -43,11 +46,21 @@ class Show extends Component
 
     public function accept()
     {
-        Membership::create([
+        $membership = Membership::create([
             'board_id' => $this->invitation->board->id,
             'user_id' => auth()->id(),
             'role' => $this->invitation->role
         ]);
+
+        Mail::to($this->invitation->board->user->email)->queue(new InvitationAcceptedMail($membership));
+
+        foreach($membership->board->memberships as $existingMembership) {
+            if($existingMembership->id == $membership->id) {
+                continue;
+            }
+
+            Mail::to($existingMembership->user->email)->queue(new NewMemberMail($membership, $existingMembership->user));
+        }
 
         $this->invitation->delete();
 

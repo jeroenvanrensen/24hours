@@ -3,11 +3,14 @@
 namespace Tests\Feature\Invitations;
 
 use App\Http\Livewire\Invitations\Show;
+use App\Mail\InvitationAcceptedMail;
+use App\Mail\NewMemberMail;
 use App\Models\Board;
 use App\Models\Invitation;
 use App\Models\Membership;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +22,8 @@ class AcceptInvitationsTest extends TestCase
     public function a_user_can_visit_the_accept_invitation_page()
     {
         $this->withoutExceptionHandling();
+
+        Mail::fake();
         
         $user = User::factory()->create();
         $this->actingAs($user);
@@ -34,6 +39,8 @@ class AcceptInvitationsTest extends TestCase
     /** @test */
     public function non_invited_users_cannot_visit_the_accept_invitation_page()
     {
+        Mail::fake();
+
         $user = User::factory()->create();
 
         $otherUser = User::factory()->create();
@@ -49,6 +56,8 @@ class AcceptInvitationsTest extends TestCase
     /** @test */
     public function guests_get_redirected_to_the_login_page()
     {
+        Mail::fake();
+
         $user = User::factory()->create();
 
         $board = Board::factory()->create();
@@ -63,6 +72,8 @@ class AcceptInvitationsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
+        Mail::fake();
+
         $board = Board::factory()->create();
         $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => 'john@example.org']);
 
@@ -74,6 +85,8 @@ class AcceptInvitationsTest extends TestCase
     public function a_user_can_accept_an_invitation()
     {
         $this->withoutExceptionHandling();
+
+        Mail::fake();
         
         $user = User::factory()->create();
         $this->actingAs($user);
@@ -99,9 +112,68 @@ class AcceptInvitationsTest extends TestCase
     }
 
     /** @test */
+    public function the_board_owner_will_get_an_email_when_someone_accepts_an_invitation()
+    {
+        $this->withoutExceptionHandling();
+
+        Mail::fake();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $boardOwner = User::factory()->create();
+        $board = Board::factory()->for($boardOwner)->create();
+        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
+
+        Mail::assertNothingQueued();
+
+        Livewire::test(Show::class, ['invitation' => $invitation])
+            ->call('accept')
+            ->assertRedirect(route('boards.show', $board));
+
+        Mail::assertQueued(InvitationAcceptedMail::class, function(InvitationAcceptedMail $mail) use ($boardOwner) {
+            return $mail->hasTo($boardOwner->email);
+        });
+
+        Mail::assertNotQueued(NewMemberMail::class);
+    }
+
+    /** @test */
+    public function all_board_members_will_get_an_email_when_someone_accepts_an_invitation()
+    {
+        $this->withoutExceptionHandling();
+
+        Mail::fake();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $alreadyBoardMember = User::factory()->create();
+        $board = Board::factory()->create();
+        $membership = Membership::factory()->for($alreadyBoardMember)->for($board)->create();
+        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
+
+        Mail::assertNothingQueued();
+
+        Livewire::test(Show::class, ['invitation' => $invitation])
+            ->call('accept')
+            ->assertRedirect(route('boards.show', $board));
+
+        Mail::assertQueued(NewMemberMail::class, function(NewMemberMail $mail) use ($alreadyBoardMember) {
+            return $mail->hasTo($alreadyBoardMember->email);
+        });
+
+        Mail::assertNotQueued(InvitationAcceptedMail::class, function(InvitationAcceptedMail $mail) use ($alreadyBoardMember) {
+            return $mail->hasTo($alreadyBoardMember->email);
+        });
+    }
+
+    /** @test */
     public function a_user_can_deny_an_invitation()
     {
         $this->withoutExceptionHandling();
+
+        Mail::fake();
         
         $user = User::factory()->create();
         $this->actingAs($user);

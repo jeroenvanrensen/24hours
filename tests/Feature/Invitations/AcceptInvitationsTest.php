@@ -4,6 +4,7 @@ namespace Tests\Feature\Invitations;
 
 use App\Http\Livewire\Invitations\Show;
 use App\Mail\InvitationAcceptedMail;
+use App\Mail\InvitationDeniedMail;
 use App\Mail\NewMemberMail;
 use App\Models\Board;
 use App\Models\Invitation;
@@ -190,5 +191,54 @@ class AcceptInvitationsTest extends TestCase
             
         $this->assertCount(0, Invitation::all());
         $this->assertCount(0, Membership::all());
+    }
+
+    /** @test */
+    public function the_board_owner_gets_an_email_when_someone_denies_an_invitation()
+    {
+        $this->withoutExceptionHandling();
+
+        Mail::fake();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $boardOwner = User::factory()->create();
+        $board = Board::factory()->for($boardOwner)->create();
+        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
+
+        Mail::assertNothingQueued();
+
+        Livewire::test(Show::class, ['invitation' => $invitation])
+            ->call('deny')
+            ->assertRedirect(route('invitations.check'));
+
+        Mail::assertQueued(InvitationDeniedMail::class, function(InvitationDeniedMail $mail) use ($boardOwner) {
+            return $mail->hasTo($boardOwner->email);
+        });
+    }
+
+    /** @test */
+    public function members_dont_get_an_email_when_someone_denies_an_invitation()
+    {
+        $this->withoutExceptionHandling();
+
+        Mail::fake();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $alreadyMember = User::factory()->create();
+        $board = Board::factory()->create();
+        $membership = Membership::factory()->for($alreadyMember)->for($board)->create();
+        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
+
+        Livewire::test(Show::class, ['invitation' => $invitation])
+            ->call('deny')
+            ->assertRedirect(route('invitations.check'));
+
+        Mail::assertNotQueued(InvitationDeniedMail::class, function(InvitationDeniedMail $mail) use ($alreadyMember) {
+            return $mail->hasTo($alreadyMember->email);
+        });
     }
 }

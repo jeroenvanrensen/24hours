@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Invitations;
 
 use App\Mail\InvitationAcceptedMail;
+use App\Mail\InvitationDeniedMail;
 use App\Mail\NewMemberMail;
 use App\Models\Invitation;
 use App\Models\Membership;
@@ -69,6 +70,8 @@ class Show extends Component
 
     public function deny()
     {
+        Mail::to($this->invitation->board->user->email)->queue(new InvitationDeniedMail($this->invitation));
+
         $this->invitation->delete();
         
         return redirect()->route('invitations.check');

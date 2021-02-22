@@ -1,4 +1,27 @@
-<div x-data="{ showModal: false }">
+<div
+    x-data="{ showModal: false }"
+    x-init="
+        toolbarOptions = [
+            [{ 'header': [1, 2, 3, false] }],
+            ['bold', 'italic', 'underline', 'link', 'code'],
+            ['image', 'blockquote', 'code-block'],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }]
+        ];
+
+        quill = new Quill($refs.quillEditor, {
+            theme: 'bubble',
+            placeholder: 'Clean your head...',
+            modules: {
+                toolbar: toolbarOptions
+            }
+        });
+
+        quill.on('text-change', function () {
+            $dispatch('quill-input', quill.root.innerHTML);
+        });
+    "
+    x-on:quill-input="@this.set('body', $event.detail)"
+>
     <!-- Navbar -->
     @include('layouts.custom-navbar', [
         'backLink' => route('boards.show', $note->board),
@@ -30,31 +53,7 @@
     @can('manageItems', $note->board)
         <!-- Editor -->
         <div wire:ignore class="max-w-2xl mx-auto px-6 my-8 md:my-12 dark:placeholder-gray-400">
-            <div
-                x-data="{}"
-                x-ref="quillEditor"
-                x-init="
-                    toolbarOptions = [
-                        [{ 'header': [1, 2, 3, false] }],
-                        ['bold', 'italic', 'underline', 'link', 'code'],
-                        ['image', 'blockquote', 'code-block'],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }]
-                    ];
-
-                    quill = new Quill($refs.quillEditor, {
-                        theme: 'bubble',
-                        placeholder: 'Clean your head...',
-                        modules: {
-                            toolbar: toolbarOptions
-                        }
-                    });
-
-                    quill.on('text-change', function () {
-                        $dispatch('input', quill.root.innerHTML);
-                    });
-                "
-                wire:model.debounce="body"
-            >
+            <div x-ref="quillEditor">
                 {!! $body !!}
             </div>
         </div>

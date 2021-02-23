@@ -2,9 +2,11 @@
 
 namespace App\Http\Livewire\Members;
 
+use App\Mail\BoardLeftMail;
 use App\Models\Board;
 use App\Models\Membership;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
 class Index extends Component
@@ -32,10 +34,18 @@ class Index extends Component
     {
         $this->authorize('leave', $this->board);
 
-        Membership::query()
+        $membership = Membership::query()
             ->where('user_id', auth()->id())
             ->where('board_id', $this->board->id)
-            ->delete();
+            ->first();
+
+        $membership->delete();
+
+        Mail::to($this->board->user->email)->queue(new BoardLeftMail($membership, $this->board->user));
+
+        foreach($this->board->fresh()->memberships as $receiver) {
+            Mail::to($receiver->user->email)->queue(new BoardLeftMail($membership, $receiver->user));
+        }
 
         return redirect()->route('boards.index');
     }

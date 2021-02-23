@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail\Members;
+namespace App\Mail;
 
 use App\Models\Invitation;
 use App\Models\User;
@@ -22,7 +22,7 @@ class InvitationMail extends Mailable
 
     public function build()
     {
-        return $this->markdown('emails.members.invitation', [
+        return $this->markdown('emails.invitation', [
             'username' => User::where('email', $this->invitation->email)->first()->name ?? $this->invitation->email
         ])->subject('You have been invited to ' . $this->invitation->board->name . ' - 24Hours');
     }

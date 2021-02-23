@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\Members;
 
-use App\Mail\Members\InvitationMail;
+use App\Mail\InvitationMail;
 use App\Models\Board;
 use App\Models\Invitation;
 use App\Models\Membership;

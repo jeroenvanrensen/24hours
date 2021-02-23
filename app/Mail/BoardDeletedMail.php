@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail\Boards;
+namespace App\Mail;
 
 use App\Models\Board;
 use App\Models\Membership;
@@ -25,7 +25,7 @@ class BoardDeletedMail extends Mailable
 
     public function build()
     {
-        return $this->markdown('emails.boards.deleted')
+        return $this->markdown('emails.board-deleted')
             ->subject($this->board->name . ' is deleted - 24Hours');
     }
 }

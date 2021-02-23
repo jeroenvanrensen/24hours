@@ -3,7 +3,7 @@
 namespace Tests\Feature\Boards;
 
 use App\Http\Livewire\Boards\Edit;
-use App\Mail\Boards\BoardDeletedMail;
+use App\Mail\BoardDeletedMail;
 use App\Models\Board;
 use App\Models\Invitation;
 use App\Models\Link;

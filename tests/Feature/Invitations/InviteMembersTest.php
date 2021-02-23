@@ -3,7 +3,7 @@
 namespace Tests\Feature\Invitations;
 
 use App\Http\Livewire\Members\Create;
-use App\Mail\Members\InvitationMail;
+use App\Mail\InvitationMail;
 use App\Models\Board;
 use App\Models\Invitation;
 use App\Models\Membership;

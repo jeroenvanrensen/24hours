@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\Boards;
 
-use App\Mail\Boards\BoardDeletedMail;
+use App\Mail\BoardDeletedMail;
 use App\Models\Board;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Mail;

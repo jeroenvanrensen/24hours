@@ -22,6 +22,6 @@ class InvitationDeniedMail extends Mailable
     public function build()
     {
         return $this->markdown('emails.invitation-denied')
-            ->subject($this->invitation->email . ' has denied your invitation to ' . $this->invitation->board->name . ' - 24Hours');
+            ->subject($this->invitation->email . ' denied your invitation - 24Hours');
     }
 }

@@ -27,6 +27,6 @@ class BoardLeftMail extends Mailable
     public function build()
     {
         return $this->markdown('emails.board-left')
-            ->subject($this->membership->user->name . ' has left ' . $this->membership->board->name . ' - 24Hours');
+            ->subject($this->membership->user->name . ' left ' . $this->membership->board->name . ' - 24Hours');
     }
 }

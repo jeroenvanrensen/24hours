@@ -1,8 +1,10 @@
 @component('mail::message')
 
-Hi {{ $receiver->name }},
+# {{ $membership->user->first_name }} has joined {{ $membership->board->name }}
 
-{{ $membership->user->name }} <{{ $membership->user->email }}> has joined **{{ $membership->board->name }}** by {{ $membership->board->user->name }}.
+Hi {{ $receiver->first_name }},
+
+{{ $membership->user->name }} (<{{ $membership->user->email }}>) has joined {{ $membership->board->name }} by {{ $membership->board->user->name }}.
 
 Thank you,<br />
 {{ config('app.name') }}

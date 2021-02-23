@@ -26,6 +26,6 @@ class BoardDeletedMail extends Mailable
     public function build()
     {
         return $this->markdown('emails.board-deleted')
-            ->subject($this->board->name . ' is deleted - 24Hours');
+            ->subject('Board ' . $this->board->name . ' deleted - 24Hours');
     }
 }

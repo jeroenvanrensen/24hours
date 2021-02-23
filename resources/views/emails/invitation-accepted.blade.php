@@ -1,8 +1,10 @@
 @component('mail::message')
 
-Hi {{ $membership->board->user->name }},
+# {{ $membership->user->first_name }} accepted your invitation
 
-Your invitation to {{ $membership->user->name }} for {{ $membership->board->name }} has been accepted.
+Hi {{ $membership->board->user->first_name }},
+
+Your invitation to {{ $membership->user->name }} (<{{ $membership->user->email }}>) for {{ $membership->board->name }} has been accepted.
 
 Thank you,<br />
 {{ config('app.name') }}

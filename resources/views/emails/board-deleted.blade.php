@@ -1,8 +1,10 @@
 @component('mail::message')
 
-Hi {{ $membership->user->name }},
+# Board {{ $board->name }} deleted
 
-The board **{{ $board->name }}** is deleted by {{ $board->user->name }}.
+Hi {{ $membership->user->first_name }},
+
+The board {{ $board->name }} is deleted by {{ $board->user->name }}.
 
 This means you can't see any of the board's items anymore.
 

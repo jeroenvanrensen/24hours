@@ -14,6 +14,8 @@ class CreateMembershipsTable extends Migration
             $table->foreignId('board_id');
             $table->string('role');
             $table->timestamps();
+
+            $table->unique(['user_id', 'board_id']);
         });
     }
 }

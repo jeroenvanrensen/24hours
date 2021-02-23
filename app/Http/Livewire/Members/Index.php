@@ -39,13 +39,17 @@ class Index extends Component
             ->where('board_id', $this->board->id)
             ->first();
 
-        $membership->delete();
-
         Mail::to($this->board->user->email)->queue(new BoardLeftMail($membership, $this->board->user));
 
         foreach($this->board->fresh()->memberships as $receiver) {
+            if($receiver->id == $membership->id) {
+                continue;
+            }
+
             Mail::to($receiver->user->email)->queue(new BoardLeftMail($membership, $receiver->user));
         }
+
+        $membership->delete();
 
         return redirect()->route('boards.index');
     }

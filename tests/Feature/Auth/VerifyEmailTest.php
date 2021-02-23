@@ -73,7 +73,7 @@ class VerifyEmailTest extends TestCase
         $this->assertNull($user->fresh()->email_verified_at);
 
         $this->get($verificationUrl)
-            ->assertRedirect(RouteServiceProvider::HOME);
+            ->assertRedirect(route('invitations.check'));
 
         $this->assertNotNull($user->fresh()->email_verified_at);
     }

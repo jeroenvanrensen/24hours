@@ -12,21 +12,27 @@
 
     <ul>
         <li class="mb-6">
-            <strong class="block">{{ $board->user->name }}</strong>
-            <span>Owner</span>
+            <strong>{{ $board->user->name }}</strong>
+            <div>Owner</div>
         </li>
 
         @foreach($board->memberships as $membership)
             <li class="mb-6">
-                <strong class="block">{{ $membership->user->name }}</strong>
-                <span>{{ ucfirst($membership->role) }}</span>
+                <strong>{{ $membership->user->name }}</strong>
+                <div class="mb-px">{{ ucfirst($membership->role) }}</div>
+                
+                @can('edit', $board)
+                    <div class="text-sm">
+                        <a class="text-gray-500 underline focus:text-gray-400" href="{{ route('members.edit', [$board, $membership]) }}">Edit role</a>
+                    </div>
+                @endcan
             </li>
         @endforeach
 
         @foreach($board->invitations as $invitation)
             <li class="mb-6 text-gray-500">
-                <strong class="block">{{ $invitation->email }}</strong>
-                <span>Invited - {{ ucfirst($invitation->role) }}</span>
+                <strong>{{ $invitation->email }}</strong>
+                <div>Invited - {{ ucfirst($invitation->role) }}</div>
             </li>
         @endforeach
     </ul>

@@ -8,6 +8,7 @@ use App\Http\Livewire\Boards\Index as IndexBoards;
 use App\Http\Livewire\Boards\Show as ShowBoard;
 use App\Http\Livewire\Home;
 use App\Http\Livewire\Invitations\Show as ShowInvitation;
+use App\Http\Livewire\Members\Edit as EditMember;
 use App\Http\Livewire\Members\Index as IndexMembers;
 use App\Http\Livewire\Notes\Edit as EditNote;
 use App\Http\Livewire\Search\Search;
@@ -35,6 +36,7 @@ Route::middleware(['auth', 'verified'])->prefix('app')->group(function () {
     Route::get('/invitations/{invitation:uuid}', ShowInvitation::class)->name('invitations.show')->withoutMiddleware(['auth', 'verified']);
 
     Route::get('/boards/{board:uuid}/members', IndexMembers::class)->name('members.index');
+    Route::get('/boards/{board:uuid}/members/{membership:uuid}', EditMember::class)->name('members.edit');
 
     Route::get('/links/{link:uuid}', ShowLink::class)->name('links.show');
     Route::get('/notes/{note:uuid}', EditNote::class)->name('notes.edit');

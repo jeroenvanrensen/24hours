@@ -21,6 +21,8 @@ class EditMembersTest extends TestCase
     {
         $this->withoutExceptionHandling();
         
+        Mail::fake();
+        
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -31,12 +33,15 @@ class EditMembersTest extends TestCase
 
         $this->get(route('members.edit', [$board, $membership]))
             ->assertStatus(200)
-            ->assertSeeLivewire('members.edit');
+            ->assertSeeLivewire('members.edit')
+            ->assertSeeLivewire('members.delete');
     }
 
     /** @test */
     public function members_cannot_visit_the_edit_membership_page()
     {
+        Mail::fake();
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -53,6 +58,8 @@ class EditMembersTest extends TestCase
     /** @test */
     public function viewers_cannot_visit_the_edit_membership_page()
     {
+        Mail::fake();
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -69,6 +76,8 @@ class EditMembersTest extends TestCase
     /** @test */
     public function non_members_cannot_visit_the_edit_membership_page()
     {
+        Mail::fake();
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -84,6 +93,8 @@ class EditMembersTest extends TestCase
     /** @test */
     public function guests_cannot_visit_the_edit_membership_page()
     {
+        Mail::fake();
+
         $board = Board::factory()->create();
 
         $member = User::factory()->create();
@@ -97,6 +108,8 @@ class EditMembersTest extends TestCase
     public function the_owner_can_edit_a_membership()
     {
         $this->withoutExceptionHandling();
+
+        Mail::fake();
         
         $user = User::factory()->create();
         $this->actingAs($user);
@@ -120,6 +133,8 @@ class EditMembersTest extends TestCase
     public function a_membership_requires_a_valid_role()
     {
         $this->withoutExceptionHandling();
+
+        Mail::fake();
         
         $user = User::factory()->create();
         $this->actingAs($user);

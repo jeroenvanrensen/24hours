@@ -1,6 +1,6 @@
 <div x-data="{ newMemberModal: false, showLeaveBoardMoadal: false }" class="max-w-2xl mx-auto">
     <div class="mb-8 flex items-center justify-between">
-        <h2 class="text-2xl md:text-3xl font-serif">Members</h2>
+        <x-heading small>Board members</x-heading>
 
         @can('edit', $board)
             <x-button @click="newMemberModal = true">Add member</x-button>
@@ -23,7 +23,7 @@
                 
                 @can('edit', $board)
                     <div class="text-sm">
-                        <a class="text-gray-500 underline focus:text-gray-400" href="{{ route('members.edit', [$board, $membership]) }}">Edit role</a>
+                        <a class="text-gray-500 underline focus:text-gray-400 dark:text-gray-400 dark:focus:text-gray-500" href="{{ route('members.edit', [$board, $membership]) }}">Edit / remove</a>
                     </div>
                 @endcan
             </li>

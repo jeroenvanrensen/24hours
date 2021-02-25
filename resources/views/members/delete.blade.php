@@ -7,6 +7,6 @@
 
     <div class="flex items-center justify-end">
         <x-button class="mr-4" secondary link href="{{ route('members.index', $board) }}">Cancel</x-button>
-        <x-button wire:click="destroy">Remove</x-button>
+        <x-button wire:click="destroy" color="red">Remove</x-button>
     </div>
 </x-modal>

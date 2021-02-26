@@ -8,11 +8,13 @@ class Search extends Component
 {
     public $query;
 
-    public $results = [];
+    protected $results = [];
 
     public function render()
     {
-        return view('search.search');
+        return view('search.search', [
+            'results' => $this->results
+        ]);
     }
 
     public function updated()

@@ -5,7 +5,11 @@
         <x-forms.input type="text" name="query" id="query" wire:model="query" placeholder="Search anything..." autofocus />
     </x-forms.group>
     
-    @foreach($results as $result)
+    @forelse($results as $result)
         @include('search.types.' . strtolower(class_basename($result)))
-    @endforeach
+    @empty
+        @if(strlen($query) > 0)
+            <p>No results found.</p>
+        @endif
+    @endforelse
 </div>

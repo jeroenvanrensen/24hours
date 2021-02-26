@@ -4,6 +4,7 @@ namespace Tests\Feature\Search;
 
 use App\Http\Livewire\Search\Search;
 use App\Models\Board;
+use App\Models\Membership;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -41,11 +42,27 @@ class SearchBoardsTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        $board = Board::factory()->create(['name' => 'My Board']); // other user
+        $board = Board::factory()->create(['name' => 'First Board']); // other user
 
         Livewire::test(Search::class)
-            ->set('query', 'My')
+            ->set('query', 'First')
             ->assertDontSee($board->name);
+    }
+
+    /** @test */
+    public function a_user_can_search_boards_when_they_are_a_member()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create(['name' => 'First Board']);
+        $membership = Membership::factory()->for($user)->for($board)->create();
+
+        Livewire::test(Search::class)
+            ->set('query', 'First')
+            ->assertSee($board->name);
     }
 
     /** @test */

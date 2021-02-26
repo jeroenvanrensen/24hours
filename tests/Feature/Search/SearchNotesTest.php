@@ -4,6 +4,7 @@ namespace Tests\Feature\Search;
 
 use App\Http\Livewire\Search\Search;
 use App\Models\Board;
+use App\Models\Membership;
 use App\Models\Note;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -55,6 +56,24 @@ class SearchNotesTest extends TestCase
             ->set('query', 'First')
             ->assertSee($firstNote->title)
             ->assertDontSee($secondNote->title);
+    }
+
+    /** @test */
+    public function a_user_can_search_notes_when_they_are_a_member()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create(['name' => 'First Board']);
+        $note = Note::factory()->for($board)->create(['title' => 'First note']);
+
+        $membership = Membership::factory()->for($user)->for($board)->create();
+
+        Livewire::test(Search::class)
+            ->set('query', 'First')
+            ->assertSee($note->title);
     }
 
     /** @test */

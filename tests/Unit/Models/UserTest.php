@@ -189,16 +189,85 @@ class UserTest extends TestCase
         
         $user = User::factory()->create();
 
-        $firstBoard = Board::factory()->for($user)->create(); // owner - visible
-        $secondBoard = Board::factory()->create(); // member - visible
+        // Owner - visible
+        $firstBoard = Board::factory()->for($user)->create();
+
+        // Member - visible
+        $secondBoard = Board::factory()->create();
         $membership = Membership::factory()->for($user)->for($secondBoard)->create();
-        $thirdBoard = Board::factory()->create(); // invited - not visible
+
+        // Invited - not visible
+        $thirdBoard = Board::factory()->create();
         $invitation = Invitation::factory()->for($thirdBoard)->create(['email' => $user->email]);
-        $fourthBoard = Board::factory()->create(); // nothing - not visible
+
+        // Nothing - not visible
+        $fourthBoard = Board::factory()->create();
 
         $this->assertCount(2, $user->visibleBoards());
 
         $this->assertEquals($firstBoard->id, $user->visibleBoards()[1]->id);
         $this->assertEquals($secondBoard->id, $user->visibleBoards()[0]->id);
+    }
+
+    /** @test */
+    public function a_user_has_visible_links()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+
+        // Owner - visible
+        $firstBoard = Board::factory()->for($user)->create();
+        $firstLink = Link::factory()->for($firstBoard)->create();
+
+        // Member - visible
+        $secondBoard = Board::factory()->create();
+        $membership = Membership::factory()->for($user)->for($secondBoard)->create();
+        $secondLink = Link::factory()->for($secondBoard)->create();
+
+        // Invited - not visible
+        $thirdBoard = Board::factory()->create();
+        $invitation = Invitation::factory()->for($thirdBoard)->create(['email' => $user->email]);
+        $thirdLink = Link::factory()->for($thirdBoard)->create();
+
+        // Nothing - not visible
+        $fourthBoard = Board::factory()->create();
+        $fourthLink = Link::factory()->for($fourthBoard)->create();
+
+        $this->assertCount(2, $user->visibleLinks());
+
+        $this->assertEquals($firstLink->id, $user->visibleLinks()[1]->id);
+        $this->assertEquals($secondLink->id, $user->visibleLinks()[0]->id);
+    }
+
+    /** @test */
+    public function a_user_has_visible_notes()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+
+        // Owner - visible
+        $firstBoard = Board::factory()->for($user)->create();
+        $firstNote = Note::factory()->for($firstBoard)->create();
+
+        // Member - visible
+        $secondBoard = Board::factory()->create();
+        $membership = Membership::factory()->for($user)->for($secondBoard)->create();
+        $secondNote = Note::factory()->for($secondBoard)->create();
+
+        // Invited - not visible
+        $thirdBoard = Board::factory()->create();
+        $invitation = Invitation::factory()->for($thirdBoard)->create(['email' => $user->email]);
+        $thirdNote = Note::factory()->for($thirdBoard)->create();
+
+        // Nothing - not visible
+        $fourthBoard = Board::factory()->create();
+        $fourthNote = Note::factory()->for($fourthBoard)->create();
+
+        $this->assertCount(2, $user->visibleNotes());
+
+        $this->assertEquals($firstNote->id, $user->visibleNotes()[1]->id);
+        $this->assertEquals($secondNote->id, $user->visibleNotes()[0]->id);
     }
 }

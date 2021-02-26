@@ -62,4 +62,18 @@ class User extends Authenticatable implements MustVerifyEmail
             return $membership->board;
         })->merge($this->boards)->sortByDesc('updated_at');
     }
+
+    public function visibleLinks()
+    {
+        return $this->memberships->map(function($membership) {
+            return $membership->board->links;
+        })->flatten()->merge($this->links)->sortByDesc('updated_at');
+    }
+
+    public function visibleNotes()
+    {
+        return $this->memberships->map(function($membership) {
+            return $membership->board->notes;
+        })->flatten()->merge($this->notes)->sortByDesc('updated_at');
+    }
 }

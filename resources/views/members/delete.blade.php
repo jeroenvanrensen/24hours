@@ -6,7 +6,7 @@
     <p class="mb-8 font-bold">{{ $membership->user->name }}</p>
 
     <div class="flex items-center justify-end">
-        <x-button class="mr-4" secondary link href="{{ route('members.index', $board) }}">Cancel</x-button>
+        <x-button class="mr-4" secondary @click="showRemoveMemberModal = false">Cancel</x-button>
         <x-button wire:click="destroy" color="red">Remove</x-button>
     </div>
 </x-modal>

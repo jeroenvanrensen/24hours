@@ -2,9 +2,13 @@
 
 @if($small)
 
-<h1 class="mb-8 text-2xl md:text-3xl font-serif">
-    {{ $slot }}
-</h1>
+<div class="mb-8 flex items-center justify-between">
+    <h1 class="text-2xl md:text-3xl font-serif">
+        {{ $slot }}
+    </h1>
+
+    {{ $right ?? null }}
+</div>
 
 @else
 

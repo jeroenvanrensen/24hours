@@ -8,7 +8,7 @@
 <li class="relative" x-data="{ {{ $modalName }}: false }">
     <a href="{{ $url }}" class="block group border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none overflow-hidden" {{ $newTab ? 'target="_blank"' : '' }}>
         <!-- Image -->
-        <div class="h-40 w-full bg-gray-200 dark:bg-gray-700 transition group-hover:opacity-75 group-focus:opacity-50 flex items-center justify-center">
+        <div class="h-36 lg:h-40 w-full bg-gray-200 dark:bg-gray-700 transition group-hover:opacity-75 group-focus:opacity-50 flex items-center justify-center">
             {{ $image }}
         </div>
 

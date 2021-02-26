@@ -1,14 +1,16 @@
 <div x-data="{ newMemberModal: false, showLeaveBoardMoadal: false }" class="max-w-2xl mx-auto">
-    <div class="mb-8 flex items-center justify-between">
-        <x-heading small>Board members</x-heading>
+    <x-heading small>
+        Board members
 
-        @can('edit', $board)
-            <x-button @click="newMemberModal = true">Add member</x-button>
-        @endcan
-        @can('leave', $board)
-            <x-button color="red" @click="showLeaveBoardMoadal = true">Leave board</x-button>
-        @endcan
-    </div>
+        <x-slot name="right">
+            @can('edit', $board)
+                <x-button @click="newMemberModal = true">Add member</x-button>
+            @endcan
+            @can('leave', $board)
+                <x-button color="red" @click="showLeaveBoardMoadal = true">Leave board</x-button>
+            @endcan
+        </x-slot>
+    </x-heading>
 
     <ul>
         <li class="mb-6">

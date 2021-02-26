@@ -1,4 +1,4 @@
-<nav class="py-4 px-6 md:px-12 flex items-center justify-between">
+<nav class="pt-6 pb-4 md:py-4 px-6 md:px-12 flex items-center justify-between">
     <a href="{{ auth()->check() ? route('boards.index') : route('home') }}" class="font-serif focus:underline focus:outline-none tracking-wide text-xl md:w-0">24Hours</a>
 
     <ul class="flex">

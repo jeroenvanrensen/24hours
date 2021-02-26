@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+/** @group search */
 class SearchLinksTest extends TestCase
 {
     use RefreshDatabase;

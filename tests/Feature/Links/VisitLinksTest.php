@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+/** @group links */
 class VisitLinksTest extends TestCase
 {
     use RefreshDatabase;

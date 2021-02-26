@@ -6,6 +6,7 @@ use App\Services\WebScraper\Scraper;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+/** @group services */
 class WebScraperTest extends TestCase
 {
     use RefreshDatabase;

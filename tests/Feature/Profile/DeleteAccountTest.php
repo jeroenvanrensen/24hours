@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+/** @group profile */
 class DeleteAccountTest extends TestCase
 {
     use RefreshDatabase;

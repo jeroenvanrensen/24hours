@@ -7,6 +7,7 @@ use App\Models\Note;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+/** @group models */
 class NoteTest extends TestCase
 {
     use RefreshDatabase;

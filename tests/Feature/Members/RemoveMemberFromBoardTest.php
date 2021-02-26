@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+/** @group members */
 class RemoveMemberFromBoardTest extends TestCase
 {
     use RefreshDatabase;

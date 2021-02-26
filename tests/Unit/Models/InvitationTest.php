@@ -7,6 +7,7 @@ use App\Models\Invitation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+/** @group models */
 class InvitationTest extends TestCase
 {
     use RefreshDatabase;

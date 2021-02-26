@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+/** @group auth */
 class ResetPasswordTest extends TestCase
 {
     use RefreshDatabase;

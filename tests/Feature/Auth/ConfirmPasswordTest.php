@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+/** @group auth */
 class ConfirmPasswordTest extends TestCase
 {
     use RefreshDatabase;

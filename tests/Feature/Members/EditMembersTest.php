@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+/** @group members */
 class EditMembersTest extends TestCase
 {
     use RefreshDatabase;

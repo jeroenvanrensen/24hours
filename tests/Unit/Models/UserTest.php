@@ -12,6 +12,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+/** @group models */
 class UserTest extends TestCase
 {
     use RefreshDatabase;

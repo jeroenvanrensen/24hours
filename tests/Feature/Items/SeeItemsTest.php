@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+/** @group items */
 class SeeItemsTest extends TestCase
 {
     use RefreshDatabase;

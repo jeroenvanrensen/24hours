@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+/** @group invitations */
 class InviteMembersTest extends TestCase
 {
     use RefreshDatabase;

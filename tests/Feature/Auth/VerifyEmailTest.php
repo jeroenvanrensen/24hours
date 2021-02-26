@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+/** @group auth */
 class VerifyEmailTest extends TestCase
 {
     use RefreshDatabase;

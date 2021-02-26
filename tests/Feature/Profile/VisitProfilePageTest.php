@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+/** @group profile */
 class VisitProfilePageTest extends TestCase
 {
     use RefreshDatabase;

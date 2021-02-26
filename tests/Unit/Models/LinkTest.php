@@ -7,6 +7,7 @@ use App\Models\Link;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+/** @group models */
 class LinkTest extends TestCase
 {
     use RefreshDatabase;

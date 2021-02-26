@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+/** @group profile */
 class UpdatePasswordTest extends TestCase
 {
     use RefreshDatabase;

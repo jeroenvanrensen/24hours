@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+/** @group models */
 class MembershipTest extends TestCase
 {
     use RefreshDatabase;

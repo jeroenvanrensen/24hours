@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+/** @group boards */
 class SeeSingleBoardTest extends TestCase
 {
     use RefreshDatabase;

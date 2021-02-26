@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+/** @group auth */
 class RegisterTest extends TestCase
 {
     use RefreshDatabase;

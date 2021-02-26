@@ -12,6 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+/** @group notes */
 class DeleteNotesTest extends TestCase
 {
     use RefreshDatabase;

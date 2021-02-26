@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+/** @group links */
 class DeleteLinksTest extends TestCase
 {
     use RefreshDatabase;

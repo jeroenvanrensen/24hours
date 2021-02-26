@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+/** @group boards */
 class DeleteBoardsTest extends TestCase
 {
     use RefreshDatabase;

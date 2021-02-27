@@ -5,6 +5,16 @@
     'loading' => null
 ])
 
+@php
+
+// All possible colors are here for purging css classes
+$colors = [
+    'blue' => ['bg-blue-800', 'hover:bg-blue-900', 'focus:bg-blue-900', 'ring-blue-400'],
+    'red' => ['bg-red-800', 'hover:bg-red-900', 'focus:bg-blue-900', 'ring-red-400']
+];
+
+@endphp
+
 @if($secondary)
 
 <{{ $link ? 'a' : 'button' }} {{ $attributes->merge([

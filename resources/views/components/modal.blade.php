@@ -4,9 +4,9 @@
     <div @click="{{ $name }} = false" class="absolute w-full h-full bg-gray-600 opacity-60 dark:bg-black"></div>
 
     <div class="p-8 z-10 bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-xl w-full">
-        <div class="mb-6 flex items-center justify-between">
+        <div class="mb-8 flex items-center justify-between">
             <!-- Title -->
-            <h2 class="text-xl font-semibold">{{ $title }}</h2>
+            <h2 class="text-2xl font-semibold">{{ $title }}</h2>
 
             <!-- Close button -->
             <button @click="{{ $name }} = false" class="text-gray-400 hover:text-gray-500 focus:text-gray-600 focus:outline-none dark:hover:text-gray-300 dark:focus:text-gray-200">

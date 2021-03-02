@@ -34,6 +34,10 @@ class Register extends Component
 
     public function updated($attribute)
     {
+        if($attribute == 'password') {
+            return;
+        }
+        
         $this->validateOnly($attribute);
     }
 

@@ -68,9 +68,8 @@
         
         <p class="mb-6">Here are some statistics about this note.</p>
 
-        <p class="mb-2"><strong>Created at: </strong> {{ $note->created_at->format('F j, Y') }} ({{ $note->created_at->diffForHumans() }})</p>
-        <p class="mb-6"><strong>Last update: </strong> {{ $note->updated_at->format('F j, Y') }} ({{ $note->updated_at->diffForHumans() }})</p>
-
+        <p class="mb-6"><strong>Created at: </strong> {{ $note->created_at->format('F j, Y') }} ({{ $note->created_at->diffForHumans() }})</p>
+        
         <div class="flex items-center justify-end">
             <x-button @click="showInfoModal = false">Close</x-button>
         </div>

@@ -3,10 +3,12 @@
 namespace Tests\Feature\Auth;
 
 use App\Http\Livewire\Auth\VerifyEmail;
+use App\Mail\WelcomeEmail;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Notifications\VerifyEmail as VerifyEmailNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
@@ -61,6 +63,8 @@ class VerifyEmailTest extends TestCase
     public function a_user_can_verify_their_email()
     {
         $this->withoutExceptionHandling();
+
+        Mail::fake();
         
         $user = User::factory()->create(['email_verified_at' => null]);
         $this->actingAs($user);
@@ -82,6 +86,8 @@ class VerifyEmailTest extends TestCase
     /** @test */
     public function guests_cannot_verify_their_email()
     {
+        Mail::fake();
+
         $user = User::factory()->create();
         
         $verificationUrl = URL::temporarySignedRoute(
@@ -97,6 +103,8 @@ class VerifyEmailTest extends TestCase
     /** @test */
     public function the_token_has_to_be_valid()
     {
+        Mail::fake();
+
         $user = User::factory()->create(['email_verified_at' => null]);
         $this->actingAs($user);
         
@@ -109,5 +117,31 @@ class VerifyEmailTest extends TestCase
         $this->get($verificationUrl);
 
         $this->assertNull($user->fresh()->email_verified_at);
+    }
+
+    /** @test */
+    public function a_user_gets_a_welcome_email_after_verifying_their_email()
+    {
+        $this->withoutExceptionHandling();
+
+        Mail::fake();
+        
+        $user = User::factory()->create(['email_verified_at' => null]);
+        $this->actingAs($user);
+        
+        $verificationUrl = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(30),
+            ['id' => $user->id, 'hash' => sha1($user->email)]
+        );
+
+        Mail::assertNothingQueued();
+
+        $this->get($verificationUrl)
+            ->assertRedirect(route('invitations.check'));
+
+        Mail::assertQueued(WelcomeEmail::class, function(WelcomeEmail $mail) use ($user) {
+            return $mail->hasTo($user->email);
+        });
     }
 }

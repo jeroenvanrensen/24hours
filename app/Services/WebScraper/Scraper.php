@@ -52,20 +52,20 @@ class Scraper
 
     protected function getImageFromMetaProperty()
     {
-        return collect($this->crawler->filter('meta')->each(function ($node) {
+        return $this->getAbsoluteImagePath(collect($this->crawler->filter('meta')->each(function ($node) {
             if($node->attr('property') == 'og:image') {
                 return $node->attr('content');
             }
-        }))->filter()->flatten()[0] ?? null;
+        }))->filter()->flatten()[0] ?? null, $this->url) ?? null;
     }
 
     protected function getImageFromMetaName()
     {
-        return collect($this->crawler->filter('meta')->each(function ($node) {
+        return $this->getAbsoluteImagePath(collect($this->crawler->filter('meta')->each(function ($node) {
             if($node->attr('name') == 'og:image') {
                 return $node->attr('content');
             }
-        }))->filter()->flatten()[0] ?? null;
+        }))->filter()->flatten()[0] ?? null, $this->url) ?? null;
     }
 
     protected function getImageFromTag()
@@ -75,8 +75,13 @@ class Scraper
         })[0] ?? null;
     }
 
-    protected function getAbsoluteImagePath($relative, $host): string
+    /** @return string|null */
+    protected function getAbsoluteImagePath($relative, $host)
     {
+        if(empty($relative)) {
+            return null;
+        }
+
         // return if already absolute URL
         if (parse_url($relative, PHP_URL_SCHEME) != '') {
             return $relative;

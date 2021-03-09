@@ -18,7 +18,7 @@ $colors = [
 @if($secondary)
 
 <{{ $link ? 'a' : 'button' }} {{ $attributes->merge([
-    'class' => 'py-2 px-4 md:px-6 bg-gray-100 rounded transition hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:ring-2 ring-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:bg-gray-500',
+    'class' => 'py-2 px-4 md:px-6 bg-gray-100 rounded transition hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:ring-2 ring-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:bg-gray-500',
     'wire:loading.class' => 'opacity-50 pointer-events-none',
     'wire:target' => $loading
 ]) }}>

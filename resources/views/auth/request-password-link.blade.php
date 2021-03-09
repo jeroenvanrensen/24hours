@@ -1,6 +1,6 @@
 <div>
     <x-auth.card>
-        <h1 class="text-2xl mb-6">Forgot Password</h1>
+        <h1 class="mb-6 text-2xl">Forgot Password</h1>
 
         <p class="mb-6"> Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.</p>
 
@@ -12,7 +12,7 @@
         </x-forms.group>
 
         <!-- Submit Button -->
-        <div class="flex justify-end items-center">
+        <div class="flex items-center justify-end">
             @if(session()->has('success'))
                 <span class="text-sm text-gray-600">{{ session()->get('success') }}</span>
             @endif

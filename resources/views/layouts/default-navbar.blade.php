@@ -1,5 +1,5 @@
-<nav class="pt-6 pb-4 md:py-4 px-6 md:px-12 flex items-center justify-between">
-    <a href="{{ auth()->check() ? route('boards.index') : route('home') }}" class="font-serif focus:underline focus:outline-none tracking-wide text-xl md:w-0">24Hours</a>
+<nav class="flex items-center justify-between px-6 pt-6 pb-4 md:py-4 md:px-12">
+    <a href="{{ auth()->check() ? route('boards.index') : route('home') }}" class="font-serif text-xl tracking-wide focus:underline focus:outline-none md:w-0">24Hours</a>
 
     <ul class="flex">
         @auth
@@ -26,7 +26,7 @@
     </ul>
 
     @auth
-        <a href="{{ route('profile.edit') }}" class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none focus:bg-gray-300 text-gray-600 dark:bg-gray-700 dark:hover:bg-gray-500 dark:focus:bg-gray-500 dark:text-gray-200">
+        <a href="{{ route('profile.edit') }}" class="p-2 text-gray-600 bg-gray-200 rounded-full hover:bg-gray-300 focus:outline-none focus:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-500 dark:focus:bg-gray-500 dark:text-gray-200">
             <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>

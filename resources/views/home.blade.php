@@ -1,28 +1,28 @@
-<div class="bg-gray-200 dark:bg-gray-900 w-full min-h-screen">
+<div class="w-full min-h-screen bg-gray-200 dark:bg-gray-900">
     @include('layouts.default-navbar')
 
     <!-- Hero -->
-    <div class="mt-8 md:mt-32 max-w-6xl mx-auto px-6">
+    <div class="max-w-6xl px-6 mx-auto mt-8 md:mt-32">
         <div class="text-center">
-            <h1 class="text-3xl md:text-5xl font-bold">Bring your projects to life.</h1>
-            <p class="mt-4 mb-8 md:mt-8 md:mb-10 text-gray-700 dark:text-gray-400 text-lg max-w-xl mx-auto">24Hours is a productivity tool designed to keep your projects moving forward and your head clear.</p>
+            <h1 class="text-3xl font-bold md:text-5xl">Bring your projects to life.</h1>
+            <p class="max-w-xl mx-auto mt-4 mb-8 text-lg text-gray-700 md:mt-8 md:mb-10 dark:text-gray-400">24Hours is a productivity tool designed to keep your projects moving forward and your head clear.</p>
             <x-button link href="{{ route('register') }}" class="py-3">Sign up for free</x-button>
         </div>
         
-        <img src="{{ asset('img/screenshot.png') }}" class="mt-20 md:mt-32 rounded md:rounded-xl shadow-sm mx-auto">
+        <img src="{{ asset('img/screenshot.png') }}" class="mx-auto mt-20 rounded shadow-sm md:mt-32 md:rounded-xl">
     </div>
 
     <!-- Dark background -->
-    <div class="-mt-28 md:-mt-72 pt-32 md:pt-96 bg-gray-800">&nbsp;</div>
+    <div class="pt-32 bg-gray-800 -mt-28 md:-mt-72 md:pt-96">&nbsp;</div>
 
     <!-- Features -->
-    <div class="py-12 md:py-24 max-w-5xl mx-auto px-6">
+    <div class="max-w-5xl px-6 py-12 mx-auto md:py-24">
         <div class="mb-8 md:mb-16 md:text-center">
-            <h2 class="text-blue-800 dark:text-blue-400 font-semibold uppercase tracking-wide">Features</h2>
-            <p class="mt-2 mb-4 md:mt-4 text-3xl leading-8 font-bold tracking-tight text-gray-900 dark:text-white">Space to organize all your ideas.</p>
+            <h2 class="font-semibold tracking-wide text-blue-800 uppercase dark:text-blue-400">Features</h2>
+            <p class="mt-2 mb-4 text-3xl font-bold leading-8 tracking-tight text-gray-900 md:mt-4 dark:text-white">Space to organize all your ideas.</p>
         </div>
 
-        <div class="md:grid grid-cols-2 gap-8 lg:gap-6">
+        <div class="grid-cols-2 gap-8 md:grid lg:gap-6">
             <!-- Grid item -->
             <x-home.feature>
                 <x-slot name="icon"><svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></x-slot>
@@ -54,9 +54,9 @@
     </div>
 
     <!-- Stats -->
-    <div class="py-20 md:py-24 bg-gray-800">
-        <div class="max-w-2xl mx-auto px-6">
-            <h2 class="mb-12 font-bold text-white text-3xl text-center">24Hours in numbers</h2>
+    <div class="py-20 bg-gray-800 md:py-24">
+        <div class="max-w-2xl px-6 mx-auto">
+            <h2 class="mb-12 text-3xl font-bold text-center text-white">24Hours in numbers</h2>
 
             <div class="grid grid-cols-4">
                 <x-home.stat>
@@ -83,13 +83,13 @@
     </div>
 
     <!-- CTA -->
-    <div class="py-16 md:py-24 text-center">
+    <div class="py-16 text-center md:py-24">
         <x-button link href="{{ route('register') }}" class="py-3">Sign up for free</x-button>
     </div>
 
     <!-- Footer -->
-    <div class="py-8 md:py-6 lg:py-8 bg-gray-300 dark:bg-gray-800">
-        <div class="max-w-6xl mx-auto px-6">
+    <div class="py-8 bg-gray-300 md:py-6 lg:py-8 dark:bg-gray-800">
+        <div class="max-w-6xl px-6 mx-auto">
             &copy; Copyright {{ date('Y') }} by <a href="https://www.jeroenvanrensen.nl/" class="underline focus:text-gray-500 focus:outline-none" target="_blank">Jeroen van Rensen</a>
         </div>
     </div>

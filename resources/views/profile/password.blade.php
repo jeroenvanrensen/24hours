@@ -32,7 +32,7 @@
         </x-forms.group>
 
         <!-- Submit Button -->
-        <div class="flex justify-end items-center">
+        <div class="flex items-center justify-end">
             @if(session()->has('success'))
                 <span class="text-gray-600 dark:text-gray-300">{{ session()->get('success') }}</span>
             @endif

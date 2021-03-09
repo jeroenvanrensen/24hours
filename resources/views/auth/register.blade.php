@@ -1,6 +1,6 @@
 <div>
     <x-auth.card>
-        <h1 class="text-2xl mb-6">Register</h1>
+        <h1 class="mb-6 text-2xl">Register</h1>
 
         <!-- Name -->
         <x-forms.group>

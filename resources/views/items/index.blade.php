@@ -1,5 +1,5 @@
 <div>
-    <ul class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <ul class="grid grid-cols-1 gap-6 md:grid-cols-3">
         @foreach($items as $item)
             @include('items.types.' . strtolower(class_basename($item)), ['board' => $board])
         @endforeach
@@ -10,7 +10,7 @@
     @endif
 
     @if($showButton)
-        <div class="mt-6 flex justify-center">
+        <div class="flex justify-center mt-6">
             <x-button secondary class="font-semibold" wire:click="loadMore">Load More</x-button>
         </div>
     @endif

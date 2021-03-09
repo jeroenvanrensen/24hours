@@ -1,6 +1,6 @@
 <div>
     <x-auth.card>
-        <h1 class="text-2xl mb-6">Confirm Password</h1>
+        <h1 class="mb-6 text-2xl">Confirm Password</h1>
 
         <p class="mb-6">This is a secure area of the application. Please confirm your password before continuing.</p>
 

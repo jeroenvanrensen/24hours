@@ -1,6 +1,6 @@
 <div>
     <x-auth.card>
-        <h1 class="text-2xl mb-6">Reset Password</h1>
+        <h1 class="mb-6 text-2xl">Reset Password</h1>
 
         <!-- Email -->
         <x-forms.group>

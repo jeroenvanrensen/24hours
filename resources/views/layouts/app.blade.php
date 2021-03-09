@@ -31,7 +31,7 @@
             @include('layouts.custom-navbar', ['backLink' => $backLink])
         @endif
 
-        <div class="max-w-5xl mx-auto px-6 my-6 md:my-12">
+        <div class="max-w-5xl px-6 mx-auto my-6 md:my-12">
             {{ $slot }}
         </div>
     @else

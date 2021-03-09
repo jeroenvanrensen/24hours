@@ -26,7 +26,7 @@
             </x-forms.group>
 
             <!-- Submit Button -->
-            <div class="flex justify-end items-center">
+            <div class="flex items-center justify-end">
                 <x-button color="red" wire:click="destroy" loading="destroy">Yes, delete my account</x-button>
             </div>
         </x-slot>

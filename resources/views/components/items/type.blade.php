@@ -6,9 +6,9 @@
 ])
 
 <li class="relative" x-data="{ {{ $modalName }}: false }">
-    <a href="{{ $url }}" class="block group border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none overflow-hidden" {{ $newTab ? 'target="_blank"' : '' }}>
+    <a href="{{ $url }}" class="block overflow-hidden border border-gray-200 rounded-lg group dark:border-gray-700 focus:outline-none" {{ $newTab ? 'target="_blank"' : '' }}>
         <!-- Image -->
-        <div class="h-36 lg:h-40 w-full bg-gray-200 dark:bg-gray-700 transition group-hover:opacity-75 group-focus:opacity-50 flex items-center justify-center">
+        <div class="flex items-center justify-center w-full transition bg-gray-200 h-36 lg:h-40 dark:bg-gray-700 group-hover:opacity-75 group-focus:opacity-50">
             {{ $image }}
         </div>
 
@@ -17,7 +17,7 @@
             <span class="block mb-2 font-semibold">{{ $item->title }}</span>
 
             <!-- Meta -->
-            <span class="flex-1 inline-flex items-center bg-gray-100 dark:bg-gray-700 py-px px-2 rounded-full text-sm font-semibold">
+            <span class="inline-flex items-center flex-1 px-2 py-px text-sm font-semibold bg-gray-100 rounded-full dark:bg-gray-700">
                 {{ $meta }}
             </span>
         </div>
@@ -25,7 +25,7 @@
 
     @can('manageItems', $board)
         <!-- Delete button -->
-        <button @click="{{ $modalName }} = true" class="absolute top-2 right-2 h-5 w-5 bg-gray-100 text-gray-600 dark:bg-gray-900 dark:text-gray-400 rounded-full flex items-center justify-center hover:bg-gray-300 focus:outline-none focus:bg-gray-400 dark:hover:bg-gray-700 dark:focus:bg-gray-500">
+        <button @click="{{ $modalName }} = true" class="absolute flex items-center justify-center w-5 h-5 text-gray-600 bg-gray-100 rounded-full top-2 right-2 dark:bg-gray-900 dark:text-gray-400 hover:bg-gray-300 focus:outline-none focus:bg-gray-400 dark:hover:bg-gray-700 dark:focus:bg-gray-500">
             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
             </svg>

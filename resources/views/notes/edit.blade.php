@@ -77,13 +77,13 @@
 
     @can('manageItems', $note->board)
         <!-- Editor -->
-        <div wire:ignore class="max-w-2xl mx-auto px-6 my-8 md:my-12 dark:placeholder-gray-400">
+        <div wire:ignore class="max-w-2xl px-6 mx-auto my-8 md:my-12 dark:placeholder-gray-400">
             <div x-ref="quillEditor">
                 {!! $body !!}
             </div>
         </div>
     @else
-        <div class="ql-editor max-w-2xl mx-auto px-6 my-8 md:my-12">
+        <div class="max-w-2xl px-6 mx-auto my-8 ql-editor md:my-12">
             {!! $body !!}
         </div>
     @endcan

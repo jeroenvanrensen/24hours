@@ -1,6 +1,6 @@
 <div>
     <x-auth.card>
-        <h1 class="text-2xl mb-6">Login</h1>
+        <h1 class="mb-6 text-2xl">Login</h1>
 
         <!-- Email -->
         <x-forms.group>
@@ -17,8 +17,8 @@
         </x-forms.group>
 
         <!-- Submit Button -->
-        <div class="flex justify-end items-center">
-            <a href="{{ route('password.request') }}" class="text-sm text-gray-600 underline hover:text-gray-800 focus:text-black dark:text-gray-400 dark:hover:text-gray-200 dark:focus:text-white outline-none">Forgot your password?</a>
+        <div class="flex items-center justify-end">
+            <a href="{{ route('password.request') }}" class="text-sm text-gray-600 underline outline-none hover:text-gray-800 focus:text-black dark:text-gray-400 dark:hover:text-gray-200 dark:focus:text-white">Forgot your password?</a>
             <x-button class="ml-4" wire:click="login" loading="login">Sign In</x-button>
         </div>
     </x-auth.card>

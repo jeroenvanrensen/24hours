@@ -21,7 +21,7 @@ class WelcomeEmail extends Mailable
 
     public function build()
     {
-        return $this->markdown('welcome')
+        return $this->markdown('emails.welcome')
             ->subject('Welcome to 24Hours!');
     }
 }

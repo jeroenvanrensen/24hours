@@ -1,6 +1,19 @@
 <div x-data="{ showModal: false }">
     <p class="mb-3 text-gray-600 md:text-center dark:text-gray-300">{{ today()->format('l, F j') }} (Week {{ (int) today()->format('W') }})</p>
-    <x-heading>Welcome back, {{ auth()->user()->first_name }}</x-heading>
+    
+    <x-heading>
+        <span x-text="
+            hours = new Date().getHours();
+            if(hours < 6) return 'Good night';
+            if(hours < 12) return 'Good morning';
+            if(hours < 18) return 'Good afternoon';
+            return 'Good evening';
+        ">
+            Welcome back
+        </span>,
+        
+        {{ auth()->user()->first_name }}
+    </x-heading>
 
     <div class="flex items-center justify-between mb-8">
         <h2 class="font-serif text-2xl md:text-3xl">My Boards</h2>

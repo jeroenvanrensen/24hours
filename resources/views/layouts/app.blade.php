@@ -37,5 +37,7 @@
     @else
         {{ $slot }}
     @endif
+
+    <livewire:offline />
 </body>
 </html>

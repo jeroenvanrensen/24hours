@@ -1,9 +1,34 @@
 @props(['name' => 'showModal'])
 
-<div x-show="{{ $name }}" class="fixed inset-0 z-50 flex items-center justify-center w-full h-screen px-6" style="display: none;" id="add-link-modal">
-    <div @click="{{ $name }} = false" class="absolute w-full h-full bg-gray-600 opacity-60 dark:bg-black"></div>
+<div
+    x-show="{{ $name }}"
+    class="fixed inset-0 z-50 flex items-center justify-center w-full h-screen px-6"
+    style="display: none;"
+>
+    <div 
+        x-show="{{ $name }}"
+        @click="{{ $name }} = false"
+        class="absolute w-full h-full transition"
+        x-transition:enter="ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+    >
+        <div class="absolute w-full h-full bg-gray-600 opacity-60 dark:bg-black"></div>
+    </div>
 
-    <div class="z-10 w-full max-w-xl p-8 bg-white rounded-lg shadow-lg dark:bg-gray-800">
+    <div
+        x-show="{{ $name }}"
+        class="z-10 w-full max-w-xl p-8 transition transform bg-white rounded-lg shadow-lg dark:bg-gray-800"
+        x-transition:enter="ease-out duration-300"
+        x-transition:enter-start="opacity-0 -translate-y-4 scale-95"
+        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+        x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+        x-transition:leave-end="opacity-0 -translate-y-4 scale-95"
+    >
         <div class="flex items-center justify-between mb-8">
             <!-- Title -->
             <h2 class="text-2xl font-semibold">{{ $title }}</h2>

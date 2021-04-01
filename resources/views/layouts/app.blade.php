@@ -13,8 +13,8 @@
 
     <!-- Styles -->
     <livewire:styles />
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}" />
     <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.bubble.css" />
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}" />
 
     <!-- Scripts -->
     <livewire:scripts />

@@ -1,25 +1,40 @@
-<div x-data="{ showModal: false }">
+<div x-data="{ showModal: false, greeting: 'Welcome back' }">
+    <!-- Date -->
     <p class="mb-3 text-gray-600 md:text-center dark:text-gray-300">{{ today()->format('l, F j') }} (Week {{ (int) today()->format('W') }})</p>
     
-    <x-heading>
-        <span x-text="
-            hours = new Date().getHours();
-            if(hours < 6) return 'Good night';
-            if(hours < 12) return 'Good morning';
-            if(hours < 18) return 'Good afternoon';
-            return 'Good evening';
-        ">
-            Welcome back
-        </span>,
-        
+    <!-- Header -->
+    <x-heading wire:poll>
+        <span id="greeting">Welcome back</span>,
         {{ auth()->user()->first_name }}
     </x-heading>
 
+    <!-- Greeting -->
+    <script>
+        setGreeting(); // At first page load
+
+        setInterval(() => {
+            setGreeting();
+        }, 60000);
+
+        function setGreeting() {
+            var hours = new Date().getHours();
+            var greeting = 'Good night';
+
+            if(hours > 5) greeting = 'Good morning';
+            if(hours > 11) greeting = 'Good afternoon';
+            if(hours > 17) greeting = 'Good evening';
+            
+            document.querySelector('#greeting').innerHTML = greeting;
+        }
+    </script>
+
+    <!-- Heading -->
     <div class="flex items-center justify-between mb-8">
         <h2 class="font-serif text-2xl md:text-3xl">My Boards</h2>
         <x-button @click="showModal = true">New Board</x-button>
     </div>
 
+    <!-- List -->
     <ul class="grid grid-cols-1 gap-6 md:grid-cols-3">
         @foreach($boards as $board)
             <li>

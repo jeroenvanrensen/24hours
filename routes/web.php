@@ -42,7 +42,7 @@ Route::middleware(['auth', 'verified'])->prefix('app')->group(function () {
     Route::get('/notes/{note:uuid}', EditNote::class)->name('notes.edit');
     
     Route::get('/search', Search::class)->name('search');
-    Route::get('/profile', EditProfile::class)->name('profile.edit');
+    Route::get('/profile', EditProfile::class)->name('profile.edit')->withoutMiddleware('verified');
 });
 
 require __DIR__ . '/auth.php';

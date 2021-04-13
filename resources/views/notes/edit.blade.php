@@ -65,10 +65,8 @@
     <!-- Info modal -->
     <x-modal name="showInfoModal">
         <x-slot name="title">Note info</x-slot>
-        
-        <p class="mb-6">Here are some statistics about this note.</p>
 
-        <p class="mb-6"><strong>Created at: </strong> {{ $note->created_at->format('F j, Y') }} ({{ $note->created_at->diffForHumans() }})</p>
+        <p class="mb-6"><strong>Key: </strong> Value</p>
         
         <div class="flex items-center justify-end">
             <x-button @click="showInfoModal = false">Close</x-button>

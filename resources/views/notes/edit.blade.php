@@ -66,7 +66,7 @@
     <x-modal name="showInfoModal">
         <x-slot name="title">Note info</x-slot>
 
-        <p class="mb-6"><strong>Key: </strong> Value</p>
+        <p class="mb-6"><strong>Word count: </strong> {{ $note->word_count }}</p>
         
         <div class="flex items-center justify-end">
             <x-button @click="showInfoModal = false">Close</x-button>

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBoardsTable extends Migration
+return new class extends Migration
 {
     public function up()
     {
@@ -15,9 +15,4 @@ class CreateBoardsTable extends Migration
             $table->timestamps();
         });
     }
-
-    public function down()
-    {
-        Schema::dropIfExists('boards');
-    }
-}
+};

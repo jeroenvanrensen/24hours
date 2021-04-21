@@ -23,15 +23,14 @@ class Note extends Model
 
     public function getWordCountAttribute(): int
     {
-        $text = Str::of($this->body)
+       return Str::of($this->body)
             ->replaceMatches('#<[^>]+>#', ' ') // Strip tags
-            ->replaceMatches('/(I)\'m/i', '$1 am') // I'm
-            ->replaceMatches('/(You)\'re/i', '$1 are') // You're
-            ->replaceMatches('/(He|She|It)\'s/i', '$1 is') // He's / She's / It's
-            ->replaceMatches('/(We)\'re/i', '$1 are') // We're
-            ->replaceMatches('/(They)\'re/i', '$1 are'); // They're
-
-        return str_word_count($text);
+            ->replaceMatches('/(I)\'m/i', '$1 am') // I'm -> I am
+            ->replaceMatches('/(You)\'re/i', '$1 are') // You're -> You are
+            ->replaceMatches('/(He|She|It)\'s/i', '$1 is') // He's / She's / It's -> He is / She is / It is
+            ->replaceMatches('/(We)\'re/i', '$1 are') // We're -> We are
+            ->replaceMatches('/(They)\'re/i', '$1 are') // They're -> They are
+            ->wordCount();
     }
 
     public function board()

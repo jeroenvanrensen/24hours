@@ -4,6 +4,7 @@
     x-show="{{ $name }}"
     class="fixed inset-0 z-50 flex items-center justify-center w-full h-screen px-6"
     style="display: none;"
+    @keydown.escape.window="{{ $name }} = false"
 >
     <div 
         x-show="{{ $name }}"

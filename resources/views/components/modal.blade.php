@@ -23,11 +23,11 @@
         x-show="{{ $name }}"
         class="z-10 w-full max-w-xl p-8 transition transform bg-white rounded-lg shadow-lg dark:bg-gray-800"
         x-transition:enter="ease-out duration-300"
-        x-transition:enter-start="opacity-0 -translate-y-4 scale-95"
-        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
         x-transition:leave="ease-in duration-200"
-        x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-        x-transition:leave-end="opacity-0 -translate-y-4 scale-95"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
     >
         <div class="flex items-center justify-between mb-8">
             <!-- Title -->

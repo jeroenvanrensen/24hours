@@ -3,16 +3,13 @@
 namespace Tests\Unit\Services;
 
 use App\Services\WebScraper\Scraper;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /** @group services */
 class WebScraperTest extends TestCase
 {
-    use RefreshDatabase;
-
-    /** 
-     * @test 
+    /**
+     * @test
      * @dataProvider websitesProvider
     */
     public function the_scraper_can_scrape_a_page($url, $title, $image)
@@ -20,7 +17,7 @@ class WebScraperTest extends TestCase
         $this->withoutExceptionHandling();
 
         $scraper = new Scraper();
-        
+
         $response = $scraper->scrape($url);
 
         $this->assertEquals($title, $response->title);

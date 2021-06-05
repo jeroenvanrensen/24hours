@@ -12,6 +12,10 @@ class Board extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'archived' => 'boolean'
+    ];
+
     protected static function boot()
     {
         parent::boot();
@@ -49,5 +53,15 @@ class Board extends Model
     public function getItemsAttribute()
     {
         return $this->notes->push($this->links)->flatten();
+    }
+
+    public function archive()
+    {
+        $this->update(['archived' => true]);
+    }
+
+    public function unarchive()
+    {
+        $this->update(['archived' => false]);
     }
 }

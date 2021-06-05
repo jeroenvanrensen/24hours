@@ -23,7 +23,7 @@ class CreateBoardTest extends TestCase
         $this->actingAs($user);
 
         $this->assertCount(0, Board::all());
-        
+
         Livewire::test(Create::class)
             ->set('name', 'My Board')
             ->call('create')
@@ -33,7 +33,8 @@ class CreateBoardTest extends TestCase
 
         $this->assertDatabaseHas('boards', [
             'user_id' => $user->id,
-            'name' => 'My Board'
+            'name' => 'My Board',
+            'archived' => 0
         ]);
     }
 
@@ -41,7 +42,7 @@ class CreateBoardTest extends TestCase
     public function a_board_requires_a_name()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 

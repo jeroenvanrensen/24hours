@@ -14,8 +14,8 @@ class NoteFactory extends Factory
     {
         return [
             'board_id' => Board::factory(),
-            'title' => $this->faker->sentence,
-            'body' => $this->faker->paragraph,
+            'title' => $this->faker->sentence(),
+            'body' => $this->faker->paragraph(),
         ];
     }
 }

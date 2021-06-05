@@ -15,7 +15,7 @@ class InvitationFactory extends Factory
     {
         return [
             'board_id' => Board::factory(),
-            'email' => $this->faker->email,
+            'email' => $this->faker->email(),
             'role' => Arr::random(['member', 'viewer'])
         ];
     }

@@ -29,15 +29,17 @@ class Delete extends Component
 
         Mail::to($this->membership->user->email)->queue(new YouAreRemovedMail($this->membership));
 
-        foreach($this->board->memberships as $membership) {
-            if($membership->id == $this->membership->id) {
+        foreach ($this->board->memberships as $membership) {
+            if ($membership->id == $this->membership->id) {
                 continue;
             }
-            
+
             Mail::to($membership->user->email)->queue(new MemberRemovedMail($this->membership, $membership->user));
         }
 
         $this->membership->delete();
+
+        session()->flash('flash.success', 'The member was removed from the board!');
 
         return redirect()->route('members.index', $this->board);
     }

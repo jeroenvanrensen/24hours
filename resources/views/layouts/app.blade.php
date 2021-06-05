@@ -39,5 +39,6 @@
     @endif
 
     <livewire:offline />
+    @include('layouts._flash')
 </body>
 </html>

@@ -52,6 +52,8 @@ class Edit extends Component
             Mail::to($this->membership->user->email)->queue(new MembershipUpdatedMail($this->membership));
         }
 
+        session()->flash('flash.success', 'The member\'s role was updated!');
+
         return redirect()->route('members.index', $this->board);
     }
 }

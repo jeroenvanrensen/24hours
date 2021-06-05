@@ -41,8 +41,8 @@ class Index extends Component
 
         Mail::to($this->board->user->email)->queue(new BoardLeftMail($membership, $this->board->user));
 
-        foreach($this->board->fresh()->memberships as $receiver) {
-            if($receiver->id == $membership->id) {
+        foreach ($this->board->fresh()->memberships as $receiver) {
+            if ($receiver->id == $membership->id) {
                 continue;
             }
 
@@ -50,6 +50,8 @@ class Index extends Component
         }
 
         $membership->delete();
+
+        session()->flash('flash.success', 'You left the board!');
 
         return redirect()->route('boards.index');
     }

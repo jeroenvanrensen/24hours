@@ -42,8 +42,8 @@ class Edit extends Component
     }
 
     protected function getTitle(): string
-    {   
-        $title = strtok(strip_tags(str_replace('</', "\n</", $this->body)),"\n\t");
+    {
+        $title = strtok(strip_tags(str_replace('</', "\n</", $this->body)), "\n\t");
 
         return $title == '' ? 'No Title' : explode('\n', wordwrap($title, 255, '\n'))[0];
     }
@@ -51,9 +51,11 @@ class Edit extends Component
     public function destroy()
     {
         $this->authorize('manageItems', $this->note->board);
-        
+
         $this->note->delete();
-        
+
+        session()->flash('flash.success', 'The note was deleted!');
+
         return redirect()->route('boards.show', $this->note->board);
     }
 }

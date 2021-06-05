@@ -20,12 +20,11 @@ class Create extends Component
 
     public function create()
     {
-        $this->validate();
-
-        $board = Board::create([
-            'user_id' => auth()->id(),
-            'name' => $this->name
+        $board = Board::create($this->validate() + [
+            'user_id' => auth()->id()
         ]);
+
+        session()->flash('flash.success', 'The board was created!');
 
         return redirect()->route('boards.show', $board);
     }

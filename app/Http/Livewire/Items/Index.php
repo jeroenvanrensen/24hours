@@ -42,7 +42,7 @@ class Index extends Component
 
     protected function showLoadMoreButton()
     {
-        if($this->board->links()->count() <= $this->numberToShow) {
+        if ($this->board->links()->count() <= $this->numberToShow) {
             return false;
         }
 
@@ -52,8 +52,10 @@ class Index extends Component
     public function deleteNote(Note $note)
     {
         $this->authorize('manageItems', $this->board);
-        
+
         $note->delete();
+
+        session()->flash('flash.success', 'The note was deleted!');
 
         return redirect()->route('boards.show', $this->board);
     }
@@ -63,6 +65,8 @@ class Index extends Component
         $this->authorize('manageItems', $this->board);
 
         $link->delete();
+
+        session()->flash('flash.success', 'The link was deleted!');
 
         return redirect()->route('boards.show', $this->board);
     }

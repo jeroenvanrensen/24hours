@@ -39,12 +39,14 @@ class Edit extends Component
 
         $this->board->save();
 
+        session()->flash('flash.success', 'The board was saved!');
+
         return redirect()->route('boards.show', $this->board);
     }
 
     public function destroy()
     {
-        foreach($this->board->memberships as $membership) {
+        foreach ($this->board->memberships as $membership) {
             Mail::to($membership->user->email)->queue(new BoardDeletedMail($membership, $this->board));
         }
 
@@ -54,6 +56,8 @@ class Edit extends Component
         $this->board->invitations()->delete();
 
         $this->board->delete();
+
+        session()->flash('flash.success', 'The board was deleted!');
 
         return redirect()->route('boards.index');
     }

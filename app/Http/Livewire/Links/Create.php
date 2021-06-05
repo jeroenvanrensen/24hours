@@ -41,6 +41,8 @@ class Create extends Component
             'image' => $response->image
         ]);
 
+        session()->flash('flash.success', 'The link was added!');
+
         return redirect()->route('boards.show', $this->board);
     }
 }

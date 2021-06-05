@@ -1,4 +1,8 @@
-<div x-data="{ showModal: false }" class="max-w-2xl mx-auto">
+<div
+    x-data="{ showModal: false }"
+    class="max-w-2xl mx-auto"
+    @keydown.window.escape="if(!showModal) Turbolinks.visit('{{ route('boards.show', $board) }}');"
+>
     <x-heading small>Edit Board</x-heading>
 
     <!-- Name -->

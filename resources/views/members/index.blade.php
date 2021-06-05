@@ -1,4 +1,8 @@
-<div x-data="{ newMemberModal: false, showLeaveBoardMoadal: false }" class="max-w-2xl mx-auto">
+<div
+    x-data="{ newMemberModal: false, showLeaveBoardMoadal: false }"
+    class="max-w-2xl mx-auto"
+    @keydown.window.escape="if(!newMemberModal && !showLeaveBoardMoadal) Turbolinks.visit('{{ route('boards.show', $board) }}');"
+>
     <x-heading small>
         Board members
 

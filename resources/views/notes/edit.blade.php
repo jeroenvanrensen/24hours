@@ -1,5 +1,6 @@
 <div
     x-data="{ showModal: false, showInfoModal: false }"
+    @keydown.window.escape="if(!showModal && !showInfoModal) Turbolinks.visit('{{ route('boards.show', $note->board) }}');"
     @can('manageItems', $note->board)
         x-init="
             toolbarOptions = [

@@ -1,4 +1,7 @@
-<div x-data="{ showDropup: false, showModal: false }">
+<div
+    x-data="{ showDropup: false, showModal: false }"
+    @keydown.window.escape="if(!showModal) Turbolinks.visit('{{ route('boards.index') }}');"
+>
     <x-heading>
         {{ $board->name }}
 

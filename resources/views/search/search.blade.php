@@ -1,4 +1,4 @@
-<div>
+<div x-data @keydown.window.escape="Turbolinks.visit('{{ route('boards.index') }}');">
     <x-heading>Search</x-heading>
 
     <x-forms.group>

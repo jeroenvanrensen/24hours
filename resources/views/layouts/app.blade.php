@@ -23,7 +23,7 @@
     <script src="https://cdn.jsdelivr.net/gh/livewire/turbolinks@v0.1.x/dist/livewire-turbolinks.js" data-turbolinks-eval="false"></script>
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 </head>
-<body x-data="{ showModal: false }" class="dark:bg-gray-800 dark:text-white">
+<body x-data="{ showModal: false }" @keydown.window.prevent.ctrl.k="Turbolinks.visit('{{ route('search') }}')" class="dark:bg-gray-800 dark:text-white">
     @if($showNavbar ?? true)
         @if($defaultNavbar ?? true)
             @include('layouts.default-navbar')

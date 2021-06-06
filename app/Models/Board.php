@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Mail\BoardArchivedMail;
+use App\Mail\BoardUnarchivedMail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class Board extends Model
@@ -58,10 +61,19 @@ class Board extends Model
     public function archive()
     {
         $this->update(['archived' => true]);
+
+        collect($this->memberships)
+            ->map(fn($membership) => $membership->user)
+            ->each(fn($member) => Mail::to($member)->queue(new BoardArchivedMail($this, $member)));
     }
 
     public function unarchive()
     {
         $this->update(['archived' => false]);
+
+        collect($this->memberships)
+            ->filter(fn($membership) => $membership->role == 'member')
+            ->map(fn($membership) => $membership->user)
+            ->each(fn($member) => Mail::to($member)->queue(new BoardUnarchivedMail($this, $member)));
     }
 }

@@ -9,7 +9,8 @@ class Index extends Component
     public function render()
     {
         return view('boards.index', [
-            'boards' => auth()->user()->visibleBoards()
+            'boards' => auth()->user()->visibleBoards()->filter(fn($board) => !$board->archived),
+            'archivedBoards' => auth()->user()->visibleBoards()->filter(fn($board) => $board->archived)
         ]);
     }
 }

@@ -111,4 +111,22 @@ class SeeAllBoardsTest extends TestCase
                 $firstBoard->name
             ]);
     }
+
+    /** @test */
+    public function archived_boards_are_below_nonarchived_boards()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $archivedBoard = Board::factory()->for($user)->create(['archived' => true, 'updated_at' => now()]);
+        $regularBoard = Board::factory()->for($user)->create(['updated_at' => now()->subWeek()]);
+        
+        Livewire::test(Index::class)
+            ->assertSeeInOrder([
+                $regularBoard->name,
+                $archivedBoard->name
+            ]);
+    }
 }

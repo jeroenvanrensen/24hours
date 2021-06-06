@@ -890,11 +890,8 @@ video {
 .mb-2 {
 	margin-bottom: 0.5rem;
 }
-.ml-6 {
-	margin-left: 1.5rem;
-}
-.-ml-4 {
-	margin-left: -1rem;
+.mt-16 {
+	margin-top: 4rem;
 }
 .-mt-1 {
 	margin-top: -0.25rem;
@@ -968,14 +965,14 @@ video {
 .h-12 {
 	height: 3rem;
 }
+.h-5 {
+	height: 1.25rem;
+}
 .h-4 {
 	height: 1rem;
 }
 .h-8 {
 	height: 2rem;
-}
-.h-5 {
-	height: 1.25rem;
 }
 .h-40 {
 	height: 10rem;
@@ -995,14 +992,14 @@ video {
 .w-12 {
 	width: 3rem;
 }
+.w-5 {
+	width: 1.25rem;
+}
 .w-4 {
 	width: 1rem;
 }
 .w-8 {
 	width: 2rem;
-}
-.w-5 {
-	width: 1.25rem;
 }
 .w-16 {
 	width: 4rem;
@@ -1097,20 +1094,15 @@ video {
 .gap-6 {
 	gap: 1.5rem;
 }
-.space-x-3 > :not([hidden]) ~ :not([hidden]) {
+.space-x-2 > :not([hidden]) ~ :not([hidden]) {
 	--tw-space-x-reverse: 0;
-	margin-right: calc(0.75rem * var(--tw-space-x-reverse));
-	margin-left: calc(0.75rem * calc(1 - var(--tw-space-x-reverse)));
+	margin-right: calc(0.5rem * var(--tw-space-x-reverse));
+	margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
 }
 .space-x-4 > :not([hidden]) ~ :not([hidden]) {
 	--tw-space-x-reverse: 0;
 	margin-right: calc(1rem * var(--tw-space-x-reverse));
 	margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
-}
-.space-x-2 > :not([hidden]) ~ :not([hidden]) {
-	--tw-space-x-reverse: 0;
-	margin-right: calc(0.5rem * var(--tw-space-x-reverse));
-	margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
 }
 .overflow-hidden {
 	overflow: hidden;
@@ -1365,6 +1357,10 @@ video {
 	--tw-text-opacity: 1;
 	color: rgba(245, 158, 11, var(--tw-text-opacity));
 }
+.text-yellow-600 {
+	--tw-text-opacity: 1;
+	color: rgba(217, 119, 6, var(--tw-text-opacity));
+}
 .text-gray-400 {
 	--tw-text-opacity: 1;
 	color: rgba(156, 163, 175, var(--tw-text-opacity));
@@ -1404,14 +1400,6 @@ video {
 .text-blue-500 {
 	--tw-text-opacity: 1;
 	color: rgba(59, 130, 246, var(--tw-text-opacity));
-}
-.text-yellow-700 {
-	--tw-text-opacity: 1;
-	color: rgba(180, 83, 9, var(--tw-text-opacity));
-}
-.text-yellow-600 {
-	--tw-text-opacity: 1;
-	color: rgba(217, 119, 6, var(--tw-text-opacity));
 }
 .underline {
 	text-decoration: underline;

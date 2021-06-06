@@ -37,4 +37,26 @@ class Show extends Component
 
         return redirect()->route('notes.edit', $note);
     }
+
+    public function archive()
+    {
+        $this->authorize('edit', $this->board);
+
+        $this->board->archive();
+        
+        session()->flash('flash.success', 'The board is archived!');
+
+        return redirect()->route('boards.show', $this->board);
+    }
+
+    public function unarchive()
+    {
+        $this->authorize('edit', $this->board);
+        
+        $this->board->unarchive();
+        
+        session()->flash('flash.success', 'The board is unarchived!');
+
+        return redirect()->route('boards.show', $this->board);
+    }
 }

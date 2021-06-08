@@ -17,18 +17,18 @@ class Show extends Component
 
     public function mount()
     {
-        if(!auth()->check()) {
+        if (!auth()->check()) {
             return $this->redirectGuest();
         }
 
-        if(auth()->user()->email != $this->invitation->email) {
+        if (auth()->user()->email != $this->invitation->email) {
             abort(403);
         }
     }
 
     protected function redirectGuest()
     {
-        if(User::where('email', $this->invitation->email)->exists()) {
+        if (User::where('email', $this->invitation->email)->exists()) {
             return redirect()->route('login');
         }
 
@@ -47,21 +47,24 @@ class Show extends Component
 
     public function accept()
     {
-        $membership = Membership::create([
+        if ($this->invitation->board->archived) {
+            abort(403);
+        }
+
+        $newMembership = Membership::create([
             'board_id' => $this->invitation->board->id,
             'user_id' => auth()->id(),
             'role' => $this->invitation->role
         ]);
 
-        Mail::to($this->invitation->board->user->email)->queue(new InvitationAcceptedMail($membership));
+        // Notify the board owner
+        Mail::to($this->invitation->board->user->email)->queue(new InvitationAcceptedMail($newMembership));
 
-        foreach($membership->board->memberships as $existingMembership) {
-            if($existingMembership->id == $membership->id) {
-                continue;
-            }
-
-            Mail::to($existingMembership->user->email)->queue(new NewMemberMail($membership, $existingMembership->user));
-        }
+        // Notify the board members
+        collect($newMembership->board->memberships) // Get all memberships
+            ->filter(fn ($membership) => $membership->id != $newMembership->id) // Filter out the new one
+            ->map(fn ($membership) => $membership->user) // Get the membership's user
+            ->each(fn ($user) => Mail::to($user->email)->queue(new NewMemberMail($newMembership, $user))); // Notify the user
 
         $this->invitation->delete();
 
@@ -70,10 +73,14 @@ class Show extends Component
 
     public function deny()
     {
+        if ($this->invitation->board->archived) {
+            abort(403);
+        }
+
         Mail::to($this->invitation->board->user->email)->queue(new InvitationDeniedMail($this->invitation));
 
         $this->invitation->delete();
-        
+
         return redirect()->route('invitations.check');
     }
 }

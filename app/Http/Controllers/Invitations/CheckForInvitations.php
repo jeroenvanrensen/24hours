@@ -10,7 +10,7 @@ class CheckForInvitations
     {
         $invitation = Invitation::where('email', auth()->user()->email)->first();
 
-        if($invitation) {
+        if ($invitation && !$invitation->board->archived) {
             return redirect()->route('invitations.show', $invitation);
         }
 

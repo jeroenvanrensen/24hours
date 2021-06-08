@@ -25,8 +25,6 @@ class AcceptInvitationsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        Mail::fake();
-        
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -41,8 +39,6 @@ class AcceptInvitationsTest extends TestCase
     /** @test */
     public function non_invited_users_cannot_visit_the_accept_invitation_page()
     {
-        Mail::fake();
-
         $user = User::factory()->create();
 
         $otherUser = User::factory()->create();
@@ -58,8 +54,6 @@ class AcceptInvitationsTest extends TestCase
     /** @test */
     public function guests_get_redirected_to_the_login_page()
     {
-        Mail::fake();
-
         $user = User::factory()->create();
 
         $board = Board::factory()->create();
@@ -68,13 +62,11 @@ class AcceptInvitationsTest extends TestCase
         $this->get(route('invitations.show', $invitation))
             ->assertRedirect(route('login'));
     }
-    
+
     /** @test */
     public function guests_get_redirected_to_the_register_page_if_they_dont_have_an_account_yet()
     {
         $this->withoutExceptionHandling();
-
-        Mail::fake();
 
         $board = Board::factory()->create();
         $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => 'john@example.org']);
@@ -88,8 +80,6 @@ class AcceptInvitationsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        Mail::fake();
-        
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -102,7 +92,7 @@ class AcceptInvitationsTest extends TestCase
         Livewire::test(Show::class, ['invitation' => $invitation])
             ->call('accept')
             ->assertRedirect(route('boards.show', $board));
-            
+
         $this->assertCount(0, Invitation::all());
         $this->assertCount(1, Membership::all());
 
@@ -114,12 +104,29 @@ class AcceptInvitationsTest extends TestCase
     }
 
     /** @test */
+    public function a_user_cannot_accept_the_invitation_if_the_board_is_archived()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create(['archived' => true]);
+        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
+
+        Livewire::test(Show::class, ['invitation' => $invitation])
+            ->call('accept')
+            ->assertStatus(403);
+
+        $this->assertCount(1, Invitation::all());
+        $this->assertCount(0, Membership::all());
+    }
+
+    /** @test */
     public function the_board_owner_will_get_an_email_when_someone_accepts_an_invitation()
     {
         $this->withoutExceptionHandling();
 
         Mail::fake();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -133,7 +140,7 @@ class AcceptInvitationsTest extends TestCase
             ->call('accept')
             ->assertRedirect(route('boards.show', $board));
 
-        Mail::assertQueued(InvitationAcceptedMail::class, function(InvitationAcceptedMail $mail) use ($boardOwner) {
+        Mail::assertQueued(InvitationAcceptedMail::class, function (InvitationAcceptedMail $mail) use ($boardOwner) {
             return $mail->hasTo($boardOwner->email);
         });
 
@@ -146,7 +153,7 @@ class AcceptInvitationsTest extends TestCase
         $this->withoutExceptionHandling();
 
         Mail::fake();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -161,11 +168,11 @@ class AcceptInvitationsTest extends TestCase
             ->call('accept')
             ->assertRedirect(route('boards.show', $board));
 
-        Mail::assertQueued(NewMemberMail::class, function(NewMemberMail $mail) use ($alreadyBoardMember) {
+        Mail::assertQueued(NewMemberMail::class, function (NewMemberMail $mail) use ($alreadyBoardMember) {
             return $mail->hasTo($alreadyBoardMember->email);
         });
 
-        Mail::assertNotQueued(InvitationAcceptedMail::class, function(InvitationAcceptedMail $mail) use ($alreadyBoardMember) {
+        Mail::assertNotQueued(InvitationAcceptedMail::class, function (InvitationAcceptedMail $mail) use ($alreadyBoardMember) {
             return $mail->hasTo($alreadyBoardMember->email);
         });
     }
@@ -175,8 +182,6 @@ class AcceptInvitationsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        Mail::fake();
-        
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -189,8 +194,25 @@ class AcceptInvitationsTest extends TestCase
         Livewire::test(Show::class, ['invitation' => $invitation])
             ->call('deny')
             ->assertRedirect(route('invitations.check'));
-            
+
         $this->assertCount(0, Invitation::all());
+        $this->assertCount(0, Membership::all());
+    }
+
+    /** @test */
+    public function a_user_cannot_deny_an_invitation_when_the_board_is_archived()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create(['archived' => true]);
+        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
+
+        Livewire::test(Show::class, ['invitation' => $invitation])
+            ->call('deny')
+            ->assertStatus(403);
+
+        $this->assertCount(1, Invitation::all());
         $this->assertCount(0, Membership::all());
     }
 
@@ -200,7 +222,7 @@ class AcceptInvitationsTest extends TestCase
         $this->withoutExceptionHandling();
 
         Mail::fake();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -214,7 +236,7 @@ class AcceptInvitationsTest extends TestCase
             ->call('deny')
             ->assertRedirect(route('invitations.check'));
 
-        Mail::assertQueued(InvitationDeniedMail::class, function(InvitationDeniedMail $mail) use ($boardOwner) {
+        Mail::assertQueued(InvitationDeniedMail::class, function (InvitationDeniedMail $mail) use ($boardOwner) {
             return $mail->hasTo($boardOwner->email);
         });
     }
@@ -225,7 +247,7 @@ class AcceptInvitationsTest extends TestCase
         $this->withoutExceptionHandling();
 
         Mail::fake();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -238,7 +260,7 @@ class AcceptInvitationsTest extends TestCase
             ->call('deny')
             ->assertRedirect(route('invitations.check'));
 
-        Mail::assertNotQueued(InvitationDeniedMail::class, function(InvitationDeniedMail $mail) use ($alreadyMember) {
+        Mail::assertNotQueued(InvitationDeniedMail::class, function (InvitationDeniedMail $mail) use ($alreadyMember) {
             return $mail->hasTo($alreadyMember->email);
         });
     }

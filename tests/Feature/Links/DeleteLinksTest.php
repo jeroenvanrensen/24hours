@@ -15,12 +15,12 @@ use Tests\TestCase;
 class DeleteLinksTest extends TestCase
 {
     use RefreshDatabase;
-    
+
     /** @test */
-    public function a_user_can_delete_a_link()
+    public function the_board_owner_can_delete_a_link()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -32,7 +32,7 @@ class DeleteLinksTest extends TestCase
         Livewire::test(Index::class, ['board' => $board])
             ->call('deleteLink', $link)
             ->assertRedirect(route('boards.show', $board));
-        
+
         $this->assertFalse($link->exists());
     }
 
@@ -40,7 +40,7 @@ class DeleteLinksTest extends TestCase
     public function members_can_delete_links()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -53,7 +53,7 @@ class DeleteLinksTest extends TestCase
         Livewire::test(Index::class, ['board' => $board])
             ->call('deleteLink', $link)
             ->assertRedirect(route('boards.show', $board));
-        
+
         $this->assertFalse($link->exists());
     }
 
@@ -94,6 +94,22 @@ class DeleteLinksTest extends TestCase
         $this->actingAs($user);
 
         $board = Board::factory()->create();
+        $link = Link::factory()->for($board)->create();
+
+        Livewire::test(Index::class, ['board' => $board])
+            ->call('deleteLink', $link)
+            ->assertStatus(403);
+
+        $this->assertTrue($link->exists());
+    }
+
+    /** @test */
+    public function a_user_cannot_delete_a_link_if_the_board_is_archived()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->for($user)->create(['archived' => true]);
         $link = Link::factory()->for($board)->create();
 
         Livewire::test(Index::class, ['board' => $board])

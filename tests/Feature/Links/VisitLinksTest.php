@@ -15,13 +15,13 @@ class VisitLinksTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function a_user_can_visit_a_link()
+    public function the_board_owner_can_visit_a_link()
     {
         $this->withoutExceptionHandling();
 
         $user = User::factory()->create();
         $this->actingAs($user);
-        
+
         $board = Board::factory()->for($user)->create();
         $link = Link::factory()->for($board)->create();
 
@@ -33,10 +33,10 @@ class VisitLinksTest extends TestCase
     public function members_can_visit_a_link()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
-        
+
         $board = Board::factory()->for($user)->create();
         $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
         $link = Link::factory()->for($board)->create();
@@ -49,10 +49,10 @@ class VisitLinksTest extends TestCase
     public function viewers_can_visit_a_link()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
-        
+
         $board = Board::factory()->for($user)->create();
         $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
         $link = Link::factory()->for($board)->create();
@@ -75,7 +75,7 @@ class VisitLinksTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAs($user);
-        
+
         $board = Board::factory()->create(); // other user
         $link = Link::factory()->for($board)->create();
 
@@ -90,7 +90,7 @@ class VisitLinksTest extends TestCase
 
         $user = User::factory()->create();
         $this->actingAs($user);
-        
+
         $board = Board::factory()->for($user)->create();
         $link = Link::factory()->for($board)->create(['updated_at' => now()->subWeek()]);
 
@@ -102,5 +102,20 @@ class VisitLinksTest extends TestCase
 
         // Assert that the link was last updated between now and 60 seconds ago
         $this->assertTrue($link->fresh()->updated_at->diffInSeconds() < 60);
+    }
+
+    /** @test */
+    public function a_user_can_visit_links_when_the_board_is_archived()
+    {
+        $this->withoutExceptionHandling();
+
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->for($user)->create(['archived' => true]);
+        $link = Link::factory()->for($board)->create();
+
+        $this->get(route('links.show', $link))
+            ->assertRedirect($link->url);
     }
 }

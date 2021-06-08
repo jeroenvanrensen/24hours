@@ -17,15 +17,15 @@ class AddLinkTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function a_user_can_add_a_link()
+    public function the_board_owner_can_add_a_link()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
         $board = Board::factory()->for($user)->create();
-        
+
         $this->assertCount(0, Link::all());
 
         Livewire::test(Create::class, ['board' => $board])
@@ -51,10 +51,10 @@ class AddLinkTest extends TestCase
             ->set('url', 'https://tailwindcss.com/')
             ->call('add')
             ->assertStatus(403);
-        
+
         $this->assertCount(0, Link::all());
     }
-    
+
     /** @test */
     public function members_can_add_links()
     {
@@ -70,10 +70,10 @@ class AddLinkTest extends TestCase
             ->set('url', 'https://tailwindcss.com/')
             ->call('add')
             ->assertRedirect(route('boards.show', $board));
-            
+
         $this->assertCount(1, Link::all());
     }
-    
+
     /** @test */
     public function viewers_cannot_add_links()
     {
@@ -87,7 +87,7 @@ class AddLinkTest extends TestCase
             ->set('url', 'https://tailwindcss.com/')
             ->call('add')
             ->assertStatus(403);
-            
+
         $this->assertCount(0, Link::all());
     }
 
@@ -103,7 +103,23 @@ class AddLinkTest extends TestCase
             ->set('url', 'https://tailwindcss.com/')
             ->call('add')
             ->assertStatus(403);
-            
+
+        $this->assertCount(0, Link::all());
+    }
+
+    /** @test */
+    public function users_cannot_add_links_if_the_board_is_archived()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->for($user)->create(['archived' => true]);
+
+        Livewire::test(Create::class, ['board' => $board])
+            ->set('url', 'https://tailwindcss.com/')
+            ->call('add')
+            ->assertStatus(403);
+
         $this->assertCount(0, Link::all());
     }
 
@@ -111,7 +127,7 @@ class AddLinkTest extends TestCase
     public function a_link_requires_a_valid_url()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 

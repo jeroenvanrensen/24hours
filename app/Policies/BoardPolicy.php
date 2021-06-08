@@ -23,7 +23,7 @@ class BoardPolicy
 
     public function manageItems(User $user, Board $board): bool
     {
-        return $this->hasPermission($user, $board, ['owner', 'member']);
+        return !$board->archived && $this->hasPermission($user, $board, ['owner', 'member']);
     }
 
     public function leave(User $user, Board $board)
@@ -33,11 +33,11 @@ class BoardPolicy
 
     protected function hasPermission(User $user, Board $board, array $allowedRoles): bool
     {
-        if(in_array('owner', $allowedRoles) && $user->id == $board->user->id) {
+        if (in_array('owner', $allowedRoles) && $user->id == $board->user->id) {
             return true;
         }
 
-        if(!$membership = Membership::where('user_id', $user->id)->where('board_id', $board->id)->first()) {
+        if (!$membership = Membership::where('user_id', $user->id)->where('board_id', $board->id)->first()) {
             return false;
         }
 

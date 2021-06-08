@@ -20,7 +20,7 @@ class SearchNotesTest extends TestCase
     public function a_user_can_search_their_notes()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -41,7 +41,7 @@ class SearchNotesTest extends TestCase
     public function a_user_can_search_their_notes_by_body()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -62,14 +62,14 @@ class SearchNotesTest extends TestCase
     public function a_user_can_search_notes_when_they_are_a_member()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
         $board = Board::factory()->create(['name' => 'First Board']);
         $note = Note::factory()->for($board)->create(['title' => 'First note']);
 
-        $membership = Membership::factory()->for($user)->for($board)->create();
+        Membership::factory()->for($user)->for($board)->create();
 
         Livewire::test(Search::class)
             ->set('query', 'First')
@@ -80,14 +80,14 @@ class SearchNotesTest extends TestCase
     public function a_user_cannot_see_a_note_they_dont_own()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
         $board = Board::factory()->create(); // other user
         $note = Note::factory()->for($board)->create();
 
-        Livewire::test(Search::class)   
+        Livewire::test(Search::class)
             ->set('query', $note->title)
             ->assertDontSee($note->title);
     }
@@ -96,7 +96,7 @@ class SearchNotesTest extends TestCase
     public function the_notes_are_sorted_by_date()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -111,5 +111,23 @@ class SearchNotesTest extends TestCase
                 $secondNote->title,
                 $firstNote->title
             ]);
+    }
+
+    /** @test */
+    public function a_user_can_search_archived_notes()
+    {
+        $this->withoutExceptionHandling();
+
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->for($user)->create(['archived' => true]);
+
+        $firstNote = Note::factory()->for($board)->create(['title' => 'First Note']);
+
+        Livewire::test(Search::class)
+            ->assertDontSee($firstNote->title)
+            ->set('query', 'First')
+            ->assertSee($firstNote->title);
     }
 }

@@ -20,7 +20,7 @@ class SearchLinksTest extends TestCase
     public function a_user_can_search_their_links()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -41,14 +41,14 @@ class SearchLinksTest extends TestCase
     public function a_user_cannot_see_a_link_they_dont_own()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
         $board = Board::factory()->create(); // other user
         $link = Link::factory()->for($board)->create();
 
-        Livewire::test(Search::class)   
+        Livewire::test(Search::class)
             ->set('query', $link->title)
             ->assertDontSee($link->title);
     }
@@ -57,14 +57,14 @@ class SearchLinksTest extends TestCase
     public function a_user_can_search_links_when_they_are_a_member()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
         $board = Board::factory()->create(['name' => 'First Board']);
         $link = Link::factory()->for($board)->create(['title' => 'First link']);
 
-        $membership = Membership::factory()->for($user)->for($board)->create();
+        Membership::factory()->for($user)->for($board)->create();
 
         Livewire::test(Search::class)
             ->set('query', 'First')
@@ -75,7 +75,7 @@ class SearchLinksTest extends TestCase
     public function the_links_are_sorted_by_date()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -90,5 +90,23 @@ class SearchLinksTest extends TestCase
                 $secondLink->title,
                 $firstLink->title
             ]);
+    }
+
+    /** @test */
+    public function a_user_can_search_archived_links()
+    {
+        $this->withoutExceptionHandling();
+
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->for($user)->create(['archived' => true]);
+
+        $firstLink = Link::factory()->for($board)->create(['title' => 'First Link']);
+
+        Livewire::test(Search::class)
+            ->assertDontSee($firstLink->title)
+            ->set('query', 'First')
+            ->assertSee($firstLink->title);
     }
 }

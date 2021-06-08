@@ -19,7 +19,7 @@ class SearchBoardsTest extends TestCase
     public function a_user_can_search_their_boards()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -38,7 +38,7 @@ class SearchBoardsTest extends TestCase
     public function a_user_cannot_see_boards_they_dont_own()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -53,12 +53,12 @@ class SearchBoardsTest extends TestCase
     public function a_user_can_search_boards_when_they_are_a_member()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
         $board = Board::factory()->create(['name' => 'First Board']);
-        $membership = Membership::factory()->for($user)->for($board)->create();
+        Membership::factory()->for($user)->for($board)->create();
 
         Livewire::test(Search::class)
             ->set('query', 'First')
@@ -69,7 +69,7 @@ class SearchBoardsTest extends TestCase
     public function the_boards_are_sorted_by_date()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -82,5 +82,21 @@ class SearchBoardsTest extends TestCase
                 $secondBoard->name,
                 $firstBoard->name
             ]);
+    }
+
+    /** @test */
+    public function a_user_can_search_archived_boards()
+    {
+        $this->withoutExceptionHandling();
+
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $firstBoard = Board::factory()->for($user)->create(['name' => 'First Board', 'archived' => true]);
+
+        Livewire::test(Search::class)
+            ->assertDontSee($firstBoard->name)
+            ->set('query', 'First')
+            ->assertSee($firstBoard->name);
     }
 }

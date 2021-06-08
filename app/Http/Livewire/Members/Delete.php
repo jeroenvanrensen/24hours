@@ -25,6 +25,8 @@ class Delete extends Component
 
     public function destroy()
     {
+        $this->authorize('manageMemberships', $this->board);
+
         $this->authorize('edit', $this->board);
 
         Mail::to($this->membership->user->email)->queue(new YouAreRemovedMail($this->membership));

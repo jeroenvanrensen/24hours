@@ -18,12 +18,10 @@ class EditMembersTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function a_project_owner_can_visit_the_edit_membership_page()
+    public function a_board_owner_can_visit_the_edit_membership_page()
     {
         $this->withoutExceptionHandling();
-        
-        Mail::fake();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -41,8 +39,6 @@ class EditMembersTest extends TestCase
     /** @test */
     public function members_cannot_visit_the_edit_membership_page()
     {
-        Mail::fake();
-
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -59,8 +55,6 @@ class EditMembersTest extends TestCase
     /** @test */
     public function viewers_cannot_visit_the_edit_membership_page()
     {
-        Mail::fake();
-
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -77,8 +71,6 @@ class EditMembersTest extends TestCase
     /** @test */
     public function non_members_cannot_visit_the_edit_membership_page()
     {
-        Mail::fake();
-
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -94,8 +86,6 @@ class EditMembersTest extends TestCase
     /** @test */
     public function guests_cannot_visit_the_edit_membership_page()
     {
-        Mail::fake();
-
         $board = Board::factory()->create();
 
         $member = User::factory()->create();
@@ -106,12 +96,25 @@ class EditMembersTest extends TestCase
     }
 
     /** @test */
+    public function the_board_owner_cannot_visit_the_edit_membership_page_when_the_board_is_archived()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->for($user)->create(['archived' => true]);
+
+        $member = User::factory()->create();
+        $membership = Membership::factory()->for($member)->for($board)->create();
+
+        $this->get(route('members.edit', [$board, $membership]))
+            ->assertStatus(403);
+    }
+
+    /** @test */
     public function the_owner_can_edit_a_membership()
     {
         $this->withoutExceptionHandling();
 
-        Mail::fake();
-        
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -121,7 +124,7 @@ class EditMembersTest extends TestCase
         $membership = Membership::factory()->for($member)->for($board)->create(['role' => 'member']);
 
         $this->assertNotEquals('viewer', $membership->fresh()->role);
-        
+
         Livewire::test(Edit::class, ['board' => $board, 'membership' => $membership])
             ->set('role', 'viewer')
             ->call('update')
@@ -135,8 +138,6 @@ class EditMembersTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        Mail::fake();
-        
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -144,17 +145,17 @@ class EditMembersTest extends TestCase
 
         $member = User::factory()->create();
         $membership = Membership::factory()->for($member)->for($board)->create();
-        
+
         Livewire::test(Edit::class, ['board' => $board, 'membership' => $membership])
             ->set('role', 'member')
             ->call('update')
             ->assertHasNoErrors();
-        
+
         Livewire::test(Edit::class, ['board' => $board, 'membership' => $membership])
             ->set('role', 'viewer')
             ->call('update')
             ->assertHasNoErrors();
-        
+
         Livewire::test(Edit::class, ['board' => $board, 'membership' => $membership])
             ->set('role', 'invalid-role')
             ->call('update')
@@ -167,7 +168,7 @@ class EditMembersTest extends TestCase
         $this->withoutExceptionHandling();
 
         Mail::fake();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -177,12 +178,12 @@ class EditMembersTest extends TestCase
         $membership = Membership::factory()->for($member)->for($board)->create(['role' => 'member']);
 
         Mail::assertNothingQueued();
-        
+
         Livewire::test(Edit::class, ['board' => $board, 'membership' => $membership])
             ->set('role', 'viewer')
             ->call('update');
 
-        Mail::assertQueued(MembershipUpdatedMail::class, function(MembershipUpdatedMail $mail) use ($member) {
+        Mail::assertQueued(MembershipUpdatedMail::class, function (MembershipUpdatedMail $mail) use ($member) {
             return $mail->hasTo($member->email);
         });
     }
@@ -193,7 +194,7 @@ class EditMembersTest extends TestCase
         $this->withoutExceptionHandling();
 
         Mail::fake();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -201,7 +202,7 @@ class EditMembersTest extends TestCase
 
         $member = User::factory()->create();
         $membership = Membership::factory()->for($member)->for($board)->create(['role' => 'member']);
-        
+
         Livewire::test(Edit::class, ['board' => $board, 'membership' => $membership])
             ->set('role', 'member') // same role
             ->call('update');

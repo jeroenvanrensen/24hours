@@ -26,6 +26,11 @@ class BoardPolicy
         return !$board->archived && $this->hasPermission($user, $board, ['owner', 'member']);
     }
 
+    public function manageMemberships(User $user, Board $board): bool
+    {
+        return !$board->archived && $this->hasPermission($user, $board, ['owner']);
+    }
+
     public function leave(User $user, Board $board)
     {
         return $this->hasPermission($user, $board, ['member', 'viewer']);

@@ -7,7 +7,7 @@
         Board members
 
         <x-slot name="right">
-            @can('edit', $board)
+            @can('manageMemberships', $board)
                 <x-button @click="newMemberModal = true">Add member</x-button>
             @endcan
             @can('leave', $board)
@@ -27,7 +27,7 @@
                 <strong>{{ $membership->user->name }}</strong>
                 <div class="mb-px">{{ ucfirst($membership->role) }}</div>
                 
-                @can('edit', $board)
+                @can('manageMemberships', $board)
                     <div class="text-sm">
                         <a class="text-gray-500 underline focus:text-gray-400 dark:text-gray-400 dark:focus:text-gray-500" href="{{ route('members.edit', [$board, $membership]) }}">Edit / remove</a>
                     </div>

@@ -16,10 +16,10 @@ class SeeMembersTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function a_user_can_visit_the_members_page()
+    public function a_board_owner_can_visit_the_members_page()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -29,6 +29,38 @@ class SeeMembersTest extends TestCase
             ->assertStatus(200)
             ->assertSeeLivewire('members.index')
             ->assertSeeLivewire('members.create');
+    }
+
+    /** @test */
+    public function members_can_visit_the_members_page()
+    {
+        $this->withoutExceptionHandling();
+
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create();
+        Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+
+        $this->get(route('members.index', $board))
+            ->assertStatus(200)
+            ->assertSeeLivewire('members.index');
+    }
+
+    /** @test */
+    public function viewers_can_visit_the_members_page()
+    {
+        $this->withoutExceptionHandling();
+
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create();
+        Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
+
+        $this->get(route('members.index', $board))
+            ->assertStatus(200)
+            ->assertSeeLivewire('members.index');
     }
 
     /** @test */
@@ -63,11 +95,27 @@ class SeeMembersTest extends TestCase
 
         $board = Board::factory()->for($user)->create();
         $member = Membership::factory()->for($otherUser)->for($board)->create(['role' => 'member']);
-        
+
         Livewire::test(Index::class, ['board' => $board])
             ->assertSee($user->name)
             ->assertSee('Owner')
             ->assertSee($member->name)
             ->assertSee('Member');
+    }
+
+    /** @test */
+    public function a_user_can_still_visit_the_members_page_when_the_board_is_archived()
+    {
+        $this->withoutExceptionHandling();
+
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->for($user)->create(['archived' => true]);
+
+        $this->get(route('members.index', $board))
+            ->assertStatus(200)
+            ->assertSeeLivewire('members.index')
+            ->assertSeeLivewire('members.create');
     }
 }

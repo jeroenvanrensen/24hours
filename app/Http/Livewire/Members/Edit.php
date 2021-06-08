@@ -25,7 +25,7 @@ class Edit extends Component
 
     public function mount()
     {
-        $this->authorize('edit', $this->board);
+        $this->authorize('manageMemberships', $this->board);
 
         $this->role = $this->membership->role;
     }

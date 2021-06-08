@@ -23,8 +23,6 @@ class RemoveMemberFromBoardTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        Mail::fake();
-
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -45,8 +43,6 @@ class RemoveMemberFromBoardTest extends TestCase
     /** @test */
     public function members_cannot_remove_a_member()
     {
-        Mail::fake();
-
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -66,8 +62,6 @@ class RemoveMemberFromBoardTest extends TestCase
     /** @test */
     public function viewers_cannot_remove_a_member()
     {
-        Mail::fake();
-
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -87,8 +81,6 @@ class RemoveMemberFromBoardTest extends TestCase
     /** @test */
     public function non_members_cannot_remove_a_member()
     {
-        Mail::fake();
-
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -107,8 +99,6 @@ class RemoveMemberFromBoardTest extends TestCase
     /** @test */
     public function guests_cannot_remove_a_member()
     {
-        Mail::fake();
-
         $board = Board::factory()->create();
 
         $member = User::factory()->create();
@@ -127,7 +117,7 @@ class RemoveMemberFromBoardTest extends TestCase
         $this->withoutExceptionHandling();
 
         Mail::fake();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -142,7 +132,7 @@ class RemoveMemberFromBoardTest extends TestCase
             ->call('destroy')
             ->assertRedirect(route('members.index', $board));
 
-        Mail::assertQueued(YouAreRemovedMail::class, function(YouAreRemovedMail $mail) use ($member) {
+        Mail::assertQueued(YouAreRemovedMail::class, function (YouAreRemovedMail $mail) use ($member) {
             return $mail->hasTo($member->email);
         });
 
@@ -155,7 +145,7 @@ class RemoveMemberFromBoardTest extends TestCase
         $this->withoutExceptionHandling();
 
         Mail::fake();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -173,12 +163,30 @@ class RemoveMemberFromBoardTest extends TestCase
             ->call('destroy')
             ->assertRedirect(route('members.index', $board));
 
-        Mail::assertQueued(MemberRemovedMail::class, function(MemberRemovedMail $mail) use ($oldMember) {
+        Mail::assertQueued(MemberRemovedMail::class, function (MemberRemovedMail $mail) use ($oldMember) {
             return $mail->hasTo($oldMember->email);
         });
 
-        Mail::assertNotQueued(YouAreRemovedMail::class, function(YouAreRemovedMail $mail) use ($oldMember) {
+        Mail::assertNotQueued(YouAreRemovedMail::class, function (YouAreRemovedMail $mail) use ($oldMember) {
             return $mail->hasTo($oldMember->email);
         });
+    }
+
+    /** @test */
+    public function a_board_owner_cannot_remove_a_member_when_the_board_is_archived()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->for($user)->create(['archived' => true]);
+
+        $member = User::factory()->create();
+        $membership = Membership::factory()->for($member)->for($board)->create();
+
+        Livewire::test(Delete::class, ['board' => $board, 'membership' => $membership])
+            ->call('destroy')
+            ->assertStatus(403);
+
+        $this->assertTrue($membership->exists());
     }
 }

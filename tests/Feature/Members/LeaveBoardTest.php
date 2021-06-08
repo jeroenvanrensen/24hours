@@ -20,8 +20,6 @@ class LeaveBoardTest extends TestCase
     /** @test */
     public function a_board_owner_cannot_leave_a_board()
     {
-        Mail::fake();
-
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -37,8 +35,6 @@ class LeaveBoardTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        Mail::fake();
-        
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -50,7 +46,7 @@ class LeaveBoardTest extends TestCase
         Livewire::test(Index::class, ['board' => $board])
             ->call('leave')
             ->assertRedirect(route('boards.index'));
-        
+
         $this->assertFalse($membership->exists());
     }
 
@@ -59,8 +55,6 @@ class LeaveBoardTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        Mail::fake();
-        
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -72,7 +66,7 @@ class LeaveBoardTest extends TestCase
         Livewire::test(Index::class, ['board' => $board])
             ->call('leave')
             ->assertRedirect(route('boards.index'));
-        
+
         $this->assertFalse($membership->exists());
     }
 
@@ -82,7 +76,7 @@ class LeaveBoardTest extends TestCase
         $this->withoutExceptionHandling();
 
         Mail::fake();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -99,18 +93,38 @@ class LeaveBoardTest extends TestCase
             ->assertRedirect(route('boards.index'));
 
         // The board owner will get an email when someone leaves a board
-        Mail::assertQueued(BoardLeftMail::class, function(BoardLeftMail $mail) use ($boardOwner) {
+        Mail::assertQueued(BoardLeftMail::class, function (BoardLeftMail $mail) use ($boardOwner) {
             return $mail->hasTo($boardOwner->email);
         });
 
         // All members will get an email when someone leaves a board
-        Mail::assertQueued(BoardLeftMail::class, function(BoardLeftMail $mail) use ($alreadyMember) {
+        Mail::assertQueued(BoardLeftMail::class, function (BoardLeftMail $mail) use ($alreadyMember) {
             return $mail->hasTo($alreadyMember->email);
         });
 
         // The leaving member won't get an email when he leaves a board
-        Mail::assertNotQueued(BoardLeftMail::class, function(BoardLeftMail $mail) use ($user) {
+        Mail::assertNotQueued(BoardLeftMail::class, function (BoardLeftMail $mail) use ($user) {
             return $mail->hasTo($user->email);
         });
+    }
+
+    /** @test */
+    public function a_user_can_leave_the_board_when_the_board_is_archived()
+    {
+        $this->withoutExceptionHandling();
+
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->create(['archived' => true]);
+        $membership = Membership::factory()->for($user)->for($board)->create();
+
+        $this->assertTrue($membership->exists());
+
+        Livewire::test(Index::class, ['board' => $board])
+            ->call('leave')
+            ->assertRedirect(route('boards.index'));
+
+        $this->assertFalse($membership->exists());
     }
 }

@@ -25,8 +25,6 @@ class DeleteBoardsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        Mail::fake();
-        
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -46,8 +44,6 @@ class DeleteBoardsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        Mail::fake();
-        
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -68,8 +64,6 @@ class DeleteBoardsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        Mail::fake();
-        
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -90,8 +84,6 @@ class DeleteBoardsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        Mail::fake();
-        
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -113,7 +105,7 @@ class DeleteBoardsTest extends TestCase
         $this->withoutExceptionHandling();
 
         Mail::fake();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -127,7 +119,7 @@ class DeleteBoardsTest extends TestCase
             ->call('destroy')
             ->assertRedirect(route('boards.index'));
 
-        Mail::assertQueued(BoardDeletedMail::class, function(BoardDeletedMail $mail) use ($otherUser) {
+        Mail::assertQueued(BoardDeletedMail::class, function (BoardDeletedMail $mail) use ($otherUser) {
             return $mail->hasTo($otherUser->email);
         });
     }
@@ -136,7 +128,7 @@ class DeleteBoardsTest extends TestCase
     public function deleting_a_board_deletes_all_its_invitations_too()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -150,5 +142,24 @@ class DeleteBoardsTest extends TestCase
             ->assertRedirect(route('boards.index'));
 
         $this->assertFalse($invitation->exists());
+    }
+
+    /** @test */
+    public function archived_boards_can_be_deleted_too()
+    {
+        $this->withoutExceptionHandling();
+
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->for($user)->create(['archived' => true]);
+
+        $this->assertTrue($board->exists());
+
+        Livewire::test(Edit::class, ['board' => $board])
+            ->call('destroy')
+            ->assertRedirect(route('boards.index'));
+
+        $this->assertFalse($board->exists());
     }
 }

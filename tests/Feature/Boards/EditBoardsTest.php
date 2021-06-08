@@ -16,10 +16,10 @@ class EditBoardsTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function a_user_can_visit_the_edit_board_page()
+    public function the_board_owner_can_visit_the_edit_board_page()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -78,10 +78,25 @@ class EditBoardsTest extends TestCase
     }
 
     /** @test */
-    public function a_user_can_edit_a_board()
+    public function the_board_owner_can_visit_the_edit_board_page_when_the_board_is_archived()
     {
         $this->withoutExceptionHandling();
-        
+
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->for($user)->create(['archived' => true]);
+
+        $this->get(route('boards.edit', $board))
+            ->assertStatus(200)
+            ->assertSeeLivewire('boards.edit');
+    }
+
+    /** @test */
+    public function the_board_owner_can_edit_a_board()
+    {
+        $this->withoutExceptionHandling();
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -101,7 +116,7 @@ class EditBoardsTest extends TestCase
     public function a_board_requires_a_name()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 

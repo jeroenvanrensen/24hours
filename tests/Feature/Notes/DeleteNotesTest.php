@@ -18,10 +18,10 @@ class DeleteNotesTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function a_user_can_delete_a_note_from_the_edit_page()
+    public function the_board_owner_can_delete_a_note_from_the_edit_page()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -33,7 +33,7 @@ class DeleteNotesTest extends TestCase
         Livewire::test(Edit::class, ['note' => $note])
             ->call('destroy')
             ->assertRedirect(route('boards.show', $board));
-        
+
         $this->assertFalse($note->exists());
     }
 
@@ -41,12 +41,12 @@ class DeleteNotesTest extends TestCase
     public function members_can_delete_notes_from_the_edit_page()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
         $board = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+        Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
         $note = Note::factory()->for($board)->create();
 
         $this->assertTrue($note->exists());
@@ -54,7 +54,7 @@ class DeleteNotesTest extends TestCase
         Livewire::test(Edit::class, ['note' => $note])
             ->call('destroy')
             ->assertRedirect(route('boards.show', $board));
-        
+
         $this->assertFalse($note->exists());
     }
 
@@ -65,21 +65,37 @@ class DeleteNotesTest extends TestCase
         $this->actingAs($user);
 
         $board = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
+        Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
         $note = Note::factory()->for($board)->create();
 
         Livewire::test(Edit::class, ['note' => $note])
             ->call('destroy')
             ->assertStatus(403);
-        
+
         $this->assertTrue($note->exists());
     }
-    
+
     /** @test */
-    public function a_user_can_delete_a_note_from_the_board_page()
+    public function a_user_cannot_delete_notes_from_the_edit_page_when_the_board_is_archived()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->for($user)->create(['archived' => true]);
+        $note = Note::factory()->for($board)->create();
+
+        Livewire::test(Edit::class, ['note' => $note])
+            ->call('destroy')
+            ->assertStatus(403);
+
+        $this->assertTrue($note->exists());
+    }
+
+    /** @test */
+    public function the_board_owner_can_delete_a_note_from_the_board_page()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -91,7 +107,7 @@ class DeleteNotesTest extends TestCase
         Livewire::test(Index::class, ['board' => $board])
             ->call('deleteNote', $note)
             ->assertRedirect(route('boards.show', $board));
-        
+
         $this->assertFalse($note->exists());
     }
 
@@ -99,12 +115,12 @@ class DeleteNotesTest extends TestCase
     public function members_can_delete_notes_from_the_board_page()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
         $board = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+        Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
         $note = Note::factory()->for($board)->create();
 
         $this->assertTrue($note->exists());
@@ -112,7 +128,7 @@ class DeleteNotesTest extends TestCase
         Livewire::test(Index::class, ['board' => $board])
             ->call('deleteNote', $note)
             ->assertRedirect(route('boards.show', $board));
-        
+
         $this->assertFalse($note->exists());
     }
 
@@ -123,7 +139,23 @@ class DeleteNotesTest extends TestCase
         $this->actingAs($user);
 
         $board = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
+        Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
+        $note = Note::factory()->for($board)->create();
+
+        Livewire::test(Index::class, ['board' => $board])
+            ->call('deleteNote', $note)
+            ->assertStatus(403);
+
+        $this->assertTrue($note->exists());
+    }
+
+    /** @test */
+    public function a_user_cannot_delete_notes_from_the_board_page_when_the_board_is_archived()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->for($user)->create(['archived' => true]);
         $note = Note::factory()->for($board)->create();
 
         Livewire::test(Index::class, ['board' => $board])

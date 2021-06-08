@@ -17,10 +17,10 @@ class CreateNotesTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function a_user_can_create_a_note()
+    public function the_board_owner_can_create_a_note()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -45,12 +45,12 @@ class CreateNotesTest extends TestCase
     public function members_can_create_notes()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
         $board = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+        Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
 
         Livewire::test(Show::class, ['board' => $board])
             ->call('createNote')
@@ -66,7 +66,22 @@ class CreateNotesTest extends TestCase
         $this->actingAs($user);
 
         $board = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
+        Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
+
+        Livewire::test(Show::class, ['board' => $board])
+            ->call('createNote')
+            ->assertStatus(403);
+
+        $this->assertCount(0, Note::all());
+    }
+
+    /** @test */
+    public function a_user_cannot_create_notes_when_the_board_is_archived()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->for($user)->create(['archived' => true]);
 
         Livewire::test(Show::class, ['board' => $board])
             ->call('createNote')

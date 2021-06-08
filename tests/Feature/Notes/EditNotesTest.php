@@ -17,10 +17,10 @@ class EditNotesTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function a_user_can_visit_the_notes_page()
+    public function the_board_owner_can_visit_the_notes_page()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -36,7 +36,7 @@ class EditNotesTest extends TestCase
     public function members_can_visit_the_notes_page()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -53,7 +53,7 @@ class EditNotesTest extends TestCase
     public function viewers_can_visit_the_notes_page()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -89,10 +89,26 @@ class EditNotesTest extends TestCase
     }
 
     /** @test */
+    public function a_user_can_still_visit_the_note_page_when_the_board_is_archived()
+    {
+        $this->withoutExceptionHandling();
+
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->for($user)->create(['archived' => true]);
+        $note = Note::factory()->for($board)->create();
+
+        $this->get(route('notes.edit', $note))
+            ->assertStatus(200)
+            ->assertSeeLivewire('notes.edit');
+    }
+
+    /** @test */
     public function the_updated_at_column_is_updated_after_editing_a_note()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -111,10 +127,10 @@ class EditNotesTest extends TestCase
     }
 
     /** @test */
-    public function a_user_can_edit_a_note()
+    public function the_board_owner_can_edit_a_note()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -133,7 +149,7 @@ class EditNotesTest extends TestCase
     public function members_can_edit_a_note()
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -150,7 +166,7 @@ class EditNotesTest extends TestCase
     }
 
     /** @test */
-    public function viewers_can_edit_a_note()
+    public function viewers_cannot_edit_a_note()
     {
         $user = User::factory()->create();
         $this->actingAs($user);
@@ -166,14 +182,30 @@ class EditNotesTest extends TestCase
         $this->assertNotEquals('My Note', $note->fresh()->body);
     }
 
-    /** 
+    /** @test */
+    public function a_user_cannot_edit_the_note_when_the_board_is_archived()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $board = Board::factory()->for($user)->create(['archived' => true]);
+        $note = Note::factory()->for($board)->create();
+
+        Livewire::test(Edit::class, ['note' => $note])
+            ->set('body', 'My Note')
+            ->assertStatus(403);
+
+        $this->assertNotEquals('My Note', $note->fresh()->body);
+    }
+
+    /**
      * @test
      * @dataProvider titlesProvider
      */
     public function the_title_is_automatically_updated($body, $title)
     {
         $this->withoutExceptionHandling();
-        
+
         $user = User::factory()->create();
         $this->actingAs($user);
 

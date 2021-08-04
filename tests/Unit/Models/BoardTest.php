@@ -1,158 +1,93 @@
 <?php
 
-namespace Tests\Unit\Models;
-
 use App\Models\Board;
 use App\Models\Invitation;
 use App\Models\Link;
 use App\Models\Membership;
 use App\Models\Note;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use function Pest\Faker\faker;
 
-/** @group models */
-class BoardTest extends TestCase
-{
-    use RefreshDatabase;
+uses()->beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function a_board_has_a_name()
-    {
-        $this->withoutExceptionHandling();
+it('has a name', function () {
+    $name = faker()->word();
+    $board = Board::factory()->create(['name' => $name]);
+    expect($board->name)->toBe($name);
+});
 
-        $board = Board::factory()->create([
-            'name' => 'My Board'
-        ]);
+it('can be archived', function () {
+    $board = Board::factory()->create(['archived' => true]);
+    expect($board->archived)->toBeTrue();
 
-        $this->assertEquals('My Board', $board->name);
-    }
+    $board = Board::factory()->create(['archived' => false]);
+    expect($board->archived)->toBeFalse();
+});
 
-    /** @test */
-    public function a_board_is_archived()
-    {
-        $this->withoutExceptionHandling();
+it('belongs to a user', function () {
+    $user = User::factory()->create();
+    $board = Board::factory()->create(['user_id' => $user->id]);
 
-        $board = Board::factory()->create([
-            'archived' => true
-        ]);
+    expect($board->user_id)->toBe($user->id);
+    expect($board->user)->toBeInstanceOf(User::class);
+    expect($board->user->id)->toBe($user->id);
+});
 
-        $this->assertTrue($board->fresh()->archived);
+it('has many links', function () {
+    $board = Board::factory()->create();
+    $link = Link::factory()->for($board)->create();
 
-        $board = Board::factory()->create([
-            'archived' => false
-        ]);
+    expect($board->links)->toHaveCount(1);
+    expect($board->links->first())->toBeInstanceOf(Link::class);
+    expect($board->links->first()->id)->toBe($link->id);
+});
 
-        $this->assertFalse($board->fresh()->archived);
-    }
+it('has many notes', function () {
+    $board = Board::factory()->create();
+    $note = Note::factory()->for($board)->create();
 
-    /** @test */
-    public function a_board_belongs_to_a_user()
-    {
-        $this->withoutExceptionHandling();
+    expect($board->notes)->toHaveCount(1);
+    expect($board->notes->first())->toBeInstanceOf(Note::class);
+    expect($board->notes->first()->id)->toBe($note->id);
+});
 
-        $user = User::factory()->create();
+it('has many items', function () {
+    $board = Board::factory()->create();
+    $link = Link::factory()->for($board)->create();
+    $note = Note::factory()->for($board)->create();
 
-        $board = Board::factory()->create([
-            'user_id' => $user->id
-        ]);
+    expect($board->items)->toHaveCount(2);
+    expect($board->items->first())->toBeInstanceOf(Note::class);
+    expect($board->items->first()->id)->toBe($note->id);
+    expect($board->items->last())->toBeInstanceOf(Link::class);
+    expect($board->items->last()->id)->toBe($link->id);
+});
 
-        $this->assertEquals($user->id, $board->user_id);
+it('has many invitations', function () {
+    $board = Board::factory()->create();
+    $invitation = Invitation::factory()->for($board)->create();
 
-        $this->assertInstanceOf(User::class, $board->user);
-        $this->assertEquals($user->id, $board->user->id);
-    }
+    expect($board->invitations)->toHaveCount(1);
+    expect($board->invitations->first())->toBeInstanceOf(Invitation::class);
+    expect($board->invitations->first()->id)->toBe($invitation->id);
+});
 
-    /** @test */
-    public function a_board_has_many_links()
-    {
-        $this->withoutExceptionHandling();
+it('has many memberships', function () {
+    $board = Board::factory()->create();
+    $membership = Membership::factory()->for($board)->create();
 
-        $board = Board::factory()->create();
+    expect($board->memberships)->toHaveCount(1);
+    expect($board->memberships->first())->toBeInstanceOf(Membership::class);
+    expect($board->memberships->first()->id)->toBe($membership->id);
+});
 
-        $link = Link::factory()->for($board)->create();
+it('can be archived and archived', function () {
+    $board = Board::factory()->create(['archived' => false]);
+    expect($board->fresh()->archived)->toBeFalse();
 
-        $this->assertCount(1, $board->links);
-        $this->assertInstanceOf(Link::class, $board->links[0]);
-        $this->assertEquals($link->id, $board->links[0]->id);
-    }
+    $board->archive();
+    expect($board->fresh()->archived)->toBeTrue();
 
-    /** @test */
-    public function a_board_has_many_notes()
-    {
-        $this->withoutExceptionHandling();
-
-        $board = Board::factory()->create();
-
-        $note = Note::factory()->for($board)->create();
-
-        $this->assertCount(1, $board->notes);
-        $this->assertInstanceOf(Note::class, $board->notes[0]);
-        $this->assertEquals($note->id, $board->notes[0]->id);
-    }
-
-    /** @test */
-    public function a_board_has_many_items()
-    {
-        $this->withoutExceptionHandling();
-
-        $board = Board::factory()->create();
-
-        $link = Link::factory()->for($board)->create();
-        $note = Note::factory()->for($board)->create();
-
-        $this->assertCount(2, $board->items);
-
-        $this->assertInstanceOf(Note::class, $board->items[0]);
-        $this->assertEquals($note->id, $board->items[0]->id);
-
-        $this->assertInstanceOf(Link::class, $board->items[1]);
-        $this->assertEquals($link->id, $board->items[1]->id);
-    }
-
-    /** @test */
-    public function a_board_has_many_invitations()
-    {
-        $this->withoutExceptionHandling();
-
-        $board = Board::factory()->create();
-
-        $invitation = Invitation::factory()->for($board)->create();
-
-        $this->assertCount(1, $board->invitations);
-        $this->assertInstanceOf(Invitation::class, $board->invitations[0]);
-        $this->assertEquals($invitation->id, $board->invitations[0]->id);
-    }
-
-    /** @test */
-    public function a_board_has_many_memberships()
-    {
-        $this->withoutExceptionHandling();
-
-        $board = Board::factory()->create();
-
-        $membership = Membership::factory()->for($board)->create();
-
-        $this->assertCount(1, $board->memberships);
-        $this->assertInstanceOf(Membership::class, $board->memberships[0]);
-        $this->assertEquals($membership->id, $board->memberships[0]->id);
-    }
-
-    /** @test */
-    public function a_board_can_be_archived_and_unarchived()
-    {
-        $this->withoutExceptionHandling();
-
-        $board = Board::factory()->create(['archived' => false]);
-
-        $this->assertFalse($board->fresh()->archived);
-
-        $board->archive();
-
-        $this->assertTrue($board->fresh()->archived);
-
-        $board->unarchive();
-
-        $this->assertFalse($board->fresh()->archived);
-    }
-}
+    $board->unarchive();
+    expect($board->fresh()->archived)->toBeFalse();
+});

@@ -12,7 +12,7 @@ class Membership extends Model
 
     protected $guarded = [];
 
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
@@ -21,12 +21,12 @@ class Membership extends Model
         });
     }
 
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function board()
+    public function board(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Board::class);
     }

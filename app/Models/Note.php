@@ -12,7 +12,7 @@ class Note extends Model
 
     protected $guarded = [];
 
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
@@ -23,7 +23,7 @@ class Note extends Model
 
     public function getWordCountAttribute(): int
     {
-       return Str::of($this->body)
+        return Str::of($this->body)
             ->replaceMatches('#<[^>]+>#', ' ') // Strip tags
             ->replaceMatches('/(I)\'m/i', '$1 am') // I'm -> I am
             ->replaceMatches('/(You)\'re/i', '$1 are') // You're -> You are
@@ -33,7 +33,7 @@ class Note extends Model
             ->wordCount();
     }
 
-    public function board()
+    public function board(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Board::class);
     }

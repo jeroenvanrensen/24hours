@@ -4,52 +4,26 @@ namespace Tests\Unit\Models;
 
 use App\Models\Board;
 use App\Models\Invitation;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Illuminate\Support\Arr;
+use function Pest\Faker\faker;
 
-/** @group models */
-class InvitationTest extends TestCase
-{
-    use RefreshDatabase;
+it('has an email', function () {
+    $email = faker()->email();
+    $invitation = Invitation::factory()->create(['email' => $email]);
+    expect($invitation->email)->toBe($email);
+});
 
-    /** @test */
-    public function an_invitation_has_an_email()
-    {
-        $this->withoutExceptionHandling();
-        
-        $invitation = Invitation::factory()->create([
-            'email' => 'john@example.org'
-        ]);
+it('has a role', function () {
+    $role = Arr::random(['viewer', 'member']);
+    $invitation = Invitation::factory()->create(['role' => $role]);
+    expect($invitation->role)->toBe($role);
+});
 
-        $this->assertEquals('john@example.org', $invitation->email);
-    }
+it('belongs to a board', function () {
+    $board = Board::factory()->create();
+    $invitation = Invitation::factory()->create(['board_id' => $board->id]);
 
-    /** @test */
-    public function an_invitation_has_a_role()
-    {
-        $this->withoutExceptionHandling();
-        
-        $invitation = Invitation::factory()->create([
-            'role' => 'member'
-        ]);
-
-        $this->assertEquals('member', $invitation->role);
-    }
-
-    /** @test */
-    public function an_invitation_belongs_to_a_board()
-    {
-        $this->withoutExceptionHandling();
-        
-        $board = Board::factory()->create();
-
-        $invitation = Invitation::factory()->create([
-            'board_id' => $board->id
-        ]);
-
-        $this->assertEquals($board->id, $invitation->board_id);
-
-        $this->assertInstanceOf(Board::class, $invitation->board);
-        $this->assertEquals($board->id, $invitation->board->id);
-    }
-}
+    expect($invitation->board_id)->toBe($board->id);
+    expect($invitation->board)->toBeInstanceOf(Board::class);
+    expect($invitation->board->id)->toBe($board->id);
+});

@@ -5,57 +5,28 @@ namespace Tests\Unit\Models;
 use App\Models\Board;
 use App\Models\Membership;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Illuminate\Support\Arr;
 
-/** @group models */
-class MembershipTest extends TestCase
-{
-    use RefreshDatabase;
+it('has a role', function () {
+    $role = Arr::random(['viewer', 'member']);
+    $membership = Membership::factory()->create(['role' => $role]);
+    expect($membership->role)->toBe($role);
+});
 
-    /** @test */
-    public function a_membership_has_a_role()
-    {
-        $this->withoutExceptionHandling();
-        
-        $member = Membership::factory()->create([
-            'role' => 'member'
-        ]);
+it('belongs to a user', function () {
+    $user = User::factory()->create();
+    $membership = Membership::factory()->create(['user_id' => $user->id]);
 
-        $this->assertEquals('member', $member->role);
-    }
+    expect($membership->user_id)->toBe($user->id);
+    expect($membership->user)->toBeInstanceOf(User::class);
+    expect($membership->user->id)->toBe($user->id);
+});
 
-    /** @test */
-    public function a_membership_belongs_to_a_user()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
+it('belongs to a board', function () {
+    $board = Board::factory()->create();
+    $membership = Membership::factory()->create(['board_id' => $board->id]);
 
-        $membership = Membership::factory()->create([
-            'user_id' => $user->id
-        ]);
-
-        $this->assertEquals($user->id, $membership->user_id);
-
-        $this->assertInstanceOf(User::class, $membership->user);
-        $this->assertEquals($user->id, $membership->user->id);
-    }
-
-    /** @test */
-    public function a_membership_belongs_to_a_board()
-    {
-        $this->withoutExceptionHandling();
-        
-        $board = Board::factory()->create();
-
-        $membership = Membership::factory()->create([
-            'board_id' => $board->id
-        ]);
-
-        $this->assertEquals($board->id, $membership->board_id);
-
-        $this->assertInstanceOf(Board::class, $membership->board);
-        $this->assertEquals($board->id, $membership->board->id);
-    }
-}
+    expect($membership->board_id)->toBe($board->id);
+    expect($membership->board)->toBeInstanceOf(Board::class);
+    expect($membership->board->id)->toBe($board->id);
+});

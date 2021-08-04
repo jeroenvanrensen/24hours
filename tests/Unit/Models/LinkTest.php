@@ -4,94 +4,44 @@ namespace Tests\Unit\Models;
 
 use App\Models\Board;
 use App\Models\Link;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use function Pest\Faker\faker;
 
-/** @group models */
-class LinkTest extends TestCase
-{
-    use RefreshDatabase;
+it('has a url', function () {
+    $url = faker()->url();
+    $link = Link::factory()->create(['url' => $url]);
+    expect($link->url)->toBe($url);
+});
 
-    /** @test */
-    public function a_link_has_a_url()
-    {
-        $this->withoutExceptionHandling();
-        
-        $link = Link::factory()->create([
-            'url' => 'https://tailwindcss.com/'
-        ]);
+it('has a title', function () {
+    $title = faker()->sentence();
+    $link = Link::factory()->create(['title' => $title]);
+    expect($link->title)->toBe($title);
+});
 
-        $this->assertEquals('https://tailwindcss.com/', $link->url);
-    }
+it('has a nullable image', function () {
+    $image = faker()->imageUrl();
+    $link = Link::factory()->create(['image' => $image]);
+    expect($link->image)->toBe($image);
 
-    /** @test */
-    public function a_link_has_a_title()
-    {
-        $this->withoutExceptionHandling();
-        
-        $link = Link::factory()->create([
-            'title' => 'Tailwind CSS'
-        ]);
+    $link = Link::factory()->create(['image' => null]);
+    expect($link->image)->toBeNull();
+});
 
-        $this->assertEquals('Tailwind CSS', $link->title);
-    }
+it('belongs to a board', function () {
+    $board = Board::factory()->create();
+    $link = Link::factory()->create(['board_id' => $board->id]);
 
-    /** @test */
-    public function a_link_has_a_nullable_image()
-    {
-        $this->withoutExceptionHandling();
-        
-        $link = Link::factory()->create([
-            'image' => 'https://refactoringui.nyc3.cdn.digitaloceanspaces.com/tailwind-logo.svg'
-        ]);
+    expect($link->board_id)->toBe($board->id);
+    expect($link->board)->toBeInstanceOf(Board::class);
+    expect($link->board->id)->toBe($board->id);
+});
 
-        $this->assertEquals('https://refactoringui.nyc3.cdn.digitaloceanspaces.com/tailwind-logo.svg', $link->image);
-
-        $link = Link::factory()->create([
-            'image' => null
-        ]);
-
-        $this->assertNull($link->image);
-    }
-
-    /** @test */
-    public function a_link_belongs_to_a_board()
-    {
-        $this->withoutExceptionHandling();
-        
-        $board = Board::factory()->create();
-
-        $link = Link::factory()->create([
-            'board_id' => $board->id
-        ]);
-
-        $this->assertEquals($board->id, $link->board_id);
-
-        $this->assertInstanceOf(Board::class, $link->board);
-        $this->assertEquals($board->id, $link->board->id);
-    }
-
-    /** @test */
-    public function a_link_has_a_host()
-    {
-        $this->withoutExceptionHandling();
-        
-        $link = Link::factory()->create([
-            'url' => 'https://tailwindcss.com/docs/guides/laravel'
-        ]);
-
-        $this->assertEquals('tailwindcss.com', $link->host);
-        
-        $link = Link::factory()->create([
-            'url' => 'https://play.tailwindcss.com/SEhypX52xg'
-        ]);
-
-        $this->assertEquals('play.tailwindcss.com', $link->host);
-        
-        $link = Link::factory()->create([
-            'url' => 'https://www.google.com/'
-        ]);
-
-        $this->assertEquals('google.com', $link->host);
-    }
-}
+it('has a host', function ($url, $host) {
+    $link = Link::factory()->create(['url' => $url]);
+    expect($link->host)->toBe($host);
+})->with([
+    ['https://tailwindcss.com/docs/guides/laravel', 'tailwindcss.com'],
+    ['https://play.tailwindcss.com/SEhypX52xg', 'play.tailwindcss.com'],
+    ['https://www.google.com/', 'google.com'],
+    ['https://laravel.com/docs/8.x/responses', 'laravel.com']
+]);

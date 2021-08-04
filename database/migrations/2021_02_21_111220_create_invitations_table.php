@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('board_id');
             $table->string('email');
-            $table->string('role');
+            $table->enum('role', ['viewer', 'member']);
             $table->timestamps();
         });
     }

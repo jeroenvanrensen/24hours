@@ -15,7 +15,8 @@ class LinkFactory extends Factory
         return [
             'board_id' => Board::factory(),
             'url' => $this->faker->url(),
-            'title' => $this->faker->sentence()
+            'title' => $this->faker->sentence(),
+            'image' => $this->faker->imageUrl()
         ];
     }
 }

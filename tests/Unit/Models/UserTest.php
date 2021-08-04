@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Unit\Models;
-
 use App\Models\Board;
 use App\Models\Invitation;
 use App\Models\Link;
@@ -9,265 +7,159 @@ use App\Models\Membership;
 use App\Models\Note;
 use App\Models\User;
 use Illuminate\Database\QueryException;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use function Pest\Faker\faker;
 
-/** @group models */
-class UserTest extends TestCase
-{
-    use RefreshDatabase;
+it('has a name', function () {
+    $name = faker()->name();
+    $user = User::factory()->create(['name' => $name]);
+    expect($user->name)->toBe($name);
+});
 
-    /** @test */
-    public function a_user_has_a_name()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create([
-            'name' => 'John Doe'
-        ]);
+it('has an email', function () {
+    $email = faker()->email();
+    $user = User::factory()->create(['email' => $email]);
+    expect($user->email)->toBe($email);
+});
 
-        $this->assertEquals('John Doe', $user->name);
-    }
+test('the email is unique', function () {
+    $email = faker()->email();
+    User::factory()->create(['email' => $email]);
+    User::factory()->create(['email' => $email]); // same email
+})->throws(QueryException::class);
 
-    /** @test */
-    public function a_user_has_a_unique_email()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create([
-            'email' => 'john@example.org'
-        ]);
+it('has a nullable email_verified_at column', function () {
+    $date = today()->subWeek();
+    $user = User::factory()->create(['email_verified_at' => $date]);
+    expect($user->email_verified_at)->toEqual($date);
 
-        $this->assertEquals('john@example.org', $user->email);
+    $user = User::factory()->create(['email_verified_at' => null]);
+    expect($user->email_verified_at)->toBeNull();
+});
 
-        $this->expectException(QueryException::class);
-        
-        User::factory()->create([
-            'email' => 'john@example.org' // same email
-        ]);
-    }
+it('has a password', function () {
+    $password = Hash::make($unhashed = faker()->word());
+    $user = User::factory()->create(['password' => $password]);
+    expect($user->password)->toBe($password);
+    expect(Hash::check($unhashed, $password))->toBeTrue();
+});
 
-    /** @test */
-    public function a_user_has_a_nullable_email_verified_at_column()
-    {
-        $this->withoutExceptionHandling();
+it('has a nullable remember_token', function () {
+    $token = Str::random(16);
+    $user = User::factory()->create(['remember_token' => $token]);
+    expect($user->remember_token)->toBe($token);
 
-        $today = today();
-        
-        $user = User::factory()->create([
-            'email_verified_at' => $today
-        ]);
+    $user = User::factory()->create(['remember_token' => null]);
+    expect($user->remember_token)->toBeNull();
+});
 
-        $this->assertEquals($today, $user->email_verified_at);
-        
-        $user = User::factory()->create([
-            'email_verified_at' => null
-        ]);
+it('has a first name', function ($name, $firstname) {
+    $user = User::factory()->create(['name' => $name]);
+    expect($user->first_name)->toBe($firstname);
+})->with([
+    ['John', 'John'],
+    ['John Doe', 'John'],
+    ['Sylvia G. Smith', 'Sylvia'],
+    ['Jeroen van Rensen', 'Jeroen']
+]);
 
-        $this->assertNull($user->email_verified_at);
-    }
+it('has many boards', function () {
+    $user = User::factory()->create();
+    $board = Board::factory()->for($user)->create();
 
-    /** @test */
-    public function a_user_has_a_password()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create([
-            'password' => 'password'
-        ]);
+    expect($user->boards)->toHaveCount(1);
+    expect($user->boards->first())->toBeInstanceOf(Board::class);
+    expect($user->boards->first()->id)->toBe($board->id);
+});
 
-        $this->assertEquals('password', $user->password);
-    }
+it('has many links', function () {
+    $user = User::factory()->create();
+    $board = Board::factory()->for($user)->create();
+    $link = Link::factory()->for($board)->create();
 
-    /** @test */
-    public function a_user_has_a_nullable_remember_token_column()
-    {
-        $this->withoutExceptionHandling();
+    expect($user->links)->toHaveCount(1);
+    expect($user->links->first())->toBeInstanceOf(Link::class);
+    expect($user->links->first()->id)->toBe($link->id);
+});
 
-        $today = today();
-        
-        $user = User::factory()->create([
-            'remember_token' => $today
-        ]);
+it('has many notes', function () {
+    $user = User::factory()->create();
+    $board = Board::factory()->for($user)->create();
+    $note = Note::factory()->for($board)->create();
 
-        $this->assertEquals($today, $user->remember_token);
-        
-        $user = User::factory()->create([
-            'remember_token' => null
-        ]);
+    expect($user->notes)->toHaveCount(1);
+    expect($user->notes->first())->toBeInstanceOf(Note::class);
+    expect($user->notes->first()->id)->toBe($note->id);
+});
 
-        $this->assertNull($user->remember_token);
-    }
+it('has many memberships', function () {
+    $user = User::factory()->create();
+    $membership = Membership::factory()->for($user)->create();
 
-    /** 
-     * @test
-     * @dataProvider namesProvider
-     */
-    public function a_user_has_a_first_name($fullName, $firstName)
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create(['name' => $fullName]);
+    expect($user->memberships)->toHaveCount(1);
+    expect($user->memberships->first())->toBeInstanceOf(Membership::class);
+    expect($user->memberships->first()->id)->toBe($membership->id);
+});
 
-        $this->assertEquals($firstName, $user->first_name);
-    }
+it('has visible boards', function () {
+    $user = User::factory()->create();
 
-    public function namesProvider()
-    {
-        return [
-            ['John', 'John'],
-            ['John Doe', 'John'],
-            ['Sylvia G. Smith', 'Sylvia'],
-            ['Jeroen van Rensen', 'Jeroen']
-        ];
-    }
+    $firstBoard = Board::factory()->for($user)->create(); // Owner - visible
 
-    /** @test */
-    public function a_user_has_many_boards()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
+    $secondBoard = Board::factory()->create(); // Member - visible
+    Membership::factory()->for($user)->for($secondBoard)->create();
 
-        $board = Board::factory()->for($user)->create();
+    $thirdBoard = Board::factory()->create(); // Invited - not visible
+    Invitation::factory()->for($thirdBoard)->create(['email' => $user->email]);
 
-        $this->assertCount(1, $user->boards);
-        $this->assertInstanceOf(Board::class, $user->boards[0]);
-        $this->assertEquals($board->id, $user->boards[0]->id);
-    }
+    $fourthBoard = Board::factory()->create(); // No relation - not visible
 
-    /** @test */
-    public function a_user_has_many_links()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
+    expect($user->visibleBoards())->toHaveCount(2);
+    expect($user->visibleBoards()->last()->id)->toBe($firstBoard->id);
+    expect($user->visibleBoards()->first()->id)->toBe($secondBoard->id);
+});
 
-        $board = Board::factory()->for($user)->create();
+it('has visible links', function () {
+    $user = User::factory()->create();
 
-        $link = Link::factory()->for($board)->create();
+    $firstBoard = Board::factory()->for($user)->create(); // Owner - visible
+    $firstLink = Link::factory()->for($firstBoard)->create();
 
-        $this->assertCount(1, $user->links);
-        $this->assertInstanceOf(Link::class, $user->links[0]);
-        $this->assertEquals($link->id, $user->links[0]->id);
-    }
+    $secondBoard = Board::factory()->create(); // Member - visible
+    Membership::factory()->for($user)->for($secondBoard)->create();
+    $secondLink = Link::factory()->for($secondBoard)->create();
 
-    /** @test */
-    public function a_user_has_many_notes()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
+    $thirdBoard = Board::factory()->create(); // Invited - not visible
+    Invitation::factory()->for($thirdBoard)->create(['email' => $user->email]);
+    $thirdLink = Link::factory()->for($thirdBoard)->create();
 
-        $board = Board::factory()->for($user)->create();
+    $fourthBoard = Board::factory()->create(); // No relation - not visible
+    $fourthLink = Link::factory()->for($fourthBoard)->create();
 
-        $note = Note::factory()->for($board)->create();
+    expect($user->visibleLinks())->toHaveCount(2);
+    expect($user->visibleLinks()->last()->id)->toBe($firstLink->id);
+    expect($user->visibleLinks()->first()->id)->toBe($secondBoard->id);
+});
 
-        $this->assertCount(1, $user->notes);
-        $this->assertInstanceOf(Note::class, $user->notes[0]);
-        $this->assertEquals($note->id, $user->notes[0]->id);
-    }
+it('has visible notes', function () {
+    $user = User::factory()->create();
 
-    /** @test */
-    public function a_user_has_many_memberships()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
+    $firstBoard = Board::factory()->for($user)->create(); // Owner - visible
+    $firstNote = Note::factory()->for($firstBoard)->create();
 
-        $membership = Membership::factory()->for($user)->create();
+    $secondBoard = Board::factory()->create(); // Member - visible
+    $membership = Membership::factory()->for($user)->for($secondBoard)->create();
+    $secondNote = Note::factory()->for($secondBoard)->create();
 
-        $this->assertCount(1, $user->memberships);
-        $this->assertInstanceOf(Membership::class, $user->memberships[0]);
-        $this->assertEquals($membership->id, $user->memberships[0]->id);
-    }
+    $thirdBoard = Board::factory()->create(); // Invited - not visible
+    $invitation = Invitation::factory()->for($thirdBoard)->create(['email' => $user->email]);
+    $thirdNote = Note::factory()->for($thirdBoard)->create();
 
-    /** @test */
-    public function a_user_has_visible_boards()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
+    $fourthBoard = Board::factory()->create(); // No relation - not visible
+    $fourthNote = Note::factory()->for($fourthBoard)->create();
 
-        // Owner - visible
-        $firstBoard = Board::factory()->for($user)->create();
-
-        // Member - visible
-        $secondBoard = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($secondBoard)->create();
-
-        // Invited - not visible
-        $thirdBoard = Board::factory()->create();
-        $invitation = Invitation::factory()->for($thirdBoard)->create(['email' => $user->email]);
-
-        // Nothing - not visible
-        $fourthBoard = Board::factory()->create();
-
-        $this->assertCount(2, $user->visibleBoards());
-
-        $this->assertEquals($firstBoard->id, $user->visibleBoards()[1]->id);
-        $this->assertEquals($secondBoard->id, $user->visibleBoards()[0]->id);
-    }
-
-    /** @test */
-    public function a_user_has_visible_links()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-
-        // Owner - visible
-        $firstBoard = Board::factory()->for($user)->create();
-        $firstLink = Link::factory()->for($firstBoard)->create();
-
-        // Member - visible
-        $secondBoard = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($secondBoard)->create();
-        $secondLink = Link::factory()->for($secondBoard)->create();
-
-        // Invited - not visible
-        $thirdBoard = Board::factory()->create();
-        $invitation = Invitation::factory()->for($thirdBoard)->create(['email' => $user->email]);
-        $thirdLink = Link::factory()->for($thirdBoard)->create();
-
-        // Nothing - not visible
-        $fourthBoard = Board::factory()->create();
-        $fourthLink = Link::factory()->for($fourthBoard)->create();
-
-        $this->assertCount(2, $user->visibleLinks());
-
-        $this->assertEquals($firstLink->id, $user->visibleLinks()[1]->id);
-        $this->assertEquals($secondLink->id, $user->visibleLinks()[0]->id);
-    }
-
-    /** @test */
-    public function a_user_has_visible_notes()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-
-        // Owner - visible
-        $firstBoard = Board::factory()->for($user)->create();
-        $firstNote = Note::factory()->for($firstBoard)->create();
-
-        // Member - visible
-        $secondBoard = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($secondBoard)->create();
-        $secondNote = Note::factory()->for($secondBoard)->create();
-
-        // Invited - not visible
-        $thirdBoard = Board::factory()->create();
-        $invitation = Invitation::factory()->for($thirdBoard)->create(['email' => $user->email]);
-        $thirdNote = Note::factory()->for($thirdBoard)->create();
-
-        // Nothing - not visible
-        $fourthBoard = Board::factory()->create();
-        $fourthNote = Note::factory()->for($fourthBoard)->create();
-
-        $this->assertCount(2, $user->visibleNotes());
-
-        $this->assertEquals($firstNote->id, $user->visibleNotes()[1]->id);
-        $this->assertEquals($secondNote->id, $user->visibleNotes()[0]->id);
-    }
-}
+    expect($user->visibleNotes())->toHaveCount(2);
+    expect($user->visibleNotes()->last()->id)->toBe($firstNote->id);
+    expect($user->visibleNotes()->first()->id)->toBe($secondNote->id);
+});

@@ -2,24 +2,23 @@
 
 namespace App\Services\WebScraper;
 
-use Exception;
 use Goutte\Client;
+use Symfony\Component\DomCrawler\Crawler;
 
 class Scraper
 {
-    public $url;
+    public string $url;
 
-    public $crawler;
+    public Crawler $crawler;
 
     public function scrape(string $url): object
     {
         $this->url = $url;
-
         $client = new Client();
 
         try {
             $this->crawler = $client->request('GET', $url);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return (object) ['title' => 'Not found', 'image' => null];
         }
 
@@ -36,49 +35,47 @@ class Scraper
         })[0] ?? 'Not found';
     }
 
-    /** @return string|null */
-    protected function getImage()
+    protected function getImage(): string|null
     {
-        if($image = $this->getImageFromMetaProperty()) {
+        if ($image = $this->getImageFromMetaProperty()) {
             return $image;
         }
-        
-        if($image = $this->getImageFromMetaName()) {
+
+        if ($image = $this->getImageFromMetaName()) {
             return $image;
         }
 
         return $this->getImageFromTag();
     }
 
-    protected function getImageFromMetaProperty()
+    protected function getImageFromMetaProperty(): string|null
     {
         return $this->getAbsoluteImagePath(collect($this->crawler->filter('meta')->each(function ($node) {
-            if($node->attr('property') == 'og:image') {
+            if ($node->attr('property') == 'og:image') {
                 return $node->attr('content');
             }
         }))->filter()->flatten()[0] ?? null, $this->url) ?? null;
     }
 
-    protected function getImageFromMetaName()
+    protected function getImageFromMetaName(): string|null
     {
         return $this->getAbsoluteImagePath(collect($this->crawler->filter('meta')->each(function ($node) {
-            if($node->attr('name') == 'og:image') {
+            if ($node->attr('name') == 'og:image') {
                 return $node->attr('content');
             }
         }))->filter()->flatten()[0] ?? null, $this->url) ?? null;
     }
 
-    protected function getImageFromTag()
+    protected function getImageFromTag(): string|null
     {
         return $this->crawler->filter('img')->each(function ($node) {
             return $this->getAbsoluteImagePath($node->attr('src'), $this->url);
         })[0] ?? null;
     }
 
-    /** @return string|null */
-    protected function getAbsoluteImagePath($relative, $host)
+    protected function getAbsoluteImagePath($relative, $host): string|null
     {
-        if(empty($relative)) {
+        if (empty($relative)) {
             return null;
         }
 
@@ -88,8 +85,8 @@ class Scraper
         }
 
         // queries and anchors
-        if (substr($relative, 0) =='#' || substr($relative, 0) =='?') {
-            return $host.$relative;
+        if (substr($relative, 0) == '#' || substr($relative, 0) == '?') {
+            return $host . $relative;
         }
 
         // parse host URL and convert to local variables: $scheme, $host, $path
@@ -112,6 +109,6 @@ class Scraper
         }
 
         // absolute URL is ready!
-        return $scheme.'://'.$abs;
+        return $scheme . '://' . $abs;
     }
 }

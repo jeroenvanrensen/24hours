@@ -20,4 +20,14 @@ class MembershipFactory extends Factory
             'role' => Arr::random(['member', 'viewer'])
         ];
     }
+
+    public function member()
+    {
+        return $this->state(fn () => ['role' => 'member']);
+    }
+
+    public function viewer()
+    {
+        return $this->state(fn () => ['role' => 'viewer']);
+    }
 }

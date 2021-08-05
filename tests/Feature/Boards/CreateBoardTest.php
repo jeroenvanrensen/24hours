@@ -1,54 +1,34 @@
 <?php
 
-namespace Tests\Feature\Boards;
-
 use App\Http\Livewire\Boards\Create;
 use App\Models\Board;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-/** @group boards */
-class CreateBoardTest extends TestCase
-{
-    use RefreshDatabase;
+uses()->beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function a_user_can_create_a_new_board()
-    {
-        $this->withoutExceptionHandling();
+test('a user can create a new board', function () {
+    $this->actingAs($user = User::factory()->create());
+    expect(Board::all())->toHaveCount(0);
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(Create::class)
+        ->set('name', 'My Board')
+        ->call('create')
+        ->assertRedirect(route('boards.show', Board::first()));
 
-        $this->assertCount(0, Board::all());
+    expect(Board::all())->toHaveCount(1);
+    tap(Board::first(), function ($board) use ($user) {
+        expect($board->user_id)->toBe($user->id);
+        expect($board->name)->toBe('My Board');
+        expect($board->archived)->toBeFalse();
+    });
+});
 
-        Livewire::test(Create::class)
-            ->set('name', 'My Board')
-            ->call('create')
-            ->assertRedirect(route('boards.show', Board::first()));
+it('requires a name', function () {
+    $this->actingAs(User::factory()->create());
 
-        $this->assertCount(1, Board::all());
-
-        $this->assertDatabaseHas('boards', [
-            'user_id' => $user->id,
-            'name' => 'My Board',
-            'archived' => 0
-        ]);
-    }
-
-    /** @test */
-    public function a_board_requires_a_name()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        Livewire::test(Create::class)
-            ->set('name', null)
-            ->call('create')
-            ->assertHasErrors('name');
-    }
-}
+    Livewire::test(Create::class)
+        ->set('name', null)
+        ->call('create')
+        ->assertHasErrors('name');
+});

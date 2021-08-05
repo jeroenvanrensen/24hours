@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Feature\Boards;
-
 use App\Http\Livewire\Boards\Edit;
 use App\Mail\BoardDeletedMail;
 use App\Models\Board;
@@ -10,156 +8,83 @@ use App\Models\Link;
 use App\Models\Membership;
 use App\Models\Note;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-/** @group boards */
-class DeleteBoardsTest extends TestCase
-{
-    use RefreshDatabase;
+uses()->beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function a_user_can_delete_a_board()
-    {
-        $this->withoutExceptionHandling();
+test('a user can delete a board', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    expect($board->exists())->toBeTrue();
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(Edit::class, ['board' => $board])
+        ->call('destroy')
+        ->assertRedirect(route('boards.index'));
 
-        $board = Board::factory()->for($user)->create();
+    expect($board->exists())->toBeFalse();
+});
 
-        $this->assertTrue($board->exists());
+test('deleting a board deletes all its links too', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    $link = Link::factory()->for($board)->create();
+    expect($link->exists())->toBeTrue();
 
-        Livewire::test(Edit::class, ['board' => $board])
-            ->call('destroy')
-            ->assertRedirect(route('boards.index'));
+    Livewire::test(Edit::class, ['board' => $board])->call('destroy');
+    expect($link->exists())->toBeFalse();
+});
 
-        $this->assertFalse($board->exists());
-    }
+test('deleting a board deletes all its notes too', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    $note = Note::factory()->for($board)->create();
+    expect($note->exists())->toBeTrue();
 
-    /** @test */
-    public function deleting_a_board_deletes_all_its_links_too()
-    {
-        $this->withoutExceptionHandling();
+    Livewire::test(Edit::class, ['board' => $board])->call('destroy');
+    expect($note->exists())->toBeFalse();
+});
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('deleting a board deletes all its memberships too', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    $membership = Membership::factory()->for($board)->create();
+    expect($membership->exists())->toBeTrue();
 
-        $board = Board::factory()->for($user)->create();
-        $link = Link::factory()->for($board)->create();
+    Livewire::test(Edit::class, ['board' => $board])->call('destroy');
+    expect($membership->exists())->toBeFalse();
+});
 
-        $this->assertTrue($link->exists());
+test('deleting a board deletes all its invitations too', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    $invitation = Invitation::factory()->for($board)->create();
+    expect($invitation->exists())->toBeTrue();
 
-        Livewire::test(Edit::class, ['board' => $board])
-            ->call('destroy')
-            ->assertRedirect(route('boards.index'));
+    Livewire::test(Edit::class, ['board' => $board])->call('destroy');
+    expect($invitation->exists())->toBeFalse();
+});
 
-        $this->assertFalse($link->exists());
-    }
+test('every member will get an email when a board is deleted', function () {
+    Mail::fake();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    $member = User::factory()->create();
+    Membership::factory()->for($board)->for($member)->create();
 
-    /** @test */
-    public function deleting_a_board_deletes_all_its_notes_too()
-    {
-        $this->withoutExceptionHandling();
+    Mail::assertNothingQueued();
+    Livewire::test(Edit::class, ['board' => $board])->call('destroy');
+    Mail::assertQueued(BoardDeletedMail::class, fn ($mail) => $mail->hasTo($member->email));
+});
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('archived boards can be deleted too', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->archived()->create();
+    expect($board->exists())->toBeTrue();
 
-        $board = Board::factory()->for($user)->create();
-        $note = Note::factory()->for($board)->create();
+    Livewire::test(Edit::class, ['board' => $board])
+        ->call('destroy')
+        ->assertRedirect(route('boards.index'));
 
-        $this->assertTrue($note->exists());
-
-        Livewire::test(Edit::class, ['board' => $board])
-            ->call('destroy')
-            ->assertRedirect(route('boards.index'));
-
-        $this->assertFalse($note->exists());
-    }
-
-    /** @test */
-    public function deleting_a_board_deletes_all_its_memberships_too()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create();
-        $membership = Membership::factory()->for($board)->create();
-
-        $this->assertTrue($membership->exists());
-
-        Livewire::test(Edit::class, ['board' => $board])
-            ->call('destroy')
-            ->assertRedirect(route('boards.index'));
-
-        $this->assertFalse($membership->exists());
-    }
-
-    /** @test */
-    public function every_member_will_get_an_email_when_a_board_is_deleted()
-    {
-        $this->withoutExceptionHandling();
-
-        Mail::fake();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $otherUser = User::factory()->create();
-        $board = Board::factory()->for($user)->create();
-        $membership = Membership::factory()->for($board)->for($otherUser)->create();
-
-        Mail::assertNothingQueued();
-
-        Livewire::test(Edit::class, ['board' => $board])
-            ->call('destroy')
-            ->assertRedirect(route('boards.index'));
-
-        Mail::assertQueued(BoardDeletedMail::class, function (BoardDeletedMail $mail) use ($otherUser) {
-            return $mail->hasTo($otherUser->email);
-        });
-    }
-
-    /** @test */
-    public function deleting_a_board_deletes_all_its_invitations_too()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create();
-        $invitation = Invitation::factory()->for($board)->create();
-
-        $this->assertTrue($invitation->exists());
-
-        Livewire::test(Edit::class, ['board' => $board])
-            ->call('destroy')
-            ->assertRedirect(route('boards.index'));
-
-        $this->assertFalse($invitation->exists());
-    }
-
-    /** @test */
-    public function archived_boards_can_be_deleted_too()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create(['archived' => true]);
-
-        $this->assertTrue($board->exists());
-
-        Livewire::test(Edit::class, ['board' => $board])
-            ->call('destroy')
-            ->assertRedirect(route('boards.index'));
-
-        $this->assertFalse($board->exists());
-    }
-}
+    expect($board->exists())->toBeFalse();
+});

@@ -1,132 +1,67 @@
 <?php
 
-namespace Tests\Feature\Boards;
-
 use App\Http\Livewire\Boards\Index;
 use App\Models\Board;
 use App\Models\Membership;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-/** @group boards */
-class SeeAllBoardsTest extends TestCase
-{
-    use RefreshDatabase;
+uses()->beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function a_user_can_visit_the_boards_index_page()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('a user can visit the boards index page', function () {
+    $this->actingAs(User::factory()->create());
 
-        $this->get(route('boards.index'))
-            ->assertStatus(200)
-            ->assertSeeLivewire('boards.index')
-            ->assertSeeLivewire('boards.create');
-    }
+    $this->get(route('boards.index'))
+        ->assertStatus(200)
+        ->assertSeeLivewire('boards.index')
+        ->assertSeeLivewire('boards.create');
+});
 
-    /** @test */
-    public function guests_cannot_visit_the_boards_index_page()
-    {
-        $this->get(route('boards.index'))
-            ->assertRedirect(route('login'));
-    }
+test('guests cannot visit the board index page', function () {
+    $this->withExceptionHandling();
+    $this->get(route('boards.index'))->assertRedirect(route('login'));
+});
 
-    /** @test */
-    public function a_user_can_see_all_their_boards()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('a user can see all their boards', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    Livewire::test(Index::class)->assertSee($board->name);
+});
 
-        $board = Board::factory()->for($user)->create();
+test('a user cannot see boards they dont own', function () {
+    $this->actingAs(User::factory()->create());
+    $board = Board::factory()->create(); // other user
+    Livewire::test(Index::class)->assertDontSee($board->name);
+});
 
-        Livewire::test(Index::class)
-            ->assertSee($board->name);
-    }
+test('users can see all boards where they are member', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->member()->create();
+    Livewire::test(Index::class)->assertSee($board->name);
+});
 
-    /** @test */
-    public function a_user_cannot_see_boards_they_dont_own()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('users can see all boards where they are viewer', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->viewer()->create();
+    Livewire::test(Index::class)->assertSee($board->name);
+});
 
-        $board = Board::factory()->create(['name' => 'A board by another user']); // other user
+test('the boards are ordered by date', function () {
+    $this->actingAs($user = User::factory()->create());
 
-        Livewire::test(Index::class)
-            ->assertDontSee($board->name);
-    }
+    $firstBoard = Board::factory()->for($user)->create(['updated_at' => now()->subWeek()]);
+    $lastBoard = Board::factory()->for($user)->create(['updated_at' => now()]);
 
-    /** @test */
-    public function users_can_see_all_boards_where_they_are_member()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(Index::class)->assertSeeInOrder([$lastBoard->name, $firstBoard->name]);
+});
 
-        $board = Board::factory()->create(['name' => 'A really long name so nothing resembles this name!']);
-        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+test('archived boards are below non archived boards', function () {
+    $this->actingAs($user = User::factory()->create());
 
-        Livewire::test(Index::class)
-            ->assertSee($board->name);
-    }
+    $archivedBoard = Board::factory()->for($user)->archived()->create(['updated_at' => now()]);
+    $regularBoard = Board::factory()->for($user)->create(['updated_at' => now()->subWeek()]);
 
-    /** @test */
-    public function users_can_see_all_boards_where_they_are_viewer()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create(['name' => 'A really long name so nothing resembles this name!']);
-        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
-
-        Livewire::test(Index::class)
-            ->assertSee($board->name);
-    } 
-
-    /** @test */
-    public function the_boards_are_ordered_by_date()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $firstBoard = Board::factory()->for($user)->create(['updated_at' => now()->subWeek()]);
-        $lastBoard = Board::factory()->for($user)->create(['updated_at' => now()]);
-
-        Livewire::test(Index::class)
-            ->assertSeeInOrder([
-                $lastBoard->name,
-                $firstBoard->name
-            ]);
-    }
-
-    /** @test */
-    public function archived_boards_are_below_nonarchived_boards()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $archivedBoard = Board::factory()->for($user)->create(['archived' => true, 'updated_at' => now()]);
-        $regularBoard = Board::factory()->for($user)->create(['updated_at' => now()->subWeek()]);
-        
-        Livewire::test(Index::class)
-            ->assertSeeInOrder([
-                $regularBoard->name,
-                $archivedBoard->name
-            ]);
-    }
-}
+    Livewire::test(Index::class)->assertSeeInOrder([$regularBoard->name, $archivedBoard->name]);
+});

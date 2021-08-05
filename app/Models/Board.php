@@ -17,6 +17,7 @@ class Board extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'user_id' => 'integer',
         'archived' => 'boolean'
     ];
 

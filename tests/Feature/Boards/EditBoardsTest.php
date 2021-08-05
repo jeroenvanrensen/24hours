@@ -1,130 +1,79 @@
 <?php
 
-namespace Tests\Feature\Boards;
-
 use App\Http\Livewire\Boards\Edit;
 use App\Models\Board;
 use App\Models\Membership;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-/** @group boards */
-class EditBoardsTest extends TestCase
-{
-    use RefreshDatabase;
+uses()->beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function the_board_owner_can_visit_the_edit_board_page()
-    {
-        $this->withoutExceptionHandling();
+test('the board owner can visit the edit board page ', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    $this->get(route('boards.edit', $board))
+        ->assertStatus(200)
+        ->assertSeeLivewire('boards.edit');
+});
 
-        $board = Board::factory()->for($user)->create();
+test('guests cannot visit the edit board page', function () {
+    $this->withExceptionHandling();
+    $board = Board::factory()->create();
+    $this->get(route('boards.edit', $board))->assertRedirect(route('login'));
+});
 
-        $this->get(route('boards.edit', $board))
-            ->assertStatus(200)
-            ->assertSeeLivewire('boards.edit');
-    }
+test('members cannot visit the edit page', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->member()->create();
+    $this->get(route('boards.edit', $board))->assertStatus(403);
+});
 
-    /** @test */
-    public function guests_cannot_visit_the_edit_board_page()
-    {
-        $board = Board::factory()->create();
+test('viewers cannot visit the edit page', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->viewer()->create();
+    $this->get(route('boards.edit', $board))->assertStatus(403);
+});
 
-        $this->get(route('boards.edit', $board))
-            ->assertRedirect(route('login'));
-    }
+test('other users cannot visit the edit board page', function () {
+    $this->withExceptionHandling();
+    $this->actingAs(User::factory()->create());
+    $board = Board::factory()->create(); // other user
+    $this->get(route('boards.edit', $board))->assertStatus(403);
+});
 
-    /** @test */
-    public function other_users_cannot_visit_the_edit_board_page()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('the board owner can visit the edit page when the board is archived', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->archived()->create();
 
-        $board = Board::factory()->create(); // other user
+    $this->get(route('boards.edit', $board))
+        ->assertStatus(200)
+        ->assertSeeLivewire('boards.edit');
+});
 
-        $this->get(route('boards.edit', $board))
-            ->assertStatus(403);
-    }
+test('the board owner can edit a board', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    expect($board->name)->not()->toBe('New Board Name');
 
-    /** @test */
-    public function members_cannot_visit_the_edit_page()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(Edit::class, ['board' => $board])
+        ->set('board.name', 'New Board Name')
+        ->call('update')
+        ->assertRedirect(route('boards.show', $board));
 
-        $board = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+    $this->assertEquals('New Board Name', $board->fresh()->name);
+});
 
-        $this->get(route('boards.edit', $board))
-            ->assertStatus(403);
-    }
+it('requires a name', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
 
-    /** @test */
-    public function viewer_cannot_visit_the_edit_page()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
-
-        $this->get(route('boards.edit', $board))
-            ->assertStatus(403);
-    }
-
-    /** @test */
-    public function the_board_owner_can_visit_the_edit_board_page_when_the_board_is_archived()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create(['archived' => true]);
-
-        $this->get(route('boards.edit', $board))
-            ->assertStatus(200)
-            ->assertSeeLivewire('boards.edit');
-    }
-
-    /** @test */
-    public function the_board_owner_can_edit_a_board()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create();
-
-        $this->assertNotEquals('New Board Name', $board->fresh()->name);
-
-        Livewire::test(Edit::class, ['board' => $board])
-            ->set('board.name', 'New Board Name')
-            ->call('update')
-            ->assertRedirect(route('boards.show', $board));
-
-        $this->assertEquals('New Board Name', $board->fresh()->name);
-    }
-
-    /** @test */
-    public function a_board_requires_a_name()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create();
-
-        Livewire::test(Edit::class, ['board' => $board])
-            ->set('board.name', null)
-            ->call('update')
-            ->assertHasErrors('board.name');
-    }
-}
+    Livewire::test(Edit::class, ['board' => $board])
+        ->set('board.name', null)
+        ->call('update')
+        ->assertHasErrors('board.name');
+});

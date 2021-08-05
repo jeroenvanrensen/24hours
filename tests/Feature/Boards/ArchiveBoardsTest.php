@@ -1,249 +1,129 @@
 <?php
 
-namespace Tests\Feature\Boards;
-
 use App\Http\Livewire\Boards\Show;
 use App\Mail\BoardArchivedMail;
 use App\Mail\BoardUnarchivedMail;
 use App\Models\Board;
 use App\Models\Membership;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-class ArchiveBoardsTest extends TestCase
-{
-    use RefreshDatabase;
+uses()->beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function the_board_owner_can_archive_the_board()
-    {
-        $this->withoutExceptionHandling();
+test('the board owner can archive the board', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    expect($board->fresh()->archived)->toBeFalse();
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(Show::class, ['board' => $board])
+        ->call('archive')
+        ->assertRedirect(route('boards.show', $board));
 
-        $board = Board::factory()->for($user)->create();
+    expect($board->fresh()->archived)->toBeTrue();
+});
 
-        $this->assertFalse($board->fresh()->archived);
+test('board members cannot archive the board', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->member()->create();
 
-        Livewire::test(Show::class, ['board' => $board])
-            ->call('archive')
-            ->assertRedirect(route('boards.show', $board));
+    Livewire::test(Show::class, ['board' => $board])->call('archive')->assertStatus(403);
+    expect($board->fresh()->archived)->toBeFalse();
+});
 
-        $this->assertTrue($board->fresh()->archived);
-    }
+test('board viewers cannot archive the board', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->viewer()->create();
 
-    /** @test */
-    public function board_members_cannot_archive_the_board()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(Show::class, ['board' => $board])->call('archive')->assertStatus(403);
+    expect($board->fresh()->archived)->toBeFalse();
+});
 
-        $board = Board::factory()->create();
-        Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+test('all members get notified when the board is archived', function () {
+    Mail::fake();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    $member = User::factory()->create();
+    Membership::factory()->for($member)->for($board)->create();
 
-        Livewire::test(Show::class, ['board' => $board])
-            ->call('archive')
-            ->assertStatus(403);
+    Mail::assertNothingQueued();
+    Livewire::test(Show::class, ['board' => $board])->call('archive');
+    Mail::assertQueued(BoardArchivedMail::class, fn ($mail) => $mail->hasTo($member->email));
+});
 
-        $this->assertFalse($board->fresh()->archived);
-    }
+test('the board owner does not get notified when the board is archived', function () {
+    Mail::fake();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
 
-    /** @test */
-    public function board_viewers_cannot_archive_the_board()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(Show::class, ['board' => $board])->call('archive');
+    Mail::assertNothingQueued();
+});
 
-        $board = Board::factory()->create();
-        Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
+test('the board owner can unarchive a board', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->archived()->create();
+    expect($board->fresh()->archived)->toBeTrue();
 
-        Livewire::test(Show::class, ['board' => $board])
-            ->call('archive')
-            ->assertStatus(403);
+    Livewire::test(Show::class, ['board' => $board])
+        ->call('unarchive')
+        ->assertRedirect(route('boards.show', $board));
 
-        $this->assertFalse($board->fresh()->archived);
-    }
+    expect($board->fresh()->archived)->toBeFalse();
+});
 
-    /** @test */
-    public function the_board_owner_does_not_get_notified_when_the_board_is_archived()
-    {
-        $this->withoutExceptionHandling();
+test('board members cannot unarchive a board', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->archived()->create();
+    Membership::factory()->for($user)->for($board)->member()->create();
 
-        Mail::fake();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(Show::class, ['board' => $board])->call('unarchive')->assertStatus(403);
+    expect($board->fresh()->archived)->toBeTrue();
+});
 
-        $board = Board::factory()->for($user)->create();
+test('board viewers cannot unarchive a board', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->archived()->create();
+    Membership::factory()->for($user)->for($board)->viewer()->create();
 
-        Livewire::test(Show::class, ['board' => $board])
-            ->call('archive');
+    Livewire::test(Show::class, ['board' => $board])->call('unarchive')->assertStatus(403);
+    expect($board->fresh()->archived)->toBeTrue();
+});
 
-        Mail::assertNothingQueued();
-    }
+test('all members get notified when the board is unarchived', function () {
+    Mail::fake();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create(['archived' => true]);
+    $member = User::factory()->create();
+    Membership::factory()->for($member)->for($board)->member()->create();
 
-    /** @test */
-    public function all_members_get_notified_when_the_board_is_archived()
-    {
-        $this->withoutExceptionHandling();
+    Mail::assertNothingQueued();
+    Livewire::test(Show::class, ['board' => $board])->call('unarchive');
+    Mail::assertQueued(BoardUnarchivedMail::class, fn ($mail) => $mail->hasTo($member->email));
+});
 
-        Mail::fake();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('the board owner does not get notified when the board is unarchived', function () {
+    Mail::fake();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create(['archived' => true]);
 
-        $board = Board::factory()->for($user)->create();
-        $member = User::factory()->create();
-        Membership::factory()->for($member)->for($board)->create(['role' => 'member']);
+    Livewire::test(Show::class, ['board' => $board])->call('unarchive');
+    Mail::assertNothingQueued();
+});
 
-        Mail::assertNothingQueued();
+test('board viewers dont get notified when the board is unarchived', function () {
+    Mail::fake();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create(['archived' => true]);
+    $viewer = User::factory()->create();
+    Membership::factory()->for($viewer)->for($board)->viewer()->create();
 
-        Livewire::test(Show::class, ['board' => $board])
-            ->call('archive');
-
-        Mail::assertQueued(BoardArchivedMail::class, function(BoardArchivedMail $mail) use ($member) {
-            return $mail->hasTo($member->email);
-        });
-    }
-
-    /** @test */
-    public function board_viewers_get_notified_when_the_board_is_archived()
-    {
-        $this->withoutExceptionHandling();
-
-        Mail::fake();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create();
-        $viewer = User::factory()->create();
-        Membership::factory()->for($viewer)->for($board)->create(['role' => 'viewer']);
-
-        Mail::assertNothingQueued();
-
-        Livewire::test(Show::class, ['board' => $board])
-            ->call('archive');
-
-        Mail::assertQueued(BoardArchivedMail::class, function(BoardArchivedMail $mail) use ($viewer) {
-            return $mail->hasTo($viewer->email);
-        });
-    }
-
-    /** @test */
-    public function the_board_owner_can_unarchive_the_board()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create(['archived' => true]);
-
-        $this->assertTrue($board->fresh()->archived);
-
-        Livewire::test(Show::class, ['board' => $board])
-            ->call('unarchive')
-            ->assertRedirect(route('boards.show', $board));
-
-        $this->assertFalse($board->fresh()->archived);
-    }
-
-    /** @test */
-    public function board_members_cannot_unarchive_the_board()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create(['archived' => true]);
-        Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
-
-        Livewire::test(Show::class, ['board' => $board])
-            ->call('unarchive')
-            ->assertStatus(403);
-
-        $this->assertTrue($board->fresh()->archived);
-    }
-
-    /** @test */
-    public function board_viewers_cannot_unarchive_the_board()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create(['archived' => true]);
-        Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
-
-        Livewire::test(Show::class, ['board' => $board])
-            ->call('unarchive')
-            ->assertStatus(403);
-
-        $this->assertTrue($board->fresh()->archived);
-    }
-
-    /** @test */
-    public function the_board_owner_does_not_get_notified_when_the_board_is_unarchived()
-    {
-        $this->withoutExceptionHandling();
-
-        Mail::fake();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create(['archived' => true]);
-
-        Livewire::test(Show::class, ['board' => $board])
-            ->call('unarchive');
-
-        Mail::assertNothingQueued();
-    }
-
-    /** @test */
-    public function all_members_get_notified_when_the_board_is_unarchived()
-    {
-        $this->withoutExceptionHandling();
-
-        Mail::fake();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create(['archived' => true]);
-        $member = User::factory()->create();
-        Membership::factory()->for($member)->for($board)->create(['role' => 'member']);
-
-        Mail::assertNothingQueued();
-
-        Livewire::test(Show::class, ['board' => $board])
-            ->call('unarchive');
-
-        Mail::assertQueued(BoardUnarchivedMail::class, function(BoardUnarchivedMail $mail) use ($member) {
-            return $mail->hasTo($member->email);
-        });
-    }
-
-    /** @test */
-    public function board_viewers_dont_get_notified_when_the_board_is_unarchived()
-    {
-        $this->withoutExceptionHandling();
-
-        Mail::fake();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create(['archived' => true]);
-        $viewer = User::factory()->create();
-        Membership::factory()->for($viewer)->for($board)->create(['role' => 'viewer']);
-
-        Livewire::test(Show::class, ['board' => $board])
-            ->call('unarchive');
-
-        Mail::assertNothingQueued();
-    }
-}
+    Livewire::test(Show::class, ['board' => $board])->call('unarchive');
+    Mail::assertNothingQueued();
+});

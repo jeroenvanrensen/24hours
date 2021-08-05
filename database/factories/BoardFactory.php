@@ -14,7 +14,13 @@ class BoardFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'name' => $this->faker->word()
+            'name' => $this->faker->word(),
+            'archived' => false
         ];
+    }
+
+    public function archived()
+    {
+        return $this->state(fn () => ['archived' => true]);
     }
 }

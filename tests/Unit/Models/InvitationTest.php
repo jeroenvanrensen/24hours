@@ -7,6 +7,8 @@ use App\Models\Invitation;
 use Illuminate\Support\Arr;
 use function Pest\Faker\faker;
 
+uses()->beforeEach(fn () => $this->withoutExceptionHandling());
+
 it('has an email', function () {
     $email = faker()->email();
     $invitation = Invitation::factory()->create(['email' => $email]);

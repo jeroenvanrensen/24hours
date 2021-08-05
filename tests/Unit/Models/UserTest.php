@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use function Pest\Faker\faker;
 
+uses()->beforeEach(fn () => $this->withoutExceptionHandling());
+
 it('has a name', function () {
     $name = faker()->name();
     $user = User::factory()->create(['name' => $name]);

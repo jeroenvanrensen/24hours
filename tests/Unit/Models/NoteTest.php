@@ -4,9 +4,9 @@ namespace Tests\Unit\Models;
 
 use App\Models\Board;
 use App\Models\Note;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use function Pest\Faker\faker;
+
+uses()->beforeEach(fn () => $this->withoutExceptionHandling());
 
 it('has a title', function () {
     $title = faker()->sentence();

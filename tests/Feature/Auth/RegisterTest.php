@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Feature\Auth;
-
 use App\Http\Livewire\Auth\Register;
 use App\Models\Board;
 use App\Models\Link;
@@ -9,193 +7,143 @@ use App\Models\Note;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Notifications\VerifyEmail;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-/** @group auth */
-class RegisterTest extends TestCase
-{
-    use RefreshDatabase;
+uses()->beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function a_user_can_visit_the_register_page()
-    {
-        $this->withoutExceptionHandling();
+test('a user can visit the register page', function () {
+    $this->get(route('register'))
+        ->assertStatus(200)
+        ->assertSeeLivewire('auth.register');
+});
 
-        $this->get(route('register'))
-            ->assertStatus(200)
-            ->assertSeeLivewire('auth.register');
-    }
+test('authenticated users cannot visit the register page', function () {
+    $this->actingAs(User::factory()->create());
+    $this->get(route('register'))->assertRedirect(RouteServiceProvider::HOME);
+});
 
-    /** @test */
-    public function authenticated_users_cannot_visit_the_register_page()
-    {
-        $this->withoutExceptionHandling();
+test('a user can register', function () {
+    expect(User::all())->toHaveCount(0);
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(Register::class)
+        ->set('name', 'John Doe')
+        ->set('email', 'john@example.org')
+        ->set('password', 'password')
+        ->set('password_confirmation', 'password')
+        ->call('register')
+        ->assertRedirect(route('invitations.check'));
 
-        $this->get(route('register'))
-            ->assertRedirect(RouteServiceProvider::HOME);
-    }
+    expect(User::all())->toHaveCount(1);
+    tap(User::first(), function ($user) {
+        expect($user->name)->toBe('John Doe');
+        expect($user->email)->toBe('john@example.org');
+        expect(Hash::check('password', $user->password))->toBeTrue();
+    });
 
-    /** @test */
-    public function a_user_can_register()
-    {
-        $this->withoutExceptionHandling();
+    expect(Board::all())->toHaveCount(0);
+    expect(Note::all())->toHaveCount(0);
+    expect(Link::all())->toHaveCount(0);
+});
 
-        $this->assertCount(0, User::all());
+test('a user is authenticated after registering', function () {
+    expect(auth()->check())->toBeFalse();
 
-        Livewire::test(Register::class)
-            ->set('name', 'John Doe')
-            ->set('email', 'john@example.org')
-            ->set('password', 'password')
-            ->set('password_confirmation', 'password')
-            ->call('register')
-            ->assertRedirect(route('invitations.check'));
+    Livewire::test(Register::class)
+        ->set('name', 'John Doe')
+        ->set('email', 'john@example.org')
+        ->set('password', 'password')
+        ->set('password_confirmation', 'password')
+        ->call('register')
+        ->assertHasNoErrors();
 
-        $this->assertCount(1, User::all());
+    expect(auth()->check())->toBeTrue();
+});
 
-        $this->assertDatabaseHas('users', [
-            'name' => 'John Doe',
-            'email' => 'john@example.org'
-        ]);
+test('a user gets an email verification link after registering', function () {
+    Notification::fake();
+    Notification::assertNothingSent();
 
-        $this->assertCount(0, Board::all());
-        $this->assertCount(0, Note::all());
-        $this->assertCount(0, Link::all());
-    }
+    Livewire::test(Register::class)
+        ->set('name', 'John Doe')
+        ->set('email', 'john@example.org')
+        ->set('password', 'password')
+        ->set('password_confirmation', 'password')
+        ->call('register')
+        ->assertHasNoErrors();
 
-    /** @test */
-    public function a_user_is_authenticated_after_registering()
-    {
-        $this->withoutExceptionHandling();
+    Notification::assertSentTo([User::first()], VerifyEmail::class);
+});
 
-        $this->assertFalse(auth()->check());
+it('requires a name', function () {
+    Livewire::test(Register::class)
+        ->set('name', null)
+        ->set('email', 'john@example.org')
+        ->set('password', 'password')
+        ->set('password_confirmation', 'password')
+        ->call('register')
+        ->assertHasErrors('name');
+});
 
-        Livewire::test(Register::class)
-            ->set('name', 'John Doe')
-            ->set('email', 'john@example.org')
-            ->set('password', 'password')
-            ->set('password_confirmation', 'password')
-            ->call('register');
+it('requires a valid email', function () {
+    // Empty email
+    Livewire::test(Register::class)
+        ->set('name', 'John Doe')
+        ->set('email', null)
+        ->set('password', 'password')
+        ->set('password_confirmation', 'password')
+        ->call('register')
+        ->assertHasErrors('email');
 
-        $this->assertTrue(auth()->check());
-    }
+    // Invalid email
+    Livewire::test(Register::class)
+        ->set('name', 'John Doe')
+        ->set('email', 'invalid-email')
+        ->set('password', 'password')
+        ->set('password_confirmation', 'password')
+        ->call('register')
+        ->assertHasErrors('email');
+});
 
-    /** @test */
-    public function a_user_gets_an_email_verification_link_after_registering()
-    {
-        $this->withoutExceptionHandling();
+test('the email must be unique', function () {
+    User::factory()->create(['email' => 'john@example.org']);
 
-        Notification::fake();
+    Livewire::test(Register::class)
+        ->set('name', 'John Doe')
+        ->set('email', 'john@example.org') // email already exists
+        ->set('password', 'password')
+        ->set('password_confirmation', 'password')
+        ->call('register')
+        ->assertHasErrors('email');
+});
 
-        Notification::assertNothingSent();
+it('requires a password of minimal 8 characters', function () {
+    // Empty password
+    Livewire::test(Register::class)
+        ->set('name', 'John Doe')
+        ->set('email', 'john@example.org')
+        ->set('password', null)
+        ->set('password_confirmation', null)
+        ->call('register')
+        ->assertHasErrors('password');
 
-        Livewire::test(Register::class)
-            ->set('name', 'John Doe')
-            ->set('email', 'john@example.org')
-            ->set('password', 'password')
-            ->set('password_confirmation', 'password')
-            ->call('register');
+    // Too short password
+    Livewire::test(Register::class)
+        ->set('name', 'John Doe')
+        ->set('email', 'john@example.org')
+        ->set('password', 'short')
+        ->set('password_confirmation', 'short')
+        ->call('register')
+        ->assertHasErrors('password');
+});
 
-        Notification::assertSentTo(
-            [User::first()],
-            VerifyEmail::class
-        );
-    }
-
-    /** @test */
-    public function a_name_is_required()
-    {
-        $this->withoutExceptionHandling();
-
-        Livewire::test(Register::class)
-            ->set('name', null)
-            ->set('email', 'john@example.org')
-            ->set('password', 'password')
-            ->set('password_confirmation', 'password')
-            ->call('register')
-            ->assertHasErrors('name');
-    }
-
-    /** @test */
-    public function a_valid_email_is_required()
-    {
-        $this->withoutExceptionHandling();
-
-        // Empty email
-        Livewire::test(Register::class)
-            ->set('name', 'John Doe')
-            ->set('email', null)
-            ->set('password', 'password')
-            ->set('password_confirmation', 'password')
-            ->call('register')
-            ->assertHasErrors('email');
-
-        // Invalid email
-        Livewire::test(Register::class)
-            ->set('name', 'John Doe')
-            ->set('email', 'invalid-email')
-            ->set('password', 'password')
-            ->set('password_confirmation', 'password')
-            ->call('register')
-            ->assertHasErrors('email');
-    }
-
-    /** @test */
-    public function the_email_must_be_unique()
-    {
-        $this->withoutExceptionHandling();
-
-        User::factory()->create(['email' => 'john@example.org']);
-
-        Livewire::test(Register::class)
-            ->set('name', 'John Doe')
-            ->set('email', 'john@example.org') // email already exists
-            ->set('password', 'password')
-            ->set('password_confirmation', 'password')
-            ->call('register')
-            ->assertHasErrors('email');
-    }
-
-    /** @test */
-    public function a_password_with_minimal_8_characters_is_required()
-    {
-        $this->withoutExceptionHandling();
-
-        // Empty password
-        Livewire::test(Register::class)
-            ->set('name', 'John Doe')
-            ->set('email', 'john@example.org')
-            ->set('password', null)
-            ->set('password_confirmation', null)
-            ->call('register')
-            ->assertHasErrors('password');
-
-        // Too short password
-        Livewire::test(Register::class)
-            ->set('name', 'John Doe')
-            ->set('email', 'john@example.org')
-            ->set('password', 'short')
-            ->set('password_confirmation', 'short')
-            ->call('register')
-            ->assertHasErrors('password');
-    }
-
-    /** @test */
-    public function the_password_must_be_confirmed()
-    {
-        $this->withoutExceptionHandling();
-
-        Livewire::test(Register::class)
-            ->set('name', 'John Doe')
-            ->set('email', 'john@example.org')
-            ->set('password', 'password')
-            ->set('password_confirmation', 'other-password') // wrong confirmation
-            ->call('register')
-            ->assertHasErrors('password');
-    }
-}
+test('the password must be confirmed', function () {
+    Livewire::test(Register::class)
+        ->set('name', 'John Doe')
+        ->set('email', 'john@example.org')
+        ->set('password', 'password')
+        ->set('password_confirmation', 'other-password') // wrong confirmation
+        ->call('register')
+        ->assertHasErrors('password');
+});

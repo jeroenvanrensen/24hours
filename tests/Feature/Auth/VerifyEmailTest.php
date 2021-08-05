@@ -1,113 +1,74 @@
 <?php
 
-namespace Tests\Feature\Auth;
-
 use App\Http\Livewire\Auth\VerifyEmail;
 use App\Models\User;
 use Illuminate\Auth\Notifications\VerifyEmail as VerifyEmailNotification;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-/** @group auth */
-class VerifyEmailTest extends TestCase
-{
-    use RefreshDatabase;
+uses()->beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function a_user_can_visit_the_email_verification_page()
-    {
-        $this->withoutExceptionHandling();
+test('a user can visit the email verification page', function () {
+    $this->actingAs(User::factory()->create());
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    $this->get(route('verification.notice'))
+        ->assertStatus(200)
+        ->assertSeeLivewire('auth.verify-email');
+});
 
-        $this->get(route('verification.notice'))
-            ->assertStatus(200)
-            ->assertSeeLivewire('auth.verify-email');
-    }
+test('guests cannot visit the email verification page', function () {
+    $this->withExceptionHandling();
+    $this->get(route('verification.notice'))->assertRedirect(route('login'));
+});
 
-    /** @test */
-    public function guests_cannot_visit_the_email_verification_page()
-    {
-        $this->get(route('verification.notice'))
-            ->assertRedirect(route('login'));
-    }
+test('a user can request another verify link', function () {
+    Notification::fake();
+    $this->actingAs($user = User::factory()->create());
+    Notification::assertNothingSent();
 
-    /** @test */
-    public function a_user_can_request_another_verify_link()
-    {
-        $this->withoutExceptionHandling();
+    Livewire::test(VerifyEmail::class)->call('request');
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Notification::assertSentTo([$user], VerifyEmailNotification::class);
+});
 
-        Notification::fake();
+test('a user can verify their email', function () {
+    $this->actingAs($user = User::factory()->create(['email_verified_at' => null]));
 
-        Notification::assertNothingSent();
+    $verificationUrl = URL::temporarySignedRoute(
+        'verification.verify',
+        now()->addMinutes(30),
+        ['id' => $user->id, 'hash' => sha1($user->email)]
+    );
 
-        Livewire::test(VerifyEmail::class)
-            ->call('request');
+    expect($user->fresh()->email_verified_at)->toBeNull();
+    $this->get($verificationUrl)->assertRedirect(route('invitations.check'));
+    expect($user->fresh()->email_verified_at)->not()->toBeNull();
+});
 
-        Notification::assertSentTo(
-            [$user],
-            VerifyEmailNotification::class
-        );
-    }
+test('guests cannot verify their email', function () {
+    $this->withExceptionHandling();
+    $user = User::factory()->create();
 
-    /** @test */
-    public function a_user_can_verify_their_email()
-    {
-        $this->withoutExceptionHandling();
+    $verificationUrl = URL::temporarySignedRoute(
+        'verification.verify',
+        now()->addMinutes(30),
+        ['id' => $user->id, 'hash' => sha1($user->email)]
+    );
 
-        $user = User::factory()->create(['email_verified_at' => null]);
-        $this->actingAs($user);
+    $this->get($verificationUrl)->assertRedirect(route('login'));
+});
 
-        $verificationUrl = URL::temporarySignedRoute(
-            'verification.verify',
-            now()->addMinutes(30),
-            ['id' => $user->id, 'hash' => sha1($user->email)]
-        );
+test('the token must be valid', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create(['email_verified_at' => null]));
 
-        $this->assertNull($user->fresh()->email_verified_at);
+    $verificationUrl = URL::temporarySignedRoute(
+        'verification.verify',
+        now()->addMinutes(30),
+        ['id' => $user->id, 'hash' => 'wrong-hash'] // wrong hash
+    );
 
-        $this->get($verificationUrl)
-            ->assertRedirect(route('invitations.check'));
-
-        $this->assertNotNull($user->fresh()->email_verified_at);
-    }
-
-    /** @test */
-    public function guests_cannot_verify_their_email()
-    {
-        $user = User::factory()->create();
-
-        $verificationUrl = URL::temporarySignedRoute(
-            'verification.verify',
-            now()->addMinutes(30),
-            ['id' => $user->id, 'hash' => sha1($user->email)]
-        );
-
-        $this->get($verificationUrl)
-            ->assertRedirect(route('login'));
-    }
-
-    /** @test */
-    public function the_token_has_to_be_valid()
-    {
-        $user = User::factory()->create(['email_verified_at' => null]);
-        $this->actingAs($user);
-
-        $verificationUrl = URL::temporarySignedRoute(
-            'verification.verify',
-            now()->addMinutes(30),
-            ['id' => $user->id, 'hash' => 'wrong-hash'] // wrong hash
-        );
-
-        $this->get($verificationUrl);
-
-        $this->assertNull($user->fresh()->email_verified_at);
-    }
-}
+    $this->get($verificationUrl)->assertStatus(403);
+    expect($user->fresh()->email_verified_at)->toBeNull();
+});

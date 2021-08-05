@@ -19,13 +19,8 @@ class Login extends Component
 
     public function login()
     {
-        $success = auth()->attempt(['email' => $this->email, 'password' => $this->password], true);
-
-        if ($success) {
-            return redirect()->to(route('invitations.check'));
-        }
-
-        $this->addError('email', 'These credentials do not match our records.');
-        $this->reset('password');
+        return auth()->attempt(['email' => $this->email, 'password' => $this->password], $remember = true)
+            ? redirect()->to(route('invitations.check'))
+            : $this->addError('email', 'These credentials do not match our records.') && $this->reset('password');
     }
 }

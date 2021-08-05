@@ -1,135 +1,106 @@
 <?php
 
-namespace Tests\Feature\Auth;
-
 use App\Http\Livewire\Auth\ResetPassword;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-/** @group auth */
-class ResetPasswordTest extends TestCase
-{
-    use RefreshDatabase;
+uses()->beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function a_user_can_visit_the_reset_password_page()
-    {
-        $this->withoutExceptionHandling();
-        
-        $this->get(route('password.reset', Str::random()))
-            ->assertStatus(200)
-            ->assertSeeLivewire('auth.reset-password');
-    }
+test('a user can visit the reset password page', function () {
+    $this->get(route('password.reset', Str::random(16)))
+        ->assertStatus(200)
+        ->assertSeeLivewire('auth.reset-password');
+});
 
-    /** @test */
-    public function authenticated_users_cannot_visit_the_reset_password_page()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
-        
-        $this->get(route('password.reset', Str::random()))
-            ->assertRedirect(RouteServiceProvider::HOME);
-    }
+test('authenticated users cannot visit the reset password page', function () {
+    $this->actingAs(User::factory()->create());
 
-    /** @test */
-    public function a_user_can_reset_their_password()
-    {
-        $this->withoutExceptionHandling();
+    $this->get(route('password.reset', Str::random()))
+        ->assertRedirect(RouteServiceProvider::HOME);
+});
 
-        $user = User::factory()->create();
-        $oldPassword = $user->password;
+test('a user can reset their password', function () {
+    $user = User::factory()->create();
+    $token = Str::random(64);
 
-        $token = Str::random(64);
-        
-        DB::table('password_resets')->insert([
-            'email' => $user->email,
-            'token' => Hash::make($token),
-            'created_at' => now()
-        ]);
+    DB::table('password_resets')->insert([
+        'email' => $user->email,
+        'token' => Hash::make($token),
+        'created_at' => now()
+    ]);
 
-        $this->assertEquals($oldPassword, $user->fresh()->password);
+    expect(Hash::check('password', $user->fresh()->password))->toBeTrue();
+    expect(Hash::check('new-password', $user->fresh()->password))->toBeFalse();
 
-        Livewire::test(ResetPassword::class, ['token' => $token])
-            ->set('email', $user->email)
-            ->set('password', 'new-password')
-            ->set('password_confirmation', 'new-password')
-            ->call('update')
-            ->assertHasNoErrors()
-            ->assertRedirect(route('login'));
+    Livewire::test(ResetPassword::class, ['token' => $token])
+        ->set('email', $user->email)
+        ->set('password', 'new-password')
+        ->set('password_confirmation', 'new-password')
+        ->call('update')
+        ->assertHasNoErrors()
+        ->assertRedirect(route('login'));
 
-        $this->assertNotEquals($oldPassword, $user->fresh()->password);
-    }
+    expect(Hash::check('password', $user->fresh()->password))->toBeFalse();
+    expect(Hash::check('new-password', $user->fresh()->password))->toBeTrue();
+});
 
-    /** @test */
-    public function a_valid_token_is_required()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        
-        DB::table('password_resets')->insert([
-            'email' => $user->email,
-            'token' => 'token'
-        ]);
+it('requires a valid token', function () {
+    $user = User::factory()->create();
 
-        Livewire::test(ResetPassword::class, ['token' => Str::random(64)]) // invalid token
-            ->set('email', $user->email)
-            ->set('password', 'new-password')
-            ->set('password_confirmation', 'new-password')
-            ->call('update')
-            ->assertHasErrors('email', 'This password reset token is invalid.');
-    }
+    DB::table('password_resets')->insert([
+        'email' => $user->email,
+        'token' => Str::random(64)
+    ]);
 
-    /** @test */
-    public function a_password_is_required_and_must_be_at_least_8_characters()
-    {
-        $token = Str::random();
+    Livewire::test(ResetPassword::class, ['token' => Str::random(64)]) // invalid token
+        ->set('email', $user->email)
+        ->set('password', 'new-password')
+        ->set('password_confirmation', 'new-password')
+        ->call('update')
+        ->assertHasErrors('email', 'This password reset token is invalid.');
+});
 
-        DB::table('password_resets')->insert([
-            'email' => 'john@example.org',
-            'token' => $token
-        ]);
+it('requires a password of minimal 8 characters', function () {
+    $token = Str::random();
 
-        // Empty password
-        Livewire::test(ResetPassword::class, ['token' => $token])
-            ->set('email', 'john@example.org')
-            ->set('password', null)
-            ->set('password_confirmation', null)
-            ->call('update')
-            ->assertHasErrors('password');
+    DB::table('password_resets')->insert([
+        'email' => 'john@example.org',
+        'token' => $token
+    ]);
 
-        // Too short password
-        Livewire::test(ResetPassword::class, ['token' => $token])
-            ->set('email', 'john@example.org')
-            ->set('password', 'short')
-            ->set('password_confirmation', 'short')
-            ->call('update')
-            ->assertHasErrors('password');
-    }
+    // Empty password
+    Livewire::test(ResetPassword::class, ['token' => $token])
+        ->set('email', 'john@example.org')
+        ->set('password', null)
+        ->set('password_confirmation', null)
+        ->call('update')
+        ->assertHasErrors('password');
 
-    /** @test */
-    public function the_password_must_be_confirmed()
-    {
-        $token = Str::random();
+    // Too short password
+    Livewire::test(ResetPassword::class, ['token' => $token])
+        ->set('email', 'john@example.org')
+        ->set('password', 'short')
+        ->set('password_confirmation', 'short')
+        ->call('update')
+        ->assertHasErrors('password');
+});
 
-        DB::table('password_resets')->insert([
-            'email' => 'john@example.org',
-            'token' => $token
-        ]);
+test('the password must be confirmed', function () {
+    $token = Str::random();
 
-        Livewire::test(ResetPassword::class, ['token' => $token])
-            ->set('email', 'john@example.org')
-            ->set('password', 'password')
-            ->set('password_confirmation', 'wrong-confirmation') // confirmation does not match
-            ->call('update')
-            ->assertHasErrors('password');
-    }
-}
+    DB::table('password_resets')->insert([
+        'email' => 'john@example.org',
+        'token' => $token
+    ]);
+
+    Livewire::test(ResetPassword::class, ['token' => $token])
+        ->set('email', 'john@example.org')
+        ->set('password', 'password')
+        ->set('password_confirmation', 'wrong-confirmation') // confirmation does not match
+        ->call('update')
+        ->assertHasErrors('password');
+});

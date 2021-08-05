@@ -4,65 +4,38 @@ namespace Tests\Feature\Auth;
 
 use App\Http\Livewire\Auth\ConfirmPassword;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-/** @group auth */
-class ConfirmPasswordTest extends TestCase
-{
-    use RefreshDatabase;
+uses()->beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function a_user_can_visit_the_confirm_password_page()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
-        
-        $this->get(route('password.confirm'))
-            ->assertStatus(200)
-            ->assertSeeLivewire('auth.confirm-password');
-    }
+test('a user can visit the confirm password page', function () {
+    $this->actingAs(User::factory()->create());
 
-    /** @test */
-    public function guests_cannot_visit_the_confirm_password_page()
-    {
-        $this->get(route('password.confirm'))
-            ->assertRedirect(route('login'));
-    }
+    $this->get(route('password.confirm'))
+        ->assertStatus(200)
+        ->assertSeeLivewire('auth.confirm-password');
+});
 
-    /** @test */
-    public function a_user_can_confirm_their_password()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create([
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi' // password
-        ]);
-        $this->actingAs($user);
+test('guests cannot visit the confirm password page', function () {
+    $this->withExceptionHandling();
+    $this->get(route('password.confirm'))->assertRedirect(route('login'));
+});
 
-        Livewire::test(ConfirmPassword::class)
-            ->set('password', 'password')
-            ->call('confirm')
-            ->assertHasNoErrors()
-            ->assertRedirect();
-    }
+test('a user can confirm their password', function () {
+    $this->actingAs(User::factory()->create());
 
-    /** @test */
-    public function the_password_has_to_be_correct()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create([
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi' // password
-        ]);
-        $this->actingAs($user);
+    Livewire::test(ConfirmPassword::class)
+        ->set('password', 'password')
+        ->call('confirm')
+        ->assertHasNoErrors()
+        ->assertRedirect();
+});
 
-        Livewire::test(ConfirmPassword::class)
-            ->set('password', 'wrong-password') // wrong password
-            ->call('confirm')
-            ->assertHasErrors('password');
-    }
-}
+test('the password must be correct', function () {
+    $this->actingAs(User::factory()->create());
+
+    Livewire::test(ConfirmPassword::class)
+        ->set('password', 'wrong-password') // wrong password
+        ->call('confirm')
+        ->assertHasErrors('password');
+});

@@ -1,148 +1,93 @@
 <?php
 
-namespace Tests\Feature\Links;
-
 use App\Http\Livewire\Links\Create;
 use App\Models\Board;
 use App\Models\Link;
 use App\Models\Membership;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-/** @group links */
-class AddLinkTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function the_board_owner_can_add_a_link()
-    {
-        $this->withoutExceptionHandling();
+test('the board owner can add a link', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    expect(Link::all())->toHaveCount(0);
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(Create::class, ['board' => $board])
+        ->set('url', 'https://tailwindcss.com/')
+        ->call('add')
+        ->assertRedirect(route('boards.show', $board));
 
-        $board = Board::factory()->for($user)->create();
+    expect(Link::all())->toHaveCount(1);
+    tap(Link::first(), function ($link) use ($board) {
+        expect($link->board_id)->toBe($board->id);
+        expect($link->url)->toBe('https://tailwindcss.com/');
+        expect($link->title)->toBe('Tailwind CSS - Rapidly build modern websites without ever leaving your HTML.');
+    });
+});
 
-        $this->assertCount(0, Link::all());
+test('guests cannot add a link', function () {
+    $this->withExceptionHandling();
+    $board = Board::factory()->create();
+    Livewire::test(Create::class, ['board' => $board])->set('url', 'https://tailwindcss.com/')->call('add')->assertStatus(403);
+    expect(Link::all())->toHaveCount(0);
+});
 
-        Livewire::test(Create::class, ['board' => $board])
-            ->set('url', 'https://tailwindcss.com/')
-            ->call('add')
-            ->assertRedirect(route('boards.show', $board));
+test('members can add links', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->member()->create();
 
-        $this->assertCount(1, Link::all());
+    Livewire::test(Create::class, ['board' => $board])
+        ->set('url', 'https://tailwindcss.com/')
+        ->call('add')
+        ->assertRedirect(route('boards.show', $board));
 
-        $this->assertDatabaseHas('links', [
-            'board_id' => $board->id,
-            'url' => 'https://tailwindcss.com/',
-            'title' => 'Tailwind CSS - Rapidly build modern websites without ever leaving your HTML.'
-        ]);
-    }
+    expect(Link::all())->toHaveCount(1);
+});
 
-    /** @test */
-    public function guests_cannot_add_links()
-    {
-        $board = Board::factory()->create();
+test('viewers can add links', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->viewer()->create();
 
-        Livewire::test(Create::class, ['board' => $board])
-            ->set('url', 'https://tailwindcss.com/')
-            ->call('add')
-            ->assertStatus(403);
+    Livewire::test(Create::class, ['board' => $board])->set('url', 'https://tailwindcss.com/')->call('add')->assertStatus(403);
+    expect(Link::all())->toHaveCount(0);
+});
 
-        $this->assertCount(0, Link::all());
-    }
+test('other users cannot add links', function () {
+    $this->withExceptionHandling();
+    $this->actingAs(User::factory()->create());
+    $board = Board::factory()->create();
 
-    /** @test */
-    public function members_can_add_links()
-    {
-        $this->withoutExceptionHandling();
+    Livewire::test(Create::class, ['board' => $board])->set('url', 'https://tailwindcss.com/')->call('add')->assertStatus(403);
+    expect(Link::all())->toHaveCount(0);
+});
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('a user cannot add links if the board is archived', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->archived()->create();
 
-        $board = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+    Livewire::test(Create::class, ['board' => $board])->set('url', 'https://tailwindcss.com/')->call('add')->assertStatus(403);
+    expect(Link::all())->toHaveCount(0);
+});
 
-        Livewire::test(Create::class, ['board' => $board])
-            ->set('url', 'https://tailwindcss.com/')
-            ->call('add')
-            ->assertRedirect(route('boards.show', $board));
+it('requires a valid url', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
 
-        $this->assertCount(1, Link::all());
-    }
+    // Empty url
+    Livewire::test(Create::class, ['board' => $board])
+        ->set('url', null)
+        ->call('add')
+        ->assertHasErrors('url');
 
-    /** @test */
-    public function viewers_cannot_add_links()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
-
-        Livewire::test(Create::class, ['board' => $board])
-            ->set('url', 'https://tailwindcss.com/')
-            ->call('add')
-            ->assertStatus(403);
-
-        $this->assertCount(0, Link::all());
-    }
-
-    /** @test */
-    public function other_users_cannot_add_links()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create();
-
-        Livewire::test(Create::class, ['board' => $board])
-            ->set('url', 'https://tailwindcss.com/')
-            ->call('add')
-            ->assertStatus(403);
-
-        $this->assertCount(0, Link::all());
-    }
-
-    /** @test */
-    public function users_cannot_add_links_if_the_board_is_archived()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create(['archived' => true]);
-
-        Livewire::test(Create::class, ['board' => $board])
-            ->set('url', 'https://tailwindcss.com/')
-            ->call('add')
-            ->assertStatus(403);
-
-        $this->assertCount(0, Link::all());
-    }
-
-    /** @test */
-    public function a_link_requires_a_valid_url()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create();
-
-        // Empty url
-        Livewire::test(Create::class, ['board' => $board])
-            ->set('url', null)
-            ->call('add')
-            ->assertHasErrors('url');
-
-        // Invalid url
-        Livewire::test(Create::class, ['board' => $board])
-            ->set('url', 'invalid-url')
-            ->call('add')
-            ->assertHasErrors('url');
-    }
-}
+    // Invalid url
+    Livewire::test(Create::class, ['board' => $board])
+        ->set('url', 'invalid-url')
+        ->call('add')
+        ->assertHasErrors('url');
+});

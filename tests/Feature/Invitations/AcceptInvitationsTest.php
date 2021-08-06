@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Feature\Invitations;
-
 use App\Http\Livewire\Invitations\Show;
 use App\Mail\InvitationAcceptedMail;
 use App\Mail\InvitationDeniedMail;

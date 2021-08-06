@@ -1,121 +1,77 @@
 <?php
 
-namespace Tests\Feature\Links;
-
 use App\Http\Livewire\Items\Index;
 use App\Models\Board;
 use App\Models\Link;
 use App\Models\Membership;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-/** @group links */
-class DeleteLinksTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function the_board_owner_can_delete_a_link()
-    {
-        $this->withoutExceptionHandling();
+test('the board owner can delete a link', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    $link = Link::factory()->for($board)->create();
+    expect($link->exists())->toBeTrue();
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(Index::class, ['board' => $board])
+        ->call('deleteLink', $link)
+        ->assertRedirect(route('boards.show', $board));
 
-        $board = Board::factory()->for($user)->create();
-        $link = Link::factory()->for($board)->create();
+    expect($link->exists())->toBeFalse();
+});
 
-        $this->assertTrue($link->exists());
+test('members can delete a link', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->member()->create();
+    $link = Link::factory()->for($board)->create();
+    expect($link->exists())->toBeTrue();
 
-        Livewire::test(Index::class, ['board' => $board])
-            ->call('deleteLink', $link)
-            ->assertRedirect(route('boards.show', $board));
+    Livewire::test(Index::class, ['board' => $board])
+        ->call('deleteLink', $link)
+        ->assertRedirect(route('boards.show', $board));
 
-        $this->assertFalse($link->exists());
-    }
+    expect($link->exists())->toBeFalse();
+});
 
-    /** @test */
-    public function members_can_delete_links()
-    {
-        $this->withoutExceptionHandling();
+test('viewers cannot delete a link', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->viewer()->create();
+    $link = Link::factory()->for($board)->create();
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(Index::class, ['board' => $board])->call('deleteLink', $link)->assertStatus(403);
+    expect($link->exists())->toBeTrue();
+});
 
-        $board = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
-        $link = Link::factory()->for($board)->create();
+test('guests cannot delete a link', function () {
+    $this->withExceptionHandling();
+    $board = Board::factory()->create();
+    $link = Link::factory()->for($board)->create();
 
-        $this->assertTrue($link->exists());
+    Livewire::test(Index::class, ['board' => $board])->call('deleteLink', $link)->assertStatus(403);
+    expect($link->exists())->toBeTrue();
+});
 
-        Livewire::test(Index::class, ['board' => $board])
-            ->call('deleteLink', $link)
-            ->assertRedirect(route('boards.show', $board));
+test('other users cannot delete links', function () {
+    $this->withExceptionHandling();
+    $this->actingAs(User::factory()->create());
+    $board = Board::factory()->create();
+    $link = Link::factory()->for($board)->create();
 
-        $this->assertFalse($link->exists());
-    }
+    Livewire::test(Index::class, ['board' => $board])->call('deleteLink', $link)->assertStatus(403);
+    expect($link->exists())->toBeTrue();
+});
 
-    /** @test */
-    public function viewers_cannot_delete_links()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('a user cannot delete a link if the board is archived', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->archived()->create();
+    $link = Link::factory()->for($board)->create();
 
-        $board = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
-        $link = Link::factory()->for($board)->create();
-
-        Livewire::test(Index::class, ['board' => $board])
-            ->call('deleteLink', $link)
-            ->assertStatus(403);
-
-        $this->assertTrue($link->exists());
-    }
-
-    /** @test */
-    public function guests_cannot_delete_links()
-    {
-        $board = Board::factory()->create();
-        $link = Link::factory()->for($board)->create();
-
-        Livewire::test(Index::class, ['board' => $board])
-            ->call('deleteLink', $link)
-            ->assertStatus(403);
-
-        $this->assertTrue($link->exists());
-    }
-
-    /** @test */
-    public function other_users_cannot_delete_links()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create();
-        $link = Link::factory()->for($board)->create();
-
-        Livewire::test(Index::class, ['board' => $board])
-            ->call('deleteLink', $link)
-            ->assertStatus(403);
-
-        $this->assertTrue($link->exists());
-    }
-
-    /** @test */
-    public function a_user_cannot_delete_a_link_if_the_board_is_archived()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create(['archived' => true]);
-        $link = Link::factory()->for($board)->create();
-
-        Livewire::test(Index::class, ['board' => $board])
-            ->call('deleteLink', $link)
-            ->assertStatus(403);
-
-        $this->assertTrue($link->exists());
-    }
-}
+    Livewire::test(Index::class, ['board' => $board])->call('deleteLink', $link)->assertStatus(403);
+    expect($link->exists())->toBeTrue();
+});

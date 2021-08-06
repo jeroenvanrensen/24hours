@@ -10,6 +10,10 @@ class Link extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'board_id' => 'integer'
+    ];
+
     protected $guarded = [];
 
     protected static function boot(): void

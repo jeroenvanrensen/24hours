@@ -1,92 +1,59 @@
 <?php
 
-namespace Tests\Feature\Notes;
-
 use App\Http\Livewire\Boards\Show;
 use App\Models\Board;
 use App\Models\Membership;
 use App\Models\Note;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-/** @group notes */
-class CreateNotesTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function the_board_owner_can_create_a_note()
-    {
-        $this->withoutExceptionHandling();
+test('the board owner can create a new note', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    expect(Note::all())->toHaveCount(0);
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(Show::class, ['board' => $board])
+        ->call('createNote')
+        ->assertRedirect(route('notes.edit', Note::first()));
 
-        $board = Board::factory()->for($user)->create();
+    expect(Note::all())->toHaveCount(1);
+    tap(Note::first(), function ($note) use ($board) {
+        expect($note->board_id)->toBe($board->id);
+        expect($note->title)->toBe('No Title');
+        expect($note->body)->toBeNull();
+    });
+});
 
-        $this->assertCount(0, Note::all());
+test('members can create a new note', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->member()->create();
+    expect(Note::all())->toHaveCount(0);
 
-        Livewire::test(Show::class, ['board' => $board])
-            ->call('createNote')
-            ->assertRedirect(route('notes.edit', Note::first()));
+    Livewire::test(Show::class, ['board' => $board])
+        ->call('createNote')
+        ->assertRedirect(route('notes.edit', Note::first()));
 
-        $this->assertCount(1, Note::all());
+    expect(Note::all())->toHaveCount(1);
+});
 
-        $this->assertDatabaseHas('notes', [
-            'board_id' => $board->id,
-            'title' => 'No Title',
-            'body' => null
-        ]);
-    }
+test('viewers can create a new note', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->viewer()->create();
 
-    /** @test */
-    public function members_can_create_notes()
-    {
-        $this->withoutExceptionHandling();
+    Livewire::test(Show::class, ['board' => $board])->call('createNote')->assertStatus(403);
+    expect(Note::all())->toHaveCount(0);
+});
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('a user cannot create a new note when the board is archived', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create(['archived' => true]);
 
-        $board = Board::factory()->create();
-        Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
-
-        Livewire::test(Show::class, ['board' => $board])
-            ->call('createNote')
-            ->assertRedirect(route('notes.edit', Note::first()));
-
-        $this->assertCount(1, Note::all());
-    }
-
-    /** @test */
-    public function viewers_cannot_create_notes()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create();
-        Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
-
-        Livewire::test(Show::class, ['board' => $board])
-            ->call('createNote')
-            ->assertStatus(403);
-
-        $this->assertCount(0, Note::all());
-    }
-
-    /** @test */
-    public function a_user_cannot_create_notes_when_the_board_is_archived()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create(['archived' => true]);
-
-        Livewire::test(Show::class, ['board' => $board])
-            ->call('createNote')
-            ->assertStatus(403);
-
-        $this->assertCount(0, Note::all());
-    }
-}
+    Livewire::test(Show::class, ['board' => $board])->call('createNote')->assertStatus(403);
+    expect(Note::all())->toHaveCount(0);
+});

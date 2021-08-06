@@ -12,7 +12,6 @@ class Edit extends Component
 
     public Note $note;
 
-    /** @var string|null */
     public $body;
 
     public function mount()

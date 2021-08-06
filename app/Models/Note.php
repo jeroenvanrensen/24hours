@@ -12,12 +12,16 @@ class Note extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'board_id' => 'integer'
+    ];
+
     protected static function boot(): void
     {
         parent::boot();
 
-        static::creating(function ($board) {
-            $board->uuid = Str::uuid();
+        static::creating(function ($note) {
+            $note->uuid = Str::uuid();
         });
     }
 

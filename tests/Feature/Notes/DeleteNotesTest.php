@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Feature\Notes;
-
 use App\Http\Livewire\Items\Index;
 use App\Http\Livewire\Notes\Edit;
 use App\Models\Board;
@@ -12,156 +10,103 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
-/** @group notes */
-class DeleteNotesTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function the_board_owner_can_delete_a_note_from_the_edit_page()
-    {
-        $this->withoutExceptionHandling();
+test('the board owner can delete a note from the edit page', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    $note = Note::factory()->for($board)->create();
+    expect($note->exists())->toBeTrue();
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(Edit::class, ['note' => $note])
+        ->call('destroy')
+        ->assertRedirect(route('boards.show', $board));
 
-        $board = Board::factory()->for($user)->create();
-        $note = Note::factory()->for($board)->create();
+    expect($note->exists())->toBeFalse();
+});
 
-        $this->assertTrue($note->exists());
+test('members can delete notes from the edit page', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->member()->create();
+    $note = Note::factory()->for($board)->create();
 
-        Livewire::test(Edit::class, ['note' => $note])
-            ->call('destroy')
-            ->assertRedirect(route('boards.show', $board));
+    expect($note->exists())->toBeTrue();
 
-        $this->assertFalse($note->exists());
-    }
+    Livewire::test(Edit::class, ['note' => $note])
+        ->call('destroy')
+        ->assertRedirect(route('boards.show', $board));
 
-    /** @test */
-    public function members_can_delete_notes_from_the_edit_page()
-    {
-        $this->withoutExceptionHandling();
+    expect($note->exists())->toBeFalse();
+});
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('viewers can delete notes from the edit page', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->viewer()->create();
+    $note = Note::factory()->for($board)->create();
 
-        $board = Board::factory()->create();
-        Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
-        $note = Note::factory()->for($board)->create();
+    Livewire::test(Edit::class, ['note' => $note])->call('destroy')->assertStatus(403);
+    expect($note->exists())->toBeTrue();
+});
 
-        $this->assertTrue($note->exists());
+test('a user cannot delete a note from the edit page when the board is archived', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->archived()->create();
+    $note = Note::factory()->for($board)->create();
 
-        Livewire::test(Edit::class, ['note' => $note])
-            ->call('destroy')
-            ->assertRedirect(route('boards.show', $board));
+    Livewire::test(Edit::class, ['note' => $note])->call('destroy')->assertStatus(403);
+    expect($note->exists())->toBeTrue();
+});
 
-        $this->assertFalse($note->exists());
-    }
+test('the board owner can delete a note from the board page', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    $note = Note::factory()->for($board)->create();
 
-    /** @test */
-    public function viewers_cannot_delete_notes_from_the_edit_page()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    expect($note->exists())->toBeTrue();
 
-        $board = Board::factory()->create();
-        Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
-        $note = Note::factory()->for($board)->create();
+    Livewire::test(Index::class, ['board' => $board])
+        ->call('deleteNote', $note)
+        ->assertRedirect(route('boards.show', $board));
 
-        Livewire::test(Edit::class, ['note' => $note])
-            ->call('destroy')
-            ->assertStatus(403);
+    expect($note->exists())->toBeFalse();
+});
 
-        $this->assertTrue($note->exists());
-    }
+test('members can delete notes from the board page', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->member()->create();
+    $note = Note::factory()->for($board)->create();
 
-    /** @test */
-    public function a_user_cannot_delete_notes_from_the_edit_page_when_the_board_is_archived()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    expect($note->exists())->toBeTrue();
 
-        $board = Board::factory()->for($user)->create(['archived' => true]);
-        $note = Note::factory()->for($board)->create();
+    Livewire::test(Index::class, ['board' => $board])
+        ->call('deleteNote', $note)
+        ->assertRedirect(route('boards.show', $board));
 
-        Livewire::test(Edit::class, ['note' => $note])
-            ->call('destroy')
-            ->assertStatus(403);
+    expect($note->exists())->toBeFalse();
+});
 
-        $this->assertTrue($note->exists());
-    }
+test('viewers can delete notes from the board page', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->viewer()->create();
+    $note = Note::factory()->for($board)->create();
 
-    /** @test */
-    public function the_board_owner_can_delete_a_note_from_the_board_page()
-    {
-        $this->withoutExceptionHandling();
+    Livewire::test(Index::class, ['board' => $board])->call('deleteNote', $note)->assertStatus(403);
+    expect($note->exists())->toBeTrue();
+});
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('a user cannot delete notes from the board page when the board is archived', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->archived()->create([]);
+    $note = Note::factory()->for($board)->create();
 
-        $board = Board::factory()->for($user)->create();
-        $note = Note::factory()->for($board)->create();
-
-        $this->assertTrue($note->exists());
-
-        Livewire::test(Index::class, ['board' => $board])
-            ->call('deleteNote', $note)
-            ->assertRedirect(route('boards.show', $board));
-
-        $this->assertFalse($note->exists());
-    }
-
-    /** @test */
-    public function members_can_delete_notes_from_the_board_page()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create();
-        Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
-        $note = Note::factory()->for($board)->create();
-
-        $this->assertTrue($note->exists());
-
-        Livewire::test(Index::class, ['board' => $board])
-            ->call('deleteNote', $note)
-            ->assertRedirect(route('boards.show', $board));
-
-        $this->assertFalse($note->exists());
-    }
-
-    /** @test */
-    public function viewers_cannot_delete_notes_from_the_board_page()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create();
-        Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
-        $note = Note::factory()->for($board)->create();
-
-        Livewire::test(Index::class, ['board' => $board])
-            ->call('deleteNote', $note)
-            ->assertStatus(403);
-
-        $this->assertTrue($note->exists());
-    }
-
-    /** @test */
-    public function a_user_cannot_delete_notes_from_the_board_page_when_the_board_is_archived()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create(['archived' => true]);
-        $note = Note::factory()->for($board)->create();
-
-        Livewire::test(Index::class, ['board' => $board])
-            ->call('deleteNote', $note)
-            ->assertStatus(403);
-
-        $this->assertTrue($note->exists());
-    }
-}
+    Livewire::test(Index::class, ['board' => $board])->call('deleteNote', $note)->assertStatus(403);
+    expect($note->exists())->toBeTrue();
+});

@@ -1,102 +1,53 @@
 <?php
 
-namespace Tests\Feature\Search;
-
 use App\Http\Livewire\Search\Search;
 use App\Models\Board;
 use App\Models\Membership;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-/** @group search */
-class SearchBoardsTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function a_user_can_search_their_boards()
-    {
-        $this->withoutExceptionHandling();
+test('a user can search their boards', function () {
+    $this->actingAs($user = User::factory()->create());
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    $firstBoard = Board::factory()->for($user)->create(['name' => 'First Board']);
+    $secondBoard = Board::factory()->for($user)->create(['name' => 'Second Board']);
 
-        $firstBoard = Board::factory()->for($user)->create(['name' => 'First Board']);
-        $secondBoard = Board::factory()->for($user)->create(['name' => 'Second Board']);
+    Livewire::test(Search::class)
+        ->assertDontSee($firstBoard->name)
+        ->assertDontSee($secondBoard->name)
+        ->set('query', 'First')
+        ->assertSee($firstBoard->name)
+        ->assertDontSee($secondBoard->name);
+});
 
-        Livewire::test(Search::class)
-            ->assertDontSee($firstBoard->name)
-            ->assertDontSee($secondBoard->name)
-            ->set('query', 'First')
-            ->assertSee($firstBoard->name)
-            ->assertDontSee($secondBoard->name);
-    }
+test('a user cannot see boards they dont own', function () {
+    $this->actingAs(User::factory()->create());
 
-    /** @test */
-    public function a_user_cannot_see_boards_they_dont_own()
-    {
-        $this->withoutExceptionHandling();
+    $board = Board::factory()->create(['name' => 'First Board']); // other user
+    Livewire::test(Search::class)->set('query', 'First')->assertDontSee($board->name);
+});
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('a user can search boards when they are a member', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create(['name' => 'First Board']);
+    Membership::factory()->for($user)->for($board)->create();
 
-        $board = Board::factory()->create(['name' => 'First Board']); // other user
+    Livewire::test(Search::class)->set('query', 'First')->assertSee($board->name);
+});
 
-        Livewire::test(Search::class)
-            ->set('query', 'First')
-            ->assertDontSee($board->name);
-    }
+test('the boards are sorted by date', function () {
+    $this->actingAs($user = User::factory()->create());
 
-    /** @test */
-    public function a_user_can_search_boards_when_they_are_a_member()
-    {
-        $this->withoutExceptionHandling();
+    $firstBoard = Board::factory()->for($user)->create(['name' => 'First Board', 'updated_at' => now()->subWeek()]);
+    $secondBoard = Board::factory()->for($user)->create(['name' => 'Second Board', 'updated_at' => now()]);
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(Search::class)->set('query', 'Board')->assertSeeInOrder([$secondBoard->name, $firstBoard->name]);
+});
 
-        $board = Board::factory()->create(['name' => 'First Board']);
-        Membership::factory()->for($user)->for($board)->create();
-
-        Livewire::test(Search::class)
-            ->set('query', 'First')
-            ->assertSee($board->name);
-    }
-
-    /** @test */
-    public function the_boards_are_sorted_by_date()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $firstBoard = Board::factory()->for($user)->create(['name' => 'First Board', 'updated_at' => now()->subWeek()]);
-        $secondBoard = Board::factory()->for($user)->create(['name' => 'Second Board', 'updated_at' => now()]);
-
-        Livewire::test(Search::class)
-            ->set('query', 'Board')
-            ->assertSeeInOrder([
-                $secondBoard->name,
-                $firstBoard->name
-            ]);
-    }
-
-    /** @test */
-    public function a_user_can_search_archived_boards()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $firstBoard = Board::factory()->for($user)->create(['name' => 'First Board', 'archived' => true]);
-
-        Livewire::test(Search::class)
-            ->assertDontSee($firstBoard->name)
-            ->set('query', 'First')
-            ->assertSee($firstBoard->name);
-    }
-}
+test('a user can search archived boards', function () {
+    $this->actingAs($user = User::factory()->create());
+    $firstBoard = Board::factory()->for($user)->archived()->create(['name' => 'First Board']);
+    Livewire::test(Search::class)->set('query', 'First')->assertSee($firstBoard->name);
+});

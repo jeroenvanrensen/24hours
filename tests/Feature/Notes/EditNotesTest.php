@@ -42,6 +42,7 @@ test('guests cannot visit the notes page', function () {
 });
 
 test('other users cannot visit the notes page', function () {
+    $this->withExceptionHandling();
     $this->actingAs(User::factory()->create());
     $board = Board::factory()->create(); // other user
     $note = Note::factory()->for($board)->create();
@@ -104,6 +105,7 @@ test('viewers cannot edit a note', function () {
 });
 
 test('a user cannot edit the note when the board is archived', function () {
+    $this->withExceptionHandling();
     $this->actingAs($user = User::factory()->create());
     $board = Board::factory()->for($user)->create(['archived' => true]);
     $note = Note::factory()->for($board)->create();

@@ -1,121 +1,75 @@
 <?php
 
-namespace Tests\Feature\Members;
-
 use App\Http\Livewire\Members\Index;
 use App\Models\Board;
 use App\Models\Membership;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-/** @group members */
-class SeeMembersTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function a_board_owner_can_visit_the_members_page()
-    {
-        $this->withoutExceptionHandling();
+test('a board owner can visit the members page', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    $this->get(route('members.index', $board))
+        ->assertStatus(200)
+        ->assertSeeLivewire('members.index')
+        ->assertSeeLivewire('members.create');
+});
 
-        $board = Board::factory()->for($user)->create();
+test('members can visit the members page', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->member()->create();
 
-        $this->get(route('members.index', $board))
-            ->assertStatus(200)
-            ->assertSeeLivewire('members.index')
-            ->assertSeeLivewire('members.create');
-    }
+    $this->get(route('members.index', $board))
+        ->assertStatus(200)
+        ->assertSeeLivewire('members.index');
+});
 
-    /** @test */
-    public function members_can_visit_the_members_page()
-    {
-        $this->withoutExceptionHandling();
+test('viewers can visit the members page', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->viewer()->create();
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    $this->get(route('members.index', $board))
+        ->assertStatus(200)
+        ->assertSeeLivewire('members.index');
+});
 
-        $board = Board::factory()->create();
-        Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+test('guests cannot visit the members page', function () {
+    $this->withExceptionHandling();
+    $board = Board::factory()->create();
+    $this->get(route('members.index', $board))->assertRedirect(route('login'));
+});
 
-        $this->get(route('members.index', $board))
-            ->assertStatus(200)
-            ->assertSeeLivewire('members.index');
-    }
+test('non-members cannot visit the members page', function () {
+    $this->withExceptionHandling();
+    $this->actingAs(User::factory()->create());
+    $board = Board::factory()->create();
+    $this->get(route('members.index', $board))->assertStatus(403);
+});
 
-    /** @test */
-    public function viewers_can_visit_the_members_page()
-    {
-        $this->withoutExceptionHandling();
+test('all members are visible on the index page', function () {
+    $this->actingAs($user = User::factory()->create());
+    $otherUser = User::factory()->create();
+    $board = Board::factory()->for($user)->create();
+    $member = Membership::factory()->for($otherUser)->for($board)->member()->create();
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(Index::class, ['board' => $board])
+        ->assertSee($user->name)
+        ->assertSee('Owner')
+        ->assertSee($member->name)
+        ->assertSee('Member');
+});
 
-        $board = Board::factory()->create();
-        Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
+test('a user can visit the members page when the board is archived', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->archived()->create();
 
-        $this->get(route('members.index', $board))
-            ->assertStatus(200)
-            ->assertSeeLivewire('members.index');
-    }
-
-    /** @test */
-    public function guests_cannot_visit_the_members_page()
-    {
-        $board = Board::factory()->create();
-
-        $this->get(route('members.index', $board))
-            ->assertRedirect(route('login'));
-    }
-
-    /** @test */
-    public function non_owners_cannot_visit_the_members_page()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create();
-
-        $this->get(route('members.index', $board))
-            ->assertStatus(403);
-    }
-
-    /** @test */
-    public function all_members_are_shown_on_the_index_page()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $otherUser = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create();
-        $member = Membership::factory()->for($otherUser)->for($board)->create(['role' => 'member']);
-
-        Livewire::test(Index::class, ['board' => $board])
-            ->assertSee($user->name)
-            ->assertSee('Owner')
-            ->assertSee($member->name)
-            ->assertSee('Member');
-    }
-
-    /** @test */
-    public function a_user_can_still_visit_the_members_page_when_the_board_is_archived()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create(['archived' => true]);
-
-        $this->get(route('members.index', $board))
-            ->assertStatus(200)
-            ->assertSeeLivewire('members.index')
-            ->assertSeeLivewire('members.create');
-    }
-}
+    $this->get(route('members.index', $board))
+        ->assertStatus(200)
+        ->assertSeeLivewire('members.index')
+        ->assertSeeLivewire('members.create');
+});

@@ -1,130 +1,73 @@
 <?php
 
-namespace Tests\Feature\Members;
-
 use App\Http\Livewire\Members\Index;
 use App\Mail\BoardLeftMail;
 use App\Models\Board;
 use App\Models\Membership;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-/** @group members */
-class LeaveBoardTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(function () {
+    $this->withoutExceptionHandling();
+    Mail::fake();
+});
 
-    /** @test */
-    public function a_board_owner_cannot_leave_a_board()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('a board owner cannot leave a board', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
 
-        $board = Board::factory()->for($user)->create();
+    Livewire::test(Index::class, ['board' => $board])->call('leave')->assertStatus(403);
+});
 
-        Livewire::test(Index::class, ['board' => $board])
-            ->call('leave')
-            ->assertStatus(403);
-    }
+test('a member can leave a board', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    $membership = Membership::factory()->for($user)->for($board)->member()->create();
 
-    /** @test */
-    public function a_member_can_leave_a_board()
-    {
-        $this->withoutExceptionHandling();
+    expect($membership->exists())->toBeTrue();
+    Livewire::test(Index::class, ['board' => $board])->call('leave')->assertRedirect(route('boards.index'));
+    expect($membership->exists())->toBeFalse();
+});
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('a viewer can leave a board', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    $membership = Membership::factory()->for($user)->for($board)->viewer()->create();
 
-        $board = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+    expect($membership->exists())->toBeTrue();
+    Livewire::test(Index::class, ['board' => $board])->call('leave')->assertRedirect(route('boards.index'));
+    expect($membership->exists())->toBeFalse();
+});
 
-        $this->assertTrue($membership->exists());
+test('users will get an email when someone leaves the board', function () {
+    $this->actingAs($user = User::factory()->create());
+    $boardOwner = User::factory()->create();
+    $alreadyMember = User::factory()->create();
+    $board = Board::factory()->for($boardOwner)->create();
+    Membership::factory()->for($alreadyMember)->for($board)->create();
+    Membership::factory()->for($user)->for($board)->create();
+    Mail::assertNothingQueued();
 
-        Livewire::test(Index::class, ['board' => $board])
-            ->call('leave')
-            ->assertRedirect(route('boards.index'));
+    Livewire::test(Index::class, ['board' => $board])->call('leave')->assertRedirect(route('boards.index'));
 
-        $this->assertFalse($membership->exists());
-    }
+    // The board owner will get an email when someone leaves a board
+    Mail::assertQueued(BoardLeftMail::class, fn ($mail) => $mail->hasTo($boardOwner->email));
 
-    /** @test */
-    public function a_viewer_can_leave_a_board()
-    {
-        $this->withoutExceptionHandling();
+    // All members will get an email when someone leaves a board
+    Mail::assertQueued(BoardLeftMail::class, fn ($mail) => $mail->hasTo($alreadyMember->email));
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    // The leaving member won't get an email when he leaves a board
+    Mail::assertNotQueued(BoardLeftMail::class, fn ($mail) => $mail->hasTo($user->email));
+});
 
-        $board = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
+test('a user can leave the board when the board is archived', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->archived()->create();
+    $membership = Membership::factory()->for($user)->for($board)->create();
 
-        $this->assertTrue($membership->exists());
-
-        Livewire::test(Index::class, ['board' => $board])
-            ->call('leave')
-            ->assertRedirect(route('boards.index'));
-
-        $this->assertFalse($membership->exists());
-    }
-
-    /** @test */
-    public function users_will_get_an_email_when_someone_leaves_a_board()
-    {
-        $this->withoutExceptionHandling();
-
-        Mail::fake();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $boardOwner = User::factory()->create();
-        $alreadyMember = User::factory()->create();
-        $board = Board::factory()->for($boardOwner)->create();
-        $membership = Membership::factory()->for($alreadyMember)->for($board)->create();
-        $membership = Membership::factory()->for($user)->for($board)->create();
-
-        Mail::assertNothingQueued();
-
-        Livewire::test(Index::class, ['board' => $board])
-            ->call('leave')
-            ->assertRedirect(route('boards.index'));
-
-        // The board owner will get an email when someone leaves a board
-        Mail::assertQueued(BoardLeftMail::class, function (BoardLeftMail $mail) use ($boardOwner) {
-            return $mail->hasTo($boardOwner->email);
-        });
-
-        // All members will get an email when someone leaves a board
-        Mail::assertQueued(BoardLeftMail::class, function (BoardLeftMail $mail) use ($alreadyMember) {
-            return $mail->hasTo($alreadyMember->email);
-        });
-
-        // The leaving member won't get an email when he leaves a board
-        Mail::assertNotQueued(BoardLeftMail::class, function (BoardLeftMail $mail) use ($user) {
-            return $mail->hasTo($user->email);
-        });
-    }
-
-    /** @test */
-    public function a_user_can_leave_the_board_when_the_board_is_archived()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create(['archived' => true]);
-        $membership = Membership::factory()->for($user)->for($board)->create();
-
-        $this->assertTrue($membership->exists());
-
-        Livewire::test(Index::class, ['board' => $board])
-            ->call('leave')
-            ->assertRedirect(route('boards.index'));
-
-        $this->assertFalse($membership->exists());
-    }
-}
+    expect($membership->exists())->toBeTrue();
+    Livewire::test(Index::class, ['board' => $board])->call('leave')->assertRedirect(route('boards.index'));
+    expect($membership->exists())->toBeFalse();
+});

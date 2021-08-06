@@ -1,212 +1,146 @@
 <?php
 
-namespace Tests\Feature\Members;
-
 use App\Http\Livewire\Members\Edit;
 use App\Mail\MembershipUpdatedMail;
 use App\Models\Board;
 use App\Models\Membership;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-/** @group members */
-class EditMembersTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(function () {
+    $this->withoutExceptionHandling();
+    Mail::fake();
+});
 
-    /** @test */
-    public function a_board_owner_can_visit_the_edit_membership_page()
-    {
-        $this->withoutExceptionHandling();
+test('a board owner can visit the edit membership page', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    $member = User::factory()->create();
+    $membership = Membership::factory()->for($member)->for($board)->create();
 
-        $board = Board::factory()->for($user)->create();
+    $this->get(route('members.edit', [$board, $membership]))
+        ->assertStatus(200)
+        ->assertSeeLivewire('members.edit')
+        ->assertSeeLivewire('members.delete');
+});
 
-        $member = User::factory()->create();
-        $membership = Membership::factory()->for($member)->for($board)->create();
+test('members cannot visit the edit membership page', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->member()->create();
 
-        $this->get(route('members.edit', [$board, $membership]))
-            ->assertStatus(200)
-            ->assertSeeLivewire('members.edit')
-            ->assertSeeLivewire('members.delete');
-    }
+    $member = User::factory()->create();
+    $membership = Membership::factory()->for($member)->for($board)->create();
 
-    /** @test */
-    public function members_cannot_visit_the_edit_membership_page()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    $this->get(route('members.edit', [$board, $membership]))->assertStatus(403);
+});
 
-        $board = Board::factory()->create();
-        Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+test('viewers cannot visit the edit membership page', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->viewer()->create();
 
-        $member = User::factory()->create();
-        $membership = Membership::factory()->for($member)->for($board)->create();
+    $member = User::factory()->create();
+    $membership = Membership::factory()->for($member)->for($board)->create();
 
-        $this->get(route('members.edit', [$board, $membership]))
-            ->assertStatus(403);
-    }
+    $this->get(route('members.edit', [$board, $membership]))->assertStatus(403);
+});
 
-    /** @test */
-    public function viewers_cannot_visit_the_edit_membership_page()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('non members cannot visit the edit membership page', function () {
+    $this->withExceptionHandling();
+    $this->actingAs(User::factory()->create());
+    $board = Board::factory()->create();
 
-        $board = Board::factory()->create();
-        Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
+    $member = User::factory()->create();
+    $membership = Membership::factory()->for($member)->for($board)->create();
 
-        $member = User::factory()->create();
-        $membership = Membership::factory()->for($member)->for($board)->create();
+    $this->get(route('members.edit', [$board, $membership]))->assertStatus(403);
+});
 
-        $this->get(route('members.edit', [$board, $membership]))
-            ->assertStatus(403);
-    }
+test('guests cannot visit the edit membership page', function () {
+    $this->withExceptionHandling();
+    $board = Board::factory()->create();
 
-    /** @test */
-    public function non_members_cannot_visit_the_edit_membership_page()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    $member = User::factory()->create();
+    $membership = Membership::factory()->for($member)->for($board)->create();
 
-        $board = Board::factory()->create();
+    $this->get(route('members.edit', [$board, $membership]))->assertRedirect(route('login'));
+});
 
-        $member = User::factory()->create();
-        $membership = Membership::factory()->for($member)->for($board)->create();
+test('the board owner cannot visit the edit membership page when the board is archived', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create(['archived' => true]);
 
-        $this->get(route('members.edit', [$board, $membership]))
-            ->assertStatus(403);
-    }
+    $member = User::factory()->create();
+    $membership = Membership::factory()->for($member)->for($board)->create();
 
-    /** @test */
-    public function guests_cannot_visit_the_edit_membership_page()
-    {
-        $board = Board::factory()->create();
+    $this->get(route('members.edit', [$board, $membership]))->assertStatus(403);
+});
 
-        $member = User::factory()->create();
-        $membership = Membership::factory()->for($member)->for($board)->create();
+test('the owner can edit a membership', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
 
-        $this->get(route('members.edit', [$board, $membership]))
-            ->assertRedirect(route('login'));
-    }
+    $member = User::factory()->create();
+    $membership = Membership::factory()->for($member)->for($board)->member()->create();
 
-    /** @test */
-    public function the_board_owner_cannot_visit_the_edit_membership_page_when_the_board_is_archived()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    expect($membership->fresh()->role)->not()->toBe('viewer');
 
-        $board = Board::factory()->for($user)->create(['archived' => true]);
+    Livewire::test(Edit::class, ['board' => $board, 'membership' => $membership])
+        ->set('role', 'viewer')
+        ->call('update')
+        ->assertRedirect(route('members.index', $board));
 
-        $member = User::factory()->create();
-        $membership = Membership::factory()->for($member)->for($board)->create();
+    expect($membership->fresh()->role)->toBe('viewer');
+});
 
-        $this->get(route('members.edit', [$board, $membership]))
-            ->assertStatus(403);
-    }
+it('requires a valid role', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
 
-    /** @test */
-    public function the_owner_can_edit_a_membership()
-    {
-        $this->withoutExceptionHandling();
+    $member = User::factory()->create();
+    $membership = Membership::factory()->for($member)->for($board)->create();
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(Edit::class, ['board' => $board, 'membership' => $membership])
+        ->set('role', 'member')
+        ->call('update')
+        ->assertHasNoErrors();
 
-        $board = Board::factory()->for($user)->create();
+    Livewire::test(Edit::class, ['board' => $board, 'membership' => $membership])
+        ->set('role', 'viewer')
+        ->call('update')
+        ->assertHasNoErrors();
 
-        $member = User::factory()->create();
-        $membership = Membership::factory()->for($member)->for($board)->create(['role' => 'member']);
+    Livewire::test(Edit::class, ['board' => $board, 'membership' => $membership])
+        ->set('role', 'invalid-role')
+        ->call('update')
+        ->assertHasErrors('role');
+});
 
-        $this->assertNotEquals('viewer', $membership->fresh()->role);
+test('the member gets an email when their membership is changed', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
 
-        Livewire::test(Edit::class, ['board' => $board, 'membership' => $membership])
-            ->set('role', 'viewer')
-            ->call('update')
-            ->assertRedirect(route('members.index', $board));
+    $member = User::factory()->create();
+    $membership = Membership::factory()->for($member)->for($board)->create(['role' => 'member']);
 
-        $this->assertEquals('viewer', $membership->fresh()->role);
-    }
+    Mail::assertNothingQueued();
+    Livewire::test(Edit::class, ['board' => $board, 'membership' => $membership])->set('role', 'viewer')->call('update');
+    Mail::assertQueued(MembershipUpdatedMail::class, fn ($mail) => $mail->hasTo($member->email));
+});
 
-    /** @test */
-    public function a_membership_requires_a_valid_role()
-    {
-        $this->withoutExceptionHandling();
+test('the member does not get an email when the membership stays the same', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    $member = User::factory()->create();
+    $membership = Membership::factory()->for($member)->for($board)->create(['role' => 'member']);
 
-        $board = Board::factory()->for($user)->create();
-
-        $member = User::factory()->create();
-        $membership = Membership::factory()->for($member)->for($board)->create();
-
-        Livewire::test(Edit::class, ['board' => $board, 'membership' => $membership])
-            ->set('role', 'member')
-            ->call('update')
-            ->assertHasNoErrors();
-
-        Livewire::test(Edit::class, ['board' => $board, 'membership' => $membership])
-            ->set('role', 'viewer')
-            ->call('update')
-            ->assertHasNoErrors();
-
-        Livewire::test(Edit::class, ['board' => $board, 'membership' => $membership])
-            ->set('role', 'invalid-role')
-            ->call('update')
-            ->assertHasErrors('role');
-    }
-
-    /** @test */
-    public function the_member_gets_an_email_when_their_membership_is_changed()
-    {
-        $this->withoutExceptionHandling();
-
-        Mail::fake();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create();
-
-        $member = User::factory()->create();
-        $membership = Membership::factory()->for($member)->for($board)->create(['role' => 'member']);
-
-        Mail::assertNothingQueued();
-
-        Livewire::test(Edit::class, ['board' => $board, 'membership' => $membership])
-            ->set('role', 'viewer')
-            ->call('update');
-
-        Mail::assertQueued(MembershipUpdatedMail::class, function (MembershipUpdatedMail $mail) use ($member) {
-            return $mail->hasTo($member->email);
-        });
-    }
-
-    /** @test */
-    public function the_member_does_not_get_an_email_when_their_membership_is_not_changed()
-    {
-        $this->withoutExceptionHandling();
-
-        Mail::fake();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create();
-
-        $member = User::factory()->create();
-        $membership = Membership::factory()->for($member)->for($board)->create(['role' => 'member']);
-
-        Livewire::test(Edit::class, ['board' => $board, 'membership' => $membership])
-            ->set('role', 'member') // same role
-            ->call('update');
-
-        Mail::assertNothingQueued();
-    }
-}
+    Livewire::test(Edit::class, ['board' => $board, 'membership' => $membership])->set('role', 'member')->call('update'); // same role
+    Mail::assertNothingQueued();
+});

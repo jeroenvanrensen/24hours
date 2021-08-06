@@ -1,192 +1,138 @@
 <?php
 
-namespace Tests\Feature\Members;
-
 use App\Http\Livewire\Members\Delete;
 use App\Mail\MemberRemovedMail;
 use App\Mail\YouAreRemovedMail;
 use App\Models\Board;
 use App\Models\Membership;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-/** @group members */
-class RemoveMemberFromBoardTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(function () {
+    $this->withoutExceptionHandling();
+    Mail::fake();
+});
 
-    /** @test */
-    public function a_board_owner_can_remove_a_member()
-    {
-        $this->withoutExceptionHandling();
+test('a board owner can remove a member', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    $member = User::factory()->create();
+    $membership = Membership::factory()->for($member)->for($board)->create();
+    expect($membership->exists())->toBeTrue();
 
-        $board = Board::factory()->for($user)->create();
+    Livewire::test(Delete::class, ['board' => $board, 'membership' => $membership])
+        ->call('destroy')
+        ->assertRedirect(route('members.index', $board));
 
-        $member = User::factory()->create();
-        $membership = Membership::factory()->for($member)->for($board)->create();
+    expect($membership->exists())->toBeFalse();
+});
 
-        $this->assertTrue($membership->exists());
+test('members cannot remove a member', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->member()->create();
 
-        Livewire::test(Delete::class, ['board' => $board, 'membership' => $membership])
-            ->call('destroy')
-            ->assertRedirect(route('members.index', $board));
+    $member = User::factory()->create();
+    $membership = Membership::factory()->for($member)->for($board)->create();
 
-        $this->assertFalse($membership->exists());
-    }
+    Livewire::test(Delete::class, ['board' => $board, 'membership' => $membership])
+        ->call('destroy')
+        ->assertStatus(403);
 
-    /** @test */
-    public function members_cannot_remove_a_member()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    expect($membership->exists())->toBeTrue();
+});
 
-        $board = Board::factory()->create();
-        Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+test('viewers cannot remove a member', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->viewer()->create();
 
-        $member = User::factory()->create();
-        $membership = Membership::factory()->for($member)->for($board)->create();
+    $member = User::factory()->create();
+    $membership = Membership::factory()->for($member)->for($board)->create();
 
-        Livewire::test(Delete::class, ['board' => $board, 'membership' => $membership])
-            ->call('destroy')
-            ->assertStatus(403);
+    Livewire::test(Delete::class, ['board' => $board, 'membership' => $membership])
+        ->call('destroy')
+        ->assertStatus(403);
 
-        $this->assertTrue($membership->exists());
-    }
+    expect($membership->exists())->toBeTrue();
+});
 
-    /** @test */
-    public function viewers_cannot_remove_a_member()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('non-members cannot remove a member', function () {
+    $this->withExceptionHandling();
+    $this->actingAs(User::factory()->create());
+    $board = Board::factory()->create();
 
-        $board = Board::factory()->create();
-        Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
+    $member = User::factory()->create();
+    $membership = Membership::factory()->for($member)->for($board)->create();
 
-        $member = User::factory()->create();
-        $membership = Membership::factory()->for($member)->for($board)->create();
+    Livewire::test(Delete::class, ['board' => $board, 'membership' => $membership])
+        ->call('destroy')
+        ->assertStatus(403);
 
-        Livewire::test(Delete::class, ['board' => $board, 'membership' => $membership])
-            ->call('destroy')
-            ->assertStatus(403);
+    expect($membership->exists())->toBeTrue();
+});
 
-        $this->assertTrue($membership->exists());
-    }
+test('guests cannot remove a member', function () {
+    $this->withExceptionHandling();
+    $board = Board::factory()->create();
 
-    /** @test */
-    public function non_members_cannot_remove_a_member()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    $member = User::factory()->create();
+    $membership = Membership::factory()->for($member)->for($board)->create();
 
-        $board = Board::factory()->create();
+    Livewire::test(Delete::class, ['board' => $board, 'membership' => $membership])
+        ->call('destroy')
+        ->assertStatus(403);
 
-        $member = User::factory()->create();
-        $membership = Membership::factory()->for($member)->for($board)->create();
+    expect($membership->exists())->toBeTrue();
+});
 
-        Livewire::test(Delete::class, ['board' => $board, 'membership' => $membership])
-            ->call('destroy')
-            ->assertStatus(403);
+test('members will get an email when they are removed', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
 
-        $this->assertTrue($membership->exists());
-    }
+    $member = User::factory()->create();
+    $membership = Membership::factory()->for($member)->for($board)->create();
+    Mail::assertNothingQueued();
 
-    /** @test */
-    public function guests_cannot_remove_a_member()
-    {
-        $board = Board::factory()->create();
+    Livewire::test(Delete::class, ['board' => $board, 'membership' => $membership])
+        ->call('destroy')
+        ->assertRedirect(route('members.index', $board));
 
-        $member = User::factory()->create();
-        $membership = Membership::factory()->for($member)->for($board)->create();
+    Mail::assertQueued(YouAreRemovedMail::class, fn ($mail) => $mail->hasTo($member->email));
+    Mail::assertNotQueued(MemberRemovedMail::class);
+});
 
-        Livewire::test(Delete::class, ['board' => $board, 'membership' => $membership])
-            ->call('destroy')
-            ->assertStatus(403);
+test('all other members will get an email when someone is removed', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
 
-        $this->assertTrue($membership->exists());
-    }
+    $oldMember = User::factory()->create();
+    Membership::factory()->for($oldMember)->for($board)->create();
 
-    /** @test */
-    public function the_member_will_get_an_email_when_they_are_removed()
-    {
-        $this->withoutExceptionHandling();
+    $member = User::factory()->create();
+    $membership = Membership::factory()->for($member)->for($board)->create();
+    Mail::assertNothingQueued();
 
-        Mail::fake();
+    Livewire::test(Delete::class, ['board' => $board, 'membership' => $membership])
+        ->call('destroy')
+        ->assertRedirect(route('members.index', $board));
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Mail::assertQueued(MemberRemovedMail::class, fn ($mail) => $mail->hasTo($oldMember->email));
+    Mail::assertNotQueued(YouAreRemovedMail::class, fn ($mail) => $mail->hasTo($oldMember->email));
+});
 
-        $board = Board::factory()->for($user)->create();
+test('a board owner cannot remove a member when the board is archived', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->archived()->create();
 
-        $member = User::factory()->create();
-        $membership = Membership::factory()->for($member)->for($board)->create();
+    $member = User::factory()->create();
+    $membership = Membership::factory()->for($member)->for($board)->create();
 
-        Mail::assertNothingQueued();
-
-        Livewire::test(Delete::class, ['board' => $board, 'membership' => $membership])
-            ->call('destroy')
-            ->assertRedirect(route('members.index', $board));
-
-        Mail::assertQueued(YouAreRemovedMail::class, function (YouAreRemovedMail $mail) use ($member) {
-            return $mail->hasTo($member->email);
-        });
-
-        Mail::assertNotQueued(MemberRemovedMail::class);
-    }
-
-    /** @test */
-    public function all_other_members_will_also_get_an_email_when_someone_is_removed()
-    {
-        $this->withoutExceptionHandling();
-
-        Mail::fake();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create();
-
-        $oldMember = User::factory()->create();
-        $oldMembership = Membership::factory()->for($oldMember)->for($board)->create();
-
-        $member = User::factory()->create();
-        $membership = Membership::factory()->for($member)->for($board)->create();
-
-        Mail::assertNothingQueued();
-
-        Livewire::test(Delete::class, ['board' => $board, 'membership' => $membership])
-            ->call('destroy')
-            ->assertRedirect(route('members.index', $board));
-
-        Mail::assertQueued(MemberRemovedMail::class, function (MemberRemovedMail $mail) use ($oldMember) {
-            return $mail->hasTo($oldMember->email);
-        });
-
-        Mail::assertNotQueued(YouAreRemovedMail::class, function (YouAreRemovedMail $mail) use ($oldMember) {
-            return $mail->hasTo($oldMember->email);
-        });
-    }
-
-    /** @test */
-    public function a_board_owner_cannot_remove_a_member_when_the_board_is_archived()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create(['archived' => true]);
-
-        $member = User::factory()->create();
-        $membership = Membership::factory()->for($member)->for($board)->create();
-
-        Livewire::test(Delete::class, ['board' => $board, 'membership' => $membership])
-            ->call('destroy')
-            ->assertStatus(403);
-
-        $this->assertTrue($membership->exists());
-    }
-}
+    Livewire::test(Delete::class, ['board' => $board, 'membership' => $membership])->call('destroy')->assertStatus(403);
+    expect($membership->exists())->toBeTrue();
+});

@@ -2,7 +2,7 @@
 
 use App\Models\User;
 
-uses()->beforeEach(fn () => $this->withoutExceptionHandling());
+beforeEach(fn () => $this->withoutExceptionHandling());
 
 test('a user can visit the home page', function () {
     $this->get(route('home'))

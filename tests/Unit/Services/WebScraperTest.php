@@ -2,7 +2,7 @@
 
 use App\Services\WebScraper\Scraper;
 
-uses()->beforeEach(fn () => $this->withoutExceptionHandling());
+beforeEach(fn () => $this->withoutExceptionHandling());
 
 it('can scrape a page', function ($url, $title, $image) {
     $scraper = new Scraper();

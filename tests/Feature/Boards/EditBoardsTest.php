@@ -6,7 +6,7 @@ use App\Models\Membership;
 use App\Models\User;
 use Livewire\Livewire;
 
-uses()->beforeEach(fn () => $this->withoutExceptionHandling());
+beforeEach(fn () => $this->withoutExceptionHandling());
 
 test('the board owner can visit the edit board page ', function () {
     $this->actingAs($user = User::factory()->create());

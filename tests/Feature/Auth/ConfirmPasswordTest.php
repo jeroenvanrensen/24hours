@@ -6,7 +6,7 @@ use App\Http\Livewire\Auth\ConfirmPassword;
 use App\Models\User;
 use Livewire\Livewire;
 
-uses()->beforeEach(fn () => $this->withoutExceptionHandling());
+beforeEach(fn () => $this->withoutExceptionHandling());
 
 test('a user can visit the confirm password page', function () {
     $this->actingAs(User::factory()->create());

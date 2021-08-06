@@ -7,7 +7,7 @@ use App\Models\Membership;
 use App\Models\User;
 use Illuminate\Support\Arr;
 
-uses()->beforeEach(fn () => $this->withoutExceptionHandling());
+beforeEach(fn () => $this->withoutExceptionHandling());
 
 it('has a role', function () {
     $role = Arr::random(['viewer', 'member']);

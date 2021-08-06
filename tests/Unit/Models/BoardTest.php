@@ -8,7 +8,7 @@ use App\Models\Note;
 use App\Models\User;
 use function Pest\Faker\faker;
 
-uses()->beforeEach(fn () => $this->withoutExceptionHandling());
+beforeEach(fn () => $this->withoutExceptionHandling());
 
 it('has a name', function () {
     $name = faker()->word();

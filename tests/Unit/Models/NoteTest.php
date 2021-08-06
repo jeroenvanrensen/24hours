@@ -6,7 +6,7 @@ use App\Models\Board;
 use App\Models\Note;
 use function Pest\Faker\faker;
 
-uses()->beforeEach(fn () => $this->withoutExceptionHandling());
+beforeEach(fn () => $this->withoutExceptionHandling());
 
 it('has a title', function () {
     $title = faker()->sentence();

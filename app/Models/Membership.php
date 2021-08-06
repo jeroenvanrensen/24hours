@@ -12,6 +12,11 @@ class Membership extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'board_id' => 'integer',
+        'user_id' => 'integer'
+    ];
+
     protected static function boot(): void
     {
         parent::boot();

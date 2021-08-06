@@ -10,258 +10,160 @@ use App\Models\Board;
 use App\Models\Invitation;
 use App\Models\Membership;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use Tests\TestCase;
 
-/** @group invitations */
-class AcceptInvitationsTest extends TestCase
-{
-    use RefreshDatabase;
-
-    /** @test */
-    public function a_user_can_visit_the_accept_invitation_page()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create();
-        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
-
-        $this->get(route('invitations.show', $invitation))
-            ->assertStatus(200)
-            ->assertSeeLivewire('invitations.show');
-    }
-
-    /** @test */
-    public function non_invited_users_cannot_visit_the_accept_invitation_page()
-    {
-        $user = User::factory()->create();
-
-        $otherUser = User::factory()->create();
-        $this->actingAs($otherUser);
-
-        $board = Board::factory()->create();
-        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
-
-        $this->get(route('invitations.show', $invitation))
-            ->assertStatus(403);
-    }
-
-    /** @test */
-    public function guests_get_redirected_to_the_login_page()
-    {
-        $user = User::factory()->create();
-
-        $board = Board::factory()->create();
-        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
-
-        $this->get(route('invitations.show', $invitation))
-            ->assertRedirect(route('login'));
-    }
-
-    /** @test */
-    public function guests_get_redirected_to_the_register_page_if_they_dont_have_an_account_yet()
-    {
-        $this->withoutExceptionHandling();
-
-        $board = Board::factory()->create();
-        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => 'john@example.org']);
-
-        $this->get(route('invitations.show', $invitation))
-            ->assertRedirect(route('register'));
-    }
-
-    /** @test */
-    public function a_user_can_accept_an_invitation()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create();
-        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
-
-        $this->assertCount(1, Invitation::all());
-        $this->assertCount(0, Membership::all());
-
-        Livewire::test(Show::class, ['invitation' => $invitation])
-            ->call('accept')
-            ->assertRedirect(route('boards.show', $board));
-
-        $this->assertCount(0, Invitation::all());
-        $this->assertCount(1, Membership::all());
-
-        $this->assertDatabaseHas('memberships', [
-            'board_id' => $board->id,
-            'user_id' => $user->id,
-            'role' => $invitation->role
-        ]);
-    }
-
-    /** @test */
-    public function a_user_cannot_accept_the_invitation_if_the_board_is_archived()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create(['archived' => true]);
-        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
-
-        Livewire::test(Show::class, ['invitation' => $invitation])
-            ->call('accept')
-            ->assertStatus(403);
-
-        $this->assertCount(1, Invitation::all());
-        $this->assertCount(0, Membership::all());
-    }
-
-    /** @test */
-    public function the_board_owner_will_get_an_email_when_someone_accepts_an_invitation()
-    {
-        $this->withoutExceptionHandling();
-
-        Mail::fake();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $boardOwner = User::factory()->create();
-        $board = Board::factory()->for($boardOwner)->create();
-        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
-
-        Mail::assertNothingQueued();
-
-        Livewire::test(Show::class, ['invitation' => $invitation])
-            ->call('accept')
-            ->assertRedirect(route('boards.show', $board));
-
-        Mail::assertQueued(InvitationAcceptedMail::class, function (InvitationAcceptedMail $mail) use ($boardOwner) {
-            return $mail->hasTo($boardOwner->email);
-        });
-
-        Mail::assertNotQueued(NewMemberMail::class);
-    }
-
-    /** @test */
-    public function all_board_members_will_get_an_email_when_someone_accepts_an_invitation()
-    {
-        $this->withoutExceptionHandling();
-
-        Mail::fake();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $alreadyBoardMember = User::factory()->create();
-        $board = Board::factory()->create();
-        $membership = Membership::factory()->for($alreadyBoardMember)->for($board)->create();
-        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
-
-        Mail::assertNothingQueued();
-
-        Livewire::test(Show::class, ['invitation' => $invitation])
-            ->call('accept')
-            ->assertRedirect(route('boards.show', $board));
-
-        Mail::assertQueued(NewMemberMail::class, function (NewMemberMail $mail) use ($alreadyBoardMember) {
-            return $mail->hasTo($alreadyBoardMember->email);
-        });
-
-        Mail::assertNotQueued(InvitationAcceptedMail::class, function (InvitationAcceptedMail $mail) use ($alreadyBoardMember) {
-            return $mail->hasTo($alreadyBoardMember->email);
-        });
-    }
-
-    /** @test */
-    public function a_user_can_deny_an_invitation()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create();
-        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
-
-        $this->assertCount(1, Invitation::all());
-        $this->assertCount(0, Membership::all());
-
-        Livewire::test(Show::class, ['invitation' => $invitation])
-            ->call('deny')
-            ->assertRedirect(route('invitations.check'));
-
-        $this->assertCount(0, Invitation::all());
-        $this->assertCount(0, Membership::all());
-    }
-
-    /** @test */
-    public function a_user_cannot_deny_an_invitation_when_the_board_is_archived()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create(['archived' => true]);
-        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
-
-        Livewire::test(Show::class, ['invitation' => $invitation])
-            ->call('deny')
-            ->assertStatus(403);
-
-        $this->assertCount(1, Invitation::all());
-        $this->assertCount(0, Membership::all());
-    }
-
-    /** @test */
-    public function the_board_owner_gets_an_email_when_someone_denies_an_invitation()
-    {
-        $this->withoutExceptionHandling();
-
-        Mail::fake();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $boardOwner = User::factory()->create();
-        $board = Board::factory()->for($boardOwner)->create();
-        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
-
-        Mail::assertNothingQueued();
-
-        Livewire::test(Show::class, ['invitation' => $invitation])
-            ->call('deny')
-            ->assertRedirect(route('invitations.check'));
-
-        Mail::assertQueued(InvitationDeniedMail::class, function (InvitationDeniedMail $mail) use ($boardOwner) {
-            return $mail->hasTo($boardOwner->email);
-        });
-    }
-
-    /** @test */
-    public function members_dont_get_an_email_when_someone_denies_an_invitation()
-    {
-        $this->withoutExceptionHandling();
-
-        Mail::fake();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $alreadyMember = User::factory()->create();
-        $board = Board::factory()->create();
-        $membership = Membership::factory()->for($alreadyMember)->for($board)->create();
-        $invitation = Invitation::factory()->create(['board_id' => $board->id, 'email' => $user->email]);
-
-        Livewire::test(Show::class, ['invitation' => $invitation])
-            ->call('deny')
-            ->assertRedirect(route('invitations.check'));
-
-        Mail::assertNotQueued(InvitationDeniedMail::class, function (InvitationDeniedMail $mail) use ($alreadyMember) {
-            return $mail->hasTo($alreadyMember->email);
-        });
-    }
-}
+beforeEach(function () {
+    $this->withoutExceptionHandling();
+    Mail::fake();
+});
+
+test('a user can visit the accept invitation page', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    $invitation = Invitation::factory()->for($board)->create(['email' => $user->email]);
+
+    $this->get(route('invitations.show', $invitation))
+        ->assertStatus(200)
+        ->assertSeeLivewire('invitations.show');
+});
+
+test('non invited users cannot visit the accept invitation page', function () {
+    $this->withExceptionHandling();
+    $user = User::factory()->create();
+
+    $otherUser = User::factory()->create();
+    $this->actingAs($otherUser);
+
+    $board = Board::factory()->create();
+    $invitation = Invitation::factory()->for($board)->create(['email' => $user->email]);
+
+    $this->get(route('invitations.show', $invitation))->assertStatus(403);
+});
+
+test('guests get redirected to the login page', function () {
+    $user = User::factory()->create();
+    $board = Board::factory()->create();
+    $invitation = Invitation::factory()->for($board)->create(['email' => $user->email]);
+
+    $this->get(route('invitations.show', $invitation))->assertRedirect(route('login'));
+});
+
+test('guests get redirected to the register page if they dont have an account yet', function () {
+    $board = Board::factory()->create();
+    $invitation = Invitation::factory()->for($board)->create(['email' => 'john@example.org']);
+
+    $this->get(route('invitations.show', $invitation))->assertRedirect(route('register'));
+});
+
+test('a user can accept an invitation', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    $invitation = Invitation::factory()->for($board)->create(['email' => $user->email]);
+
+    expect(Invitation::all())->toHaveCount(1);
+    expect(Membership::all())->toHaveCount(0);
+
+    Livewire::test(Show::class, ['invitation' => $invitation])
+        ->call('accept')
+        ->assertRedirect(route('boards.show', $board));
+
+    expect(Invitation::all())->toHaveCount(0);
+    expect(Membership::all())->toHaveCount(1);
+
+    tap(Membership::first(), function ($membership) use ($board, $user, $invitation) {
+        expect($membership->board_id)->toBe($board->id);
+        expect($membership->user_id)->toBe($user->id);
+        expect($membership->role)->toBe($invitation->role);
+    });
+});
+
+test('a user cannot accept an invitation if the board is archived', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->archived()->create();
+    $invitation = Invitation::factory()->for($board)->create(['email' => $user->email]);
+
+    Livewire::test(Show::class, ['invitation' => $invitation])->call('accept')->assertStatus(403);
+
+    expect(Invitation::all())->toHaveCount(1);
+    expect(Membership::all())->toHaveCount(0);
+});
+
+test('the board owner will get an email when someone accepts an invitation', function () {
+    $this->actingAs($user = User::factory()->create());
+    $boardOwner = User::factory()->create();
+    $board = Board::factory()->for($boardOwner)->create();
+    $invitation = Invitation::factory()->for($board)->create(['email' => $user->email]);
+    Mail::assertNothingQueued();
+
+    Livewire::test(Show::class, ['invitation' => $invitation])
+        ->call('accept')
+        ->assertRedirect(route('boards.show', $board));
+
+    Mail::assertQueued(InvitationAcceptedMail::class, fn ($mail) => $mail->hasTo($boardOwner->email));
+    Mail::assertNotQueued(NewMemberMail::class);
+});
+
+test('all board members will get an email when someone accepts an invitation', function () {
+    $this->actingAs($user = User::factory()->create());
+    $alreadyBoardMember = User::factory()->create();
+    $board = Board::factory()->create();
+    Membership::factory()->for($alreadyBoardMember)->for($board)->create();
+    $invitation = Invitation::factory()->for($board)->create(['email' => $user->email]);
+    Mail::assertNothingQueued();
+
+    Livewire::test(Show::class, ['invitation' => $invitation])->call('accept')->assertRedirect(route('boards.show', $board));
+
+    Mail::assertQueued(NewMemberMail::class, fn ($mail) => $mail->hasTo($alreadyBoardMember->email));
+    Mail::assertQueued(InvitationAcceptedMail::class, fn ($mail) => $mail->hasTo($board->user->email));
+});
+
+test('a user can deny an invitation', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    $invitation = Invitation::factory()->for($board)->create(['email' => $user->email]);
+
+    expect(Invitation::all())->toHaveCount(1);
+    expect(Membership::all())->toHaveCount(0);
+
+    Livewire::test(Show::class, ['invitation' => $invitation])->call('deny')->assertRedirect(route('invitations.check'));
+
+    expect(Invitation::all())->toHaveCount(0);
+    expect(Membership::all())->toHaveCount(0);
+});
+
+test('a user cannot deny an invitation when the board is archived', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->archived()->create();
+    $invitation = Invitation::factory()->for($board)->create(['email' => $user->email]);
+
+    Livewire::test(Show::class, ['invitation' => $invitation])->call('deny')->assertStatus(403);
+
+    expect(Invitation::all())->toHaveCount(1);
+    expect(Membership::all())->toHaveCount(0);
+});
+
+test('the board owner gets an email when someone denies an invitation', function () {
+    $this->actingAs($user = User::factory()->create());
+    $boardOwner = User::factory()->create();
+    $board = Board::factory()->for($boardOwner)->create();
+    $invitation = Invitation::factory()->for($board)->create(['email' => $user->email]);
+
+    Mail::assertNothingQueued();
+    Livewire::test(Show::class, ['invitation' => $invitation])->call('deny')->assertRedirect(route('invitations.check'));
+    Mail::assertQueued(InvitationDeniedMail::class, fn ($mail) => $mail->hasTo($boardOwner->email));
+});
+
+test('members dont get an email when someone denies an invitation', function () {
+    $this->actingAs($user = User::factory()->create());
+    $alreadyMember = User::factory()->create();
+    $board = Board::factory()->create();
+    Membership::factory()->for($alreadyMember)->for($board)->create();
+    $invitation = Invitation::factory()->for($board)->create(['email' => $user->email]);
+
+    Livewire::test(Show::class, ['invitation' => $invitation])->call('deny')->assertRedirect(route('invitations.check'));
+    Mail::assertNotQueued(InvitationDeniedMail::class, fn ($mail) => $mail->hasTo($alreadyMember->email));
+});

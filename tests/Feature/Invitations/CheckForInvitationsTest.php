@@ -1,64 +1,33 @@
 <?php
 
-namespace Tests\Feature\Invitations;
-
 use App\Models\Board;
 use App\Models\Invitation;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-/** @group invitations */
-class CheckForInvitationsTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function a_user_can_visit_the_invitations_page()
-    {
-        $this->withoutExceptionHandling();
+test('a user can visit the invitations page', function () {
+    $this->actingAs(User::factory()->create());
+    $this->get(route('invitations.check'))->assertRedirect(route('boards.index'));
+});
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('guests cannot visit the invitations page', function () {
+    $this->withExceptionHandling();
+    $this->get(route('invitations.check'))->assertRedirect(route('login'));
+});
 
-        $this->get(route('invitations.check'))
-            ->assertRedirect(route('boards.index'));
-    }
+test('a user gets redirected to an invitation is there are any', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    $invitation = Invitation::factory()->for($board)->create(['email' => $user->email]);
 
-    /** @test */
-    public function guests_cannot_visit_the_invitations_page()
-    {
-        $this->get(route('invitations.check'))
-            ->assertRedirect(route('login'));
-    }
+    $this->get(route('invitations.check'))->assertRedirect(route('invitations.show', $invitation));
+});
 
-    /** @test */
-    public function a_user_gets_redirected_to_an_invitation_if_there_are_any()
-    {
-        $this->withoutExceptionHandling();
+test('a user does not get redirected to an invitation if the board is archived', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create(['archived' => true]);
+    Invitation::factory()->for($board)->create(['email' => $user->email]);
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create();
-        $invitation = Invitation::factory()->for($board)->create(['email' => $user->email]);
-
-        $this->get(route('invitations.check'))
-            ->assertRedirect(route('invitations.show', $invitation));
-    }
-
-    /** @test */
-    public function a_user_does_not_get_redirected_to_an_invitation_if_the_board_is_archived()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->create(['archived' => true]);
-        $invitation = Invitation::factory()->for($board)->create(['email' => $user->email]);
-
-        $this->get(route('invitations.check'))
-            ->assertRedirect(route('boards.index'));
-    }
-}
+    $this->get(route('invitations.check'))->assertRedirect(route('boards.index'));
+});

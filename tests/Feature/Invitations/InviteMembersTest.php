@@ -1,231 +1,164 @@
 <?php
 
-namespace Tests\Feature\Invitations;
-
 use App\Http\Livewire\Members\Create;
 use App\Mail\InvitationMail;
 use App\Models\Board;
 use App\Models\Invitation;
 use App\Models\Membership;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
-use Tests\TestCase;
+use function Pest\Faker\faker;
 
-/** @group invitations */
-class InviteMembersTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(function () {
+    $this->withoutExceptionHandling();
+    Mail::fake();
+});
 
-    /** @test */
-    public function a_board_owner_can_invite_a_member()
-    {
-        $this->withoutExceptionHandling();
+test('a board owner can invite a member', function () {
+    $this->actingAs($user = User::factory()->create());
+    $userToBeInvited = User::factory()->create();
+    $board = Board::factory()->for($user)->create();
+    $role = Arr::random(['viewer', 'member']);
+    expect(Invitation::all())->toHaveCount(0);
 
-        Mail::fake();
+    Livewire::test(Create::class, ['board' => $board])
+        ->set('email', $userToBeInvited->email)
+        ->set('role', 'member')
+        ->call('invite');
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    expect(Invitation::all())->toHaveCount(1);
+    tap(Invitation::first(), function ($invitation) use ($board, $userToBeInvited, $role) {
+        expect($invitation->board_id)->toBe($board->id);
+        expect($invitation->email)->toBe($userToBeInvited->email);
+        expect($invitation->role)->toBe($role);
+    });
+});
 
-        $userToBeInvited = User::factory()->create();
+test('members cannot invite a user', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->member()->create();
 
-        $board = Board::factory()->for($user)->create();
+    Livewire::test(Create::class, ['board' => $board])
+        ->set('email', 'john@example.org')
+        ->set('role', 'member')
+        ->call('invite')
+        ->assertStatus(403);
 
-        $this->assertCount(0, Invitation::all());
-        
-        Livewire::test(Create::class, ['board' => $board])
-            ->set('email', $userToBeInvited->email)
-            ->set('role', 'member')
-            ->call('invite');
+    expect(Invitation::all())->toHaveCount(0);
+});
 
-        $this->assertCount(1, Invitation::all());
+test('viewers cannot invite a user', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->viewer()->create();
 
-        $this->assertDatabaseHas('invitations', [
-            'board_id' => $board->id,
-            'email' => $userToBeInvited->email,
-            'role' => 'member'
-        ]);
-    }
+    Livewire::test(Create::class, ['board' => $board])
+        ->set('email', 'john@example.org')
+        ->set('role', 'member')
+        ->call('invite')
+        ->assertStatus(403);
 
-    /** @test */
-    public function members_cannot_invite_a_user()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    expect(Invitation::all())->toHaveCount(0);
+});
 
-        $board = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'member']);
+test('a user cannot be invited twice', function () {
+    $this->actingAs($user = User::factory()->create());
+    $userToBeInvited = User::factory()->create();
+    $board = Board::factory()->for($user)->create();
 
-        Livewire::test(Create::class, ['board' => $board])
-            ->set('email', 'john@example.org')
-            ->set('role', 'member')
-            ->call('invite')
-            ->assertStatus(403);
+    Invitation::create([
+        'board_id' => $board->id,
+        'email' => $userToBeInvited->email,
+        'role' => 'member'
+    ]);
+    expect(Invitation::all())->toHaveCount(1);
 
-        $this->assertCount(0, Invitation::all());
-    }
+    Livewire::test(Create::class, ['board' => $board])
+        ->set('email', $userToBeInvited->email)
+        ->set('role', 'viewer')
+        ->call('invite')
+        ->assertHasErrors('email');
 
-    /** @test */
-    public function viewers_cannot_invite_a_user()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    expect(Invitation::all())->toHaveCount(1);
+    Mail::assertNothingQueued();
+});
 
-        $board = Board::factory()->create();
-        $membership = Membership::factory()->for($user)->for($board)->create(['role' => 'viewer']);
+test('users who are already members cannot be invited again', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
 
-        Livewire::test(Create::class, ['board' => $board])
-            ->set('email', 'john@example.org')
-            ->set('role', 'member')
-            ->call('invite')
-            ->assertStatus(403);
+    $otherUser = User::factory()->create();
+    Membership::factory()->create(['board_id' => $board->id, 'user_id' => $otherUser->id]);
 
-        $this->assertCount(0, Invitation::all());
-    }
+    Livewire::test(Create::class, ['board' => $board])
+        ->set('email', $otherUser->email)
+        ->set('role', 'viewer')
+        ->call('invite')
+        ->assertHasErrors('email');
 
-    /** @test */
-    public function a_user_cannot_be_invited_twice()
-    {
-        $this->withoutExceptionHandling();
+    Mail::assertNothingQueued();
+});
 
-        Mail::fake();
+test('non existing users can be invited', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    $email = faker()->email();
+    $role = Arr::random(['viewer', 'member']);
+    expect(Invitation::all())->toHaveCount(0);
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(Create::class, ['board' => $board])
+        ->set('email', $email) // does not exists
+        ->set('role', $role)
+        ->call('invite')
+        ->assertHasNoErrors('email');
 
-        $userToBeInvited = User::factory()->create();
+    expect(Invitation::all())->toHaveCount(1);
+    tap(Invitation::first(), function ($invitation) use ($board, $email, $role) {
+        expect($invitation->board_id)->toBe($board->id)
+            ->and($invitation->email)->toBe($email)
+            ->and($invitation->role)->toBe($role);
+    });
+});
 
-        $board = Board::factory()->for($user)->create();
-        
-        $invitation = Invitation::create([
-            'board_id' => $board->id,
-            'email' => $userToBeInvited->email,
-            'role' => 'member'
-        ]);
+it('requires an existing role', function () {
+    $this->actingAs($user = User::factory()->create());
+    $userToBeInvited = User::factory()->create();
+    $board = Board::factory()->for($user)->create();
 
-        $this->assertCount(1, Invitation::all());
-    
-        Livewire::test(Create::class, ['board' => $board])
-            ->set('email', $userToBeInvited->email)
-            ->set('role', 'viewer')
-            ->call('invite')
-            ->assertHasErrors('email');
+    Livewire::test(Create::class, ['board' => $board])
+        ->set('email', $userToBeInvited->email)
+        ->set('role', 'member')
+        ->call('invite')
+        ->assertHasNoErrors('role');
 
-        $this->assertCount(1, Invitation::all());
+    Livewire::test(Create::class, ['board' => $board])
+        ->set('email', $userToBeInvited->email)
+        ->set('role', 'viewer')
+        ->call('invite')
+        ->assertHasNoErrors('role');
 
-        Mail::assertNothingQueued();
-    }
+    Livewire::test(Create::class, ['board' => $board])
+        ->set('email', $userToBeInvited->email)
+        ->set('role', 'admin') // invalid role
+        ->call('invite')
+        ->assertHasErrors('role');
+});
 
-    /** @test */
-    public function users_who_are_already_members_cannot_be_invited_again()
-    {
-        $this->withoutExceptionHandling();
+test('an invited user gets a link mailed to join the board', function () {
+    $this->actingAs($user = User::factory()->create());
+    $userToBeInvited = User::factory()->create();
+    $board = Board::factory()->for($user)->create();
+    Mail::assertNothingQueued();
 
-        Mail::fake();
+    Livewire::test(Create::class, ['board' => $board])
+        ->set('email', $userToBeInvited->email)
+        ->set('role', 'member')
+        ->call('invite');
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create();
-
-        $otherUser = User::factory()->create();
-        $membership = Membership::factory()->create(['board_id' => $board->id, 'user_id' => $otherUser->id]);
-    
-        Livewire::test(Create::class, ['board' => $board])
-            ->set('email', $otherUser->email)
-            ->set('role', 'viewer')
-            ->call('invite')
-            ->assertHasErrors('email');
-
-        Mail::assertNothingQueued();
-    }
-
-    /** @test */
-    public function non_existing_users_can_be_invited_too()
-    {
-        $this->withoutExceptionHandling();
-
-        Mail::fake();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create();
-
-        $this->assertCount(0, Invitation::all());
-        
-        Livewire::test(Create::class, ['board' => $board])
-            ->set('email', 'john@example.org') // does not exists
-            ->set('role', 'member')
-            ->call('invite')
-            ->assertHasNoErrors('email');
-
-        $this->assertCount(1, Invitation::all());
-
-        $this->assertDatabaseHas('invitations', [
-            'board_id' => $board->id,
-            'email' => 'john@example.org',
-            'role' => 'member'
-        ]);
-    }
-
-    /** @test */
-    public function an_invitation_requires_an_existing_role()
-    {
-        $this->withoutExceptionHandling();
-
-        Mail::fake();
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $userToBeInvited = User::factory()->create();
-
-        $board = Board::factory()->for($user)->create();
-        
-        Livewire::test(Create::class, ['board' => $board])
-            ->set('email', $userToBeInvited->email)
-            ->set('role', 'member')
-            ->call('invite')
-            ->assertHasNoErrors('role');
-        
-        Livewire::test(Create::class, ['board' => $board])
-            ->set('email', $userToBeInvited->email)
-            ->set('role', 'viewer')
-            ->call('invite')
-            ->assertHasNoErrors('role');
-        
-        Livewire::test(Create::class, ['board' => $board])
-            ->set('email', $userToBeInvited->email)
-            ->set('role', 'admin') // invalid role
-            ->call('invite')
-            ->assertHasErrors('role');
-    }
-
-    /** @test */
-    public function an_invited_member_gets_a_link_mailed_to_join_a_board()
-    {
-        $this->withoutExceptionHandling();
-
-        Mail::fake();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $userToBeInvited = User::factory()->create();
-
-        $board = Board::factory()->for($user)->create();
-
-        Mail::assertNothingQueued();
-        
-        Livewire::test(Create::class, ['board' => $board])
-            ->set('email', $userToBeInvited->email)
-            ->set('role', 'member')
-            ->call('invite');
-
-        Mail::assertQueued(function(InvitationMail $mail) use ($userToBeInvited) {
-            return $mail->hasTo($userToBeInvited->email);
-        });
-    }
-}
+    Mail::assertQueued(InvitationMail::class, fn ($mail) => $mail->hasTo($userToBeInvited->email));
+});

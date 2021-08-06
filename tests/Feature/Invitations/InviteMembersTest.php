@@ -25,7 +25,7 @@ test('a board owner can invite a member', function () {
 
     Livewire::test(Create::class, ['board' => $board])
         ->set('email', $userToBeInvited->email)
-        ->set('role', 'member')
+        ->set('role', $role)
         ->call('invite');
 
     expect(Invitation::all())->toHaveCount(1);

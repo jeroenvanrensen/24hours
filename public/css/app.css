@@ -9,7 +9,7 @@
 
     padding: 0px !important;
 
-    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important
+    font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important
 }
 
 .ql-editor:focus {
@@ -583,7 +583,7 @@ ul {
  */
 
 html {
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; /* 1 */
+  font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; /* 1 */
   line-height: 1.5; /* 2 */
 }
 
@@ -899,6 +899,12 @@ video {
 .-ml-1 {
 	margin-left: -0.25rem;
 }
+.ml-6 {
+	margin-left: 1.5rem;
+}
+.ml-12 {
+	margin-left: 3rem;
+}
 .mb-16 {
 	margin-bottom: 4rem;
 }
@@ -937,6 +943,9 @@ video {
 }
 .block {
 	display: block;
+}
+.inline-block {
+	display: inline-block;
 }
 .flex {
 	display: flex;
@@ -1122,8 +1131,18 @@ video {
 .border {
 	border-width: 1px;
 }
+.border-l {
+	border-left-width: 1px;
+}
 .border-t {
 	border-top-width: 1px;
+}
+.border-gray-200 {
+	--tw-border-opacity: 1;
+	border-color: rgba(229, 231, 235, var(--tw-border-opacity));
+}
+.border-transparent {
+	border-color: transparent;
 }
 .border-gray-300 {
 	--tw-border-opacity: 1;
@@ -1132,10 +1151,6 @@ video {
 .border-red-300 {
 	--tw-border-opacity: 1;
 	border-color: rgba(252, 165, 165, var(--tw-border-opacity));
-}
-.border-gray-200 {
-	--tw-border-opacity: 1;
-	border-color: rgba(229, 231, 235, var(--tw-border-opacity));
 }
 .bg-gray-200 {
 	--tw-bg-opacity: 1;
@@ -1172,6 +1187,10 @@ video {
 .bg-gray-100 {
 	--tw-bg-opacity: 1;
 	background-color: rgba(236, 236, 236, var(--tw-bg-opacity));
+}
+.bg-indigo-600 {
+	--tw-bg-opacity: 1;
+	background-color: rgba(79, 70, 229, var(--tw-bg-opacity));
 }
 .bg-gray-700 {
 	--tw-bg-opacity: 1;
@@ -1256,6 +1275,12 @@ video {
 .pt-32 {
 	padding-top: 8rem;
 }
+.pl-6 {
+	padding-left: 1.5rem;
+}
+.pl-px {
+	padding-left: 1px;
+}
 .pl-4 {
 	padding-left: 1rem;
 }
@@ -1290,6 +1315,10 @@ video {
 	font-size: 0.875rem;
 	line-height: 1.25rem;
 }
+.text-6xl {
+	font-size: 3.75rem;
+	line-height: 1;
+}
 .text-xl {
 	font-size: 1.25rem;
 	line-height: 1.75rem;
@@ -1307,6 +1336,9 @@ video {
 }
 .font-semibold {
 	font-weight: 600;
+}
+.font-medium {
+	font-weight: 500;
 }
 .font-normal {
 	font-weight: 400;
@@ -1364,6 +1396,10 @@ video {
 .text-yellow-600 {
 	--tw-text-opacity: 1;
 	color: rgba(217, 119, 6, var(--tw-text-opacity));
+}
+.text-indigo-600 {
+	--tw-text-opacity: 1;
+	color: rgba(79, 70, 229, var(--tw-text-opacity));
 }
 .text-gray-400 {
 	--tw-text-opacity: 1;
@@ -1537,6 +1573,11 @@ video {
 	background-color: rgba(229, 231, 235, var(--tw-bg-opacity));
 }
 
+.hover\:bg-indigo-700:hover {
+	--tw-bg-opacity: 1;
+	background-color: rgba(67, 56, 202, var(--tw-bg-opacity));
+}
+
 .hover\:bg-gray-300:hover {
 	--tw-bg-opacity: 1;
 	background-color: rgba(209, 213, 219, var(--tw-bg-opacity));
@@ -1673,6 +1714,11 @@ video {
 	box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
 
+.focus\:ring-indigo-500:focus {
+	--tw-ring-opacity: 1;
+	--tw-ring-color: rgba(99, 102, 241, var(--tw-ring-opacity));
+}
+
 .focus\:ring-red-200:focus {
 	--tw-ring-opacity: 1;
 	--tw-ring-color: rgba(254, 202, 202, var(--tw-ring-opacity));
@@ -1689,6 +1735,10 @@ video {
 
 .focus\:ring-opacity-50:focus {
 	--tw-ring-opacity: 0.5;
+}
+
+.focus\:ring-offset-2:focus {
+	--tw-ring-offset-width: 2px;
 }
 
 .group:hover .group-hover\:bg-gray-300 {

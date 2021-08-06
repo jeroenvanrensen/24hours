@@ -1,36 +1,21 @@
 <?php
 
-namespace Tests\Feature\Profile;
-
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-/** @group profile */
-class VisitProfilePageTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function a_user_can_visit_the_profile_page()
-    {
-        $this->withoutExceptionHandling();
+test('a user can visit the profile page', function () {
+    $this->actingAs(User::factory()->create());
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
-        
-        $this->get(route('profile.edit'))
-            ->assertStatus(200)
-            ->assertSeeLivewire('profile.edit')
-            ->assertSeeLivewire('profile.profile-info')
-            ->assertSeeLivewire('profile.password')
-            ->assertSeeLivewire('profile.delete-account');
-    }
+    $this->get(route('profile.edit'))
+        ->assertStatus(200)
+        ->assertSeeLivewire('profile.edit')
+        ->assertSeeLivewire('profile.profile-info')
+        ->assertSeeLivewire('profile.password')
+        ->assertSeeLivewire('profile.delete-account');
+});
 
-    /** @test */
-    public function guests_cannot_visit_the_profile_page()
-    {
-        $this->get(route('profile.edit'))
-            ->assertRedirect(route('login'));
-    }
-}
+test('guests cannot visit the profile page', function () {
+    $this->withExceptionHandling();
+    $this->get(route('profile.edit'))->assertRedirect(route('login'));
+});

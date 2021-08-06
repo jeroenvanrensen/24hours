@@ -1,141 +1,93 @@
 <?php
 
-namespace Tests\Feature\Profile;
-
 use App\Http\Livewire\Profile\ProfileInfo;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-/** @group profile */
-class UpdateProfileInformationTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function a_user_can_edit_their_profile()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('a user can edit their profile', function () {
+    $this->actingAs($user = User::factory()->create());
+    expect($user->fresh()->name)->not()->toBe('John Doe');
+    expect($user->fresh()->email)->not()->toBe('john@example.org');
 
-        $this->assertNotEquals('John Doe', $user->fresh()->name);
-        $this->assertNotEquals('john@example.org', $user->fresh()->email);
+    Livewire::test(ProfileInfo::class)
+        ->set('name', 'John Doe')
+        ->set('email', 'john@example.org')
+        ->call('update');
 
-        Livewire::test(ProfileInfo::class)
-            ->set('name', 'John Doe')
-            ->set('email', 'john@example.org')
-            ->call('update');
-        
-        $this->assertEquals('John Doe', $user->fresh()->name);    
-        $this->assertEquals('john@example.org', $user->fresh()->email);    
-    }
+    expect($user->fresh()->name)->toBe('John Doe');
+    expect($user->fresh()->email)->toBe('john@example.org');
+});
 
-    /** @test */
-    public function a_name_is_required()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
-        
-        Livewire::test(ProfileInfo::class)
-            ->set('name', null)
-            ->set('email', 'john@example.org')
-            ->call('update')
-            ->assertHasErrors('name');
-    }
+it('requires a name', function () {
+    $this->actingAs($user = User::factory()->create());
 
-    /** @test */
-    public function a_valid_email_is_required()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
-        
-        // Empty email
-        Livewire::test(ProfileInfo::class)
-            ->set('name', 'John Doe')
-            ->set('email', null)
-            ->call('update')
-            ->assertHasErrors('email');
-        
-        // Invalid email
-        Livewire::test(ProfileInfo::class)
-            ->set('name', 'John Doe')
-            ->set('email', 'invalid-email')
-            ->call('update')
-            ->assertHasErrors('email');
-    }
+    Livewire::test(ProfileInfo::class)
+        ->set('name', null)
+        ->set('email', 'john@example.org')
+        ->call('update')
+        ->assertHasErrors('name');
+});
 
-    /** @test */
-    public function the_email_must_be_unique()
-    {
-        $this->withoutExceptionHandling();
-        
-        User::factory()->create(['email' => 'john@example.org']);
+it('requires a vaild email', function () {
+    $this->actingAs($user = User::factory()->create());
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
-        
-        Livewire::test(ProfileInfo::class)
-            ->set('name', 'John Doe')
-            ->set('email', 'john@example.org') // already exists
-            ->call('update')
-            ->assertHasErrors('email');
-    }
+    // Empty email
+    Livewire::test(ProfileInfo::class)
+        ->set('name', 'John Doe')
+        ->set('email', null)
+        ->call('update')
+        ->assertHasErrors('email');
 
-    /** @test */
-    public function the_email_can_be_the_same()
-    {
-        $this->withoutExceptionHandling();
+    // Invalid email
+    Livewire::test(ProfileInfo::class)
+        ->set('name', 'John Doe')
+        ->set('email', 'invalid-email')
+        ->call('update')
+        ->assertHasErrors('email');
+});
 
-        $user = User::factory()->create(['email' => 'john@example.org']);
-        $this->actingAs($user);
-        
-        Livewire::test(ProfileInfo::class)
-            ->set('name', 'John Doe')
-            ->set('email', 'john@example.org') // same email
-            ->call('update')
-            ->assertHasNoErrors();
-    }
+test('the email must be unique', function () {
+    User::factory()->create(['email' => 'john@example.org']);
+    $this->actingAs($user = User::factory()->create());
 
-    /** @test */
-    public function the_email_verified_column_is_set_to_null_if_the_email_changes()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create(['email_verified_at' => now()]);
-        $this->actingAs($user);
+    Livewire::test(ProfileInfo::class)
+        ->set('name', 'John Doe')
+        ->set('email', 'john@example.org') // already exists
+        ->call('update')
+        ->assertHasErrors('email');
+});
 
-        $this->assertNotNull($user->fresh()->email_verified_at);
-        
-        Livewire::test(ProfileInfo::class)
-            ->set('name', 'John Doe')
-            ->set('email', 'john@example.org') // new email
-            ->call('update');
+test('the email can stay the same', function () {
+    $this->actingAs(User::factory()->create(['email' => 'john@example.org']));
 
-        $this->assertNull($user->fresh()->email_verified_at);
-    }
+    Livewire::test(ProfileInfo::class)
+        ->set('name', 'John Doe')
+        ->set('email', 'john@example.org') // same email
+        ->call('update')
+        ->assertHasNoErrors();
+});
 
-    /** @test */
-    public function the_email_verified_column_is_not_set_to_null_if_the_email_does_not_change()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create(['email_verified_at' => now()]);
-        $this->actingAs($user);
+test('the email_verified_at column is set to null when the email changes', function () {
+    $this->actingAs($user = User::factory()->create());
+    expect($user->fresh()->email_verified_at)->not()->toBeNull();
 
-        $this->assertNotNull($user->fresh()->email_verified_at);
-        
-        Livewire::test(ProfileInfo::class)
-            ->set('name', 'John Doe')
-            ->set('email', $user->email) // same email
-            ->call('update');
+    Livewire::test(ProfileInfo::class)
+        ->set('name', 'John Doe')
+        ->set('email', 'john@example.org') // new email
+        ->call('update');
 
-        $this->assertNotNull($user->fresh()->email_verified_at);
-    }
-}
+    expect($user->fresh()->email_verified_at)->toBeNull();
+});
+
+test('the email_verified_at column is not set to null when the email stays the same', function () {
+    $this->actingAs($user = User::factory()->create());
+
+    Livewire::test(ProfileInfo::class)
+        ->set('name', 'John Doe')
+        ->set('email', $user->email) // new email
+        ->call('update');
+
+    expect($user->fresh()->email_verified_at)->not()->toBeNull();
+});

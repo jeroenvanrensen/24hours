@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Feature\Profile;
-
 use App\Http\Livewire\Profile\DeleteAccount;
 use App\Models\Board;
 use App\Models\Link;
@@ -11,125 +9,85 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
-/** @group profile */
-class DeleteAccountTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function a_user_can_delete_their_account()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('a user can delete their account', function () {
+    $this->actingAs($user = User::factory()->create());
+    expect($user->exists())->toBeTrue();
 
-        $this->assertTrue($user->exists());
+    Livewire::test(DeleteAccount::class)
+        ->set('email', $user->email)
+        ->set('password', 'password')
+        ->call('destroy')
+        ->assertRedirect(route('home'));
 
-        Livewire::test(DeleteAccount::class)
-            ->set('email', $user->email)
-            ->set('password', 'password')
-            ->call('destroy')
-            ->assertRedirect(route('login'));
+    expect($user->exists())->toBeFalse();
+});
 
-        $this->assertFalse($user->exists());
-    }
+test('the email must be correct', function () {
+    $this->actingAs($user = User::factory()->create());
 
-    /** @test */
-    public function a_user_cant_delete_their_account_with_the_wrong_email()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(DeleteAccount::class)
+        ->set('email', 'wrong-email')
+        ->set('password', 'password')
+        ->call('destroy')
+        ->assertHasErrors('email')
+        ->assertSet('password', '');
+});
 
-        Livewire::test(DeleteAccount::class)
-            ->set('email', 'wrong-email')
-            ->set('password', 'password')
-            ->call('destroy')
-            ->assertHasErrors('email')
-            ->assertSet('password', '');
+test('the password must be correct', function () {
+    $this->actingAs($user = User::factory()->create());
 
-        $this->assertTrue($user->exists());
-    }
+    Livewire::test(DeleteAccount::class)
+        ->set('email', $user->email)
+        ->set('password', 'wrong-password')
+        ->call('destroy')
+        ->assertHasErrors('email')
+        ->assertSet('password', '');
 
-    /** @test */
-    public function a_user_cant_delete_their_account_with_the_wrong_password()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    expect($user->exists())->toBeTrue();
+});
 
-        Livewire::test(DeleteAccount::class)
-            ->set('email', $user->email)
-            ->set('password', 'wrong-password')
-            ->call('destroy')
-            ->assertHasErrors('email')
-            ->assertSet('password', '');
+test('all the users boards are deleted', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
 
-        $this->assertTrue($user->exists());
-    }
+    expect($board->exists())->toBeTrue();
 
-    /** @test */
-    public function all_users_boards_are_deleted_when_they_delete_their_account()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    Livewire::test(DeleteAccount::class)
+        ->set('email', $user->email)
+        ->set('password', 'password')
+        ->call('destroy');
 
-        $board = Board::factory()->for($user)->create();
+    expect($board->exists())->toBeFalse();
+});
 
-        $this->assertTrue($board->exists());
+test('all users links are deleted', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    $link = Link::factory()->for($board)->create();
 
-        Livewire::test(DeleteAccount::class)
-            ->set('email', $user->email)
-            ->set('password', 'password')
-            ->call('destroy');
+    expect($link->exists())->toBeTrue();
 
-        $this->assertFalse($board->exists());
-    }
+    Livewire::test(DeleteAccount::class)
+        ->set('email', $user->email)
+        ->set('password', 'password')
+        ->call('destroy');
 
-    /** @test */
-    public function all_users_links_are_deleted_when_they_delete_their_account()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
+    expect($link->exists())->toBeFalse();
+});
 
-        $board = Board::factory()->for($user)->create();
-        $link = Link::factory()->for($board)->create();
+test('all users notes are deleted', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    $note = Note::factory()->for($board)->create();
 
-        $this->assertTrue($link->exists());
+    expect($note->exists())->toBeTrue();
 
-        Livewire::test(DeleteAccount::class)
-            ->set('email', $user->email)
-            ->set('password', 'password')
-            ->call('destroy');
+    Livewire::test(DeleteAccount::class)
+        ->set('email', $user->email)
+        ->set('password', 'password')
+        ->call('destroy');
 
-        $this->assertFalse($link->exists());
-    }
-
-    /** @test */
-    public function all_users_notes_are_deleted_when_they_delete_their_account()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $board = Board::factory()->for($user)->create();
-        $note = Note::factory()->for($board)->create();
-
-        $this->assertTrue($note->exists());
-
-        Livewire::test(DeleteAccount::class)
-            ->set('email', $user->email)
-            ->set('password', 'password')
-            ->call('destroy');
-
-        $this->assertFalse($note->exists());
-    }
-}
+    expect($note->exists())->toBeFalse();
+});

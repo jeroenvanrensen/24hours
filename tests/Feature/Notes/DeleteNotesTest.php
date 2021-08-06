@@ -6,9 +6,7 @@ use App\Models\Board;
 use App\Models\Membership;
 use App\Models\Note;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Tests\TestCase;
 
 beforeEach(fn () => $this->withoutExceptionHandling());
 

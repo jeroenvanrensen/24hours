@@ -25,13 +25,13 @@ class DeleteAccount extends Component
             $this->reset('password');
             return $this->addError('email', 'These credentials do not match our records.');
         }
-        
+
         $user->links()->delete();
         $user->notes()->delete();
         $user->boards()->delete();
         $user->delete();
 
-        return redirect()->route('login');
+        return redirect()->route('home');
     }
 
     protected function credentialsAreCorrect(User $user): bool

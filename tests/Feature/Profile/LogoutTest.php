@@ -1,32 +1,15 @@
 <?php
 
-namespace Tests\Feature\Profile;
-
 use App\Http\Livewire\Profile\Edit;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-/** @group profile */
-class LogoutTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(fn () => $this->withoutExceptionHandling());
 
-    /** @test */
-    public function a_user_can_logout()
-    {
-        $this->withoutExceptionHandling();
-        
-        $user = User::factory()->create();
-        $this->actingAs($user);
+test('a user can logout', function () {
+    $this->actingAs(User::factory()->create());
+    expect(auth()->check())->toBeTrue();
 
-        $this->assertTrue(auth()->check());
-
-        Livewire::test(Edit::class)
-            ->call('logout')
-            ->assertRedirect(route('login'));
-
-        $this->assertFalse(auth()->check());
-    }
-}
+    Livewire::test(Edit::class)->call('logout')->assertRedirect(route('login'));
+    expect(auth()->check())->toBeFalse();
+});

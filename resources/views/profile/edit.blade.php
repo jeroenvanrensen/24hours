@@ -1,9 +1,11 @@
-<div x-data @keydown.window.escape="Turbolinks.visit('{{ route('boards.index') }}');">
-    <div class="flex items-center justify-between mb-16">
-        <h1 class="font-serif text-3xl md:text-4xl">My Profile</h1>
-    </div>
+<div>
+    <x-navbar />
 
-    <livewire:profile.profile-info />
-    <livewire:profile.password />
-    <livewire:profile.delete-account />
+    <x-container x-data @keydown.window.escape="Turbolinks.visit('{{ route('boards.index') }}');">
+        <h1 class="mb-10 text-3xl font-bold">My Profile</h1>
+
+        <livewire:profile.profile-info />
+        <livewire:profile.password />
+        <livewire:profile.delete-account />
+    </x-container>
 </div>

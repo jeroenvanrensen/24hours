@@ -8,7 +8,6 @@ class Home extends Component
 {
     public function render()
     {
-        return view('home')
-            ->layout('layouts.app', ['showNavbar' => false]);
+        return view('home');
     }
 }

@@ -24,8 +24,7 @@ class Edit extends Component
 
     public function render()
     {
-        return view('notes.edit')
-            ->layout('layouts.app', ['showNavbar' => false]);
+        return view('notes.edit');
     }
 
     public function updated()

@@ -835,6 +835,12 @@ video {
 .left-4 {
 	left: 1rem;
 }
+.right-4 {
+	right: 1rem;
+}
+.top-0 {
+	top: 0px;
+}
 .z-50 {
 	z-index: 50;
 }
@@ -1087,6 +1093,9 @@ video {
 .transform {
 	transform: var(--tw-transform);
 }
+.cursor-pointer {
+	cursor: pointer;
+}
 .grid-cols-2 {
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -1184,6 +1193,10 @@ video {
 	--tw-border-opacity: 1;
 	border-color: rgba(243, 244, 246, var(--tw-border-opacity));
 }
+.border-gray-400 {
+	--tw-border-opacity: 1;
+	border-color: rgba(156, 163, 175, var(--tw-border-opacity));
+}
 .bg-gray-200 {
 	--tw-bg-opacity: 1;
 	background-color: rgba(229, 231, 235, var(--tw-bg-opacity));
@@ -1243,6 +1256,10 @@ video {
 .bg-red-500 {
 	--tw-bg-opacity: 1;
 	background-color: rgba(239, 68, 68, var(--tw-bg-opacity));
+}
+.bg-gray-500 {
+	--tw-bg-opacity: 1;
+	background-color: rgba(107, 114, 128, var(--tw-bg-opacity));
 }
 .bg-gradient-to-br {
 	background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
@@ -1326,6 +1343,14 @@ video {
 .py-6 {
 	padding-top: 1.5rem;
 	padding-bottom: 1.5rem;
+}
+.px-1 {
+	padding-left: 0.25rem;
+	padding-right: 0.25rem;
+}
+.py-px {
+	padding-top: 1px;
+	padding-bottom: 1px;
 }
 .pt-32 {
 	padding-top: 8rem;

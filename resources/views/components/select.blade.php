@@ -1,19 +1,10 @@
-@error($name)
+@props(['name'])
 
 <select {{ $attributes->merge([
-    'type' => 'text',
-    'class' => 'w-full py-2 px-4 placeholder-gray-600 dark:placeholder-gray-300 rounded-md border focus:outline-none focus:ring-2 focus:ring-opacity-75 border-red-300 focus:border-red-400 focus:ring-red-200 dark:bg-gray-700 dark:border-red-600 dark:focus:ring-red-400'
-]) }}>
+    'name' => $name,
+    'id' => $name
+    ]) }}
+    class="block w-full px-4 py-2 rounded-md shadow-sm  focus:ring-1 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500 {{ $errors->has($name) ? 'border border-red-500' : 'border border-gray-300 ' }}"
+>
     {{ $slot }}
 </select>
-
-@else
-
-<select {{ $attributes->merge([
-    'type' => 'text',
-    'class' => 'w-full py-2 px-4 placeholder-gray-600 dark:placeholder-gray-300 rounded-md border border-gray-300 focus:outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600'
-]) }}>
-    {{ $slot }}
-</select>
-
-@endif

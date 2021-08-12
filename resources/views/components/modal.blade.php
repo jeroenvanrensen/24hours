@@ -1,47 +1,47 @@
-@props(['name' => 'showModal'])
+@props(['name' => 'modal', 'title'])
 
 <div
-    x-show="{{ $name }}"
-    class="fixed inset-0 z-50 flex items-center justify-center w-full h-screen px-6"
-    style="display: none;"
-    @keydown.escape.window="{{ $name }} = false"
+    class="fixed inset-0 z-30"
+    x-data="{ show: false }"
+    {{ '@'.$name.'.window'}}="show = true"
+    x-show="show"
+    @keydown.escape.window="show = false"
 >
-    <div 
-        x-show="{{ $name }}"
-        @click="{{ $name }} = false"
-        class="absolute w-full h-full transition"
-        x-transition:enter="ease-out duration-300"
+    <div
+        x-show="show"
+        class="absolute inset-0 z-30"
+        x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100"
-        x-transition:leave="ease-in duration-200"
+        x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
     >
-        <div class="absolute w-full h-full bg-gray-600 opacity-60 dark:bg-black"></div>
+        <div class="w-full h-full bg-black opacity-40"></div>
     </div>
 
-    <div
-        x-show="{{ $name }}"
-        class="z-10 w-full max-w-xl p-8 transition transform bg-white rounded-lg shadow-lg dark:bg-gray-800"
-        x-transition:enter="ease-out duration-300"
-        x-transition:enter-start="opacity-0 scale-95"
-        x-transition:enter-end="opacity-100 scale-100"
-        x-transition:leave="ease-in duration-200"
-        x-transition:leave-start="opacity-100 scale-100"
-        x-transition:leave-end="opacity-0 scale-95"
-    >
-        <div class="flex items-center justify-between mb-8">
-            <!-- Title -->
-            <h2 class="text-2xl font-semibold">{{ $title }}</h2>
+    <div class="absolute z-40 flex items-center justify-center w-full h-full">
+        <div
+            x-show="show"
+            @click.away="show = false"
+            class="w-full max-w-lg overflow-hidden bg-white rounded-lg shadow-lg"
+            x-transition:enter="transition transform ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition transform ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+        >
+            <div class="p-8 pb-8">
+                <h3 class="mb-4 text-xl font-medium">{{ $title }}</h3>
+                
+                {{ $slot }}
+            </div>
 
-            <!-- Close button -->
-            <button @click="{{ $name }} = false" class="text-gray-400 hover:text-gray-500 focus:text-gray-600 focus:outline-none dark:hover:text-gray-300 dark:focus:text-gray-200">
-                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-        </div>
-
-        {{ $slot }}
+            <div class="flex items-center justify-end px-8 py-4 space-x-4 bg-gray-50">
+                <x-button secondary @click="show = false">Cancel</x-button>
+                {{ $footer ?? null }}
+            </div>
+        </divclass=>
     </div>
 </div>

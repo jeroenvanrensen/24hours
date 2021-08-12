@@ -1,80 +1,40 @@
-<div x-data="{ showModal: false, greeting: 'Welcome back' }">
-    <!-- Date -->
-    <p class="mb-3 text-gray-600 md:text-center dark:text-gray-300">{{ today()->format('l, F j') }} (Week {{ (int) today()->format('W') }})</p>
+<div>
+    <x-navbar />
+    <x-container>
+        <div x-data class="flex items-center justify-between mb-10">
+            <h1 class="text-3xl font-bold ">My Boards</h1>
+            <x-button @click="$dispatch('create-board')">New Board</x-button>
+        </div>
     
-    <!-- Header -->
-    <x-heading>
-        <span id="greeting">Welcome back</span>,
-        {{ auth()->user()->first_name }}
-    </x-heading>
-
-    <!-- Greeting -->
-    <script>
-        setGreeting(); // At first page load
-
-        setInterval(() => {
-            setGreeting();
-        }, 60000);
-
-        function setGreeting() {
-            var hours = new Date().getHours();
-            var greeting = 'Good night';
-
-            if(hours > 5) greeting = 'Good morning';
-            if(hours > 11) greeting = 'Good afternoon';
-            if(hours > 17) greeting = 'Good evening';
-            
-            document.querySelector('#greeting').innerHTML = greeting;
-        }
-    </script>
-
-    <!-- Heading -->
-    <div class="flex items-center justify-between mb-8">
-        <h2 class="font-serif text-2xl md:text-3xl">My Boards</h2>
-        <x-button @click="showModal = true">New Board</x-button>
-    </div>
-
-    <!-- List -->
-    <ul class="grid grid-cols-1 gap-6 md:grid-cols-3">
-        @foreach($boards as $board)
-            <li>
-                <a href="{{ route('boards.show', $board) }}" class="group focus:outline-none">
-                    <div class="flex items-center justify-center mb-2 bg-gray-200 rounded-lg h-36 lg:h-40 group-hover:bg-gray-300 group-focus:bg-gray-300 dark:bg-gray-700 dark:group-hover:bg-gray-600 dark:group-focus:bg-gray-600">
-                    <svg class="w-12 h-12 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-</svg>
+        <div class="grid grid-cols-4 gap-8">
+            @foreach($boards as $board)
+                <a class="group" href="{{ route('boards.show', $board) }}">
+                    <div class="aspect-w-16 aspect-h-10">
+                        <img
+                            src="{{
+                                [
+                                    'https://images.unsplash.com/photo-1448375240586-882707db888b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+                                    'https://images.unsplash.com/photo-1461360370896-922624d12aa1?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1353&q=80',
+                                    'https://images.unsplash.com/photo-1458560871784-56d23406c091?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=967&q=80',
+                                    'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+                                    'https://images.unsplash.com/photo-1509869175650-a1d97972541a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+                                    'https://images.unsplash.com/photo-1476966502122-c26b7830def9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1372&q=80'
+                                ][rand(0, 4)]
+                            }}"
+                            class="object-cover overflow-hidden transition duration-200 rounded-md shadow-lg group-hover:opacity-80"
+                            alt="Cover image"
+                        />
                     </div>
 
-                    <span class="text-lg font-semibold">{{ $board->name }}</span>
+                    <h2 class="mt-4 text-lg font-medium">{{ $board->name }}</h2>
+                    <p class="text-sm text-gray-500">{{ $board->updated_at->format('F j, Y') }}</p>
                 </a>
-            </li>
-        @endforeach
-    </ul>
+            @endforeach
+        </div>
+    </x-container>
 
     @if(count($boards) == 0)
-        <p>No Boards Found.</p>
-    @endif
-    
-    @if(count($archivedBoards) > 0)
-        <!-- Heading -->
-        <h2 class="mt-16 mb-8 font-serif text-2xl md:text-3xl">Archived Boards</h2>
-
-        <!-- List -->
-        <ul class="grid grid-cols-1 gap-6 md:grid-cols-3">
-            @foreach($archivedBoards as $board)
-                <li>
-                    <a href="{{ route('boards.show', $board) }}" class="group focus:outline-none">
-                        <div class="flex items-center justify-center mb-2 bg-gray-200 rounded-lg h-36 lg:h-40 group-hover:bg-gray-300 group-focus:bg-gray-300 dark:bg-gray-700 dark:group-hover:bg-gray-600 dark:group-focus:bg-gray-600">
-                            <svg class="w-12 h-12 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
-                        </div>
-    
-                        <span class="text-lg font-semibold">{{ $board->name }}</span>
-                    </a>
-                </li>
-            @endforeach
-        </ul>
+    <p>No Boards Found.</p>
     @endif
 
     <livewire:boards.create />

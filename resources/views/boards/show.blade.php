@@ -1,16 +1,14 @@
 <div>
     <x-navbar />
     
-    <x-container>
-        @if($board->archived)
-        <p class="flex items-center justify-center mb-4 space-x-2 text-sm font-medium text-yellow-600">
-            <x-heroicon-s-exclamation-circle class="w-5 h-5 text-yellow-500" />
-            <span>This board is archived. This means it's locked.</span>
-        </p>
-        @endif
-    
+    <x-container>    
         <h1 class="flex justify-between mb-10">
-            <span class="text-3xl font-bold">{{ $board->name }}</span>
+            <div class="flex items-center space-x-4">
+                <span class="text-3xl font-bold">{{ $board->name }}</span>
+                @if($board->archived)
+                <span class="px-2 py-1 text-xs font-medium text-indigo-800 uppercase bg-indigo-100 rounded-md">Archived</span>
+                @endif
+            </div>
     
             <div class="flex items-center ml-4 space-x-2">
                 <!-- Edit button -->

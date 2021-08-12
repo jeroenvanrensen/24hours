@@ -1208,6 +1208,10 @@ video {
 	--tw-bg-opacity: 1;
 	background-color: rgba(209, 250, 229, var(--tw-bg-opacity));
 }
+.bg-indigo-100 {
+	--tw-bg-opacity: 1;
+	background-color: rgba(224, 231, 255, var(--tw-bg-opacity));
+}
 .bg-gradient-to-br {
 	background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
 }
@@ -1474,6 +1478,10 @@ video {
 .text-green-800 {
 	--tw-text-opacity: 1;
 	color: rgba(6, 95, 70, var(--tw-text-opacity));
+}
+.text-indigo-800 {
+	--tw-text-opacity: 1;
+	color: rgba(55, 48, 163, var(--tw-text-opacity));
 }
 .underline {
 	text-decoration: underline;

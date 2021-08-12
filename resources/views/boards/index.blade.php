@@ -30,7 +30,9 @@
         </div>
 
         @if(count($archivedBoards) > 0)
+        @if(count($boards) > 0)
         <h1 class="mt-16 mb-10 text-3xl font-bold">Archived Boards</h1>
+        @endif
     
         <div class="grid grid-cols-4 gap-8">
             @foreach($archivedBoards as $board)

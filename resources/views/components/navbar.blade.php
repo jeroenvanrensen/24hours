@@ -30,11 +30,7 @@
             @click="show = true"
             class="border-2 border-transparent rounded-full  focus:outline-none ring-2 ring-transparent focus:ring-white"
         >
-            <img
-                src="https://www.w3schools.com/w3css/img_avatar2.png"
-                alt="Avatar"
-                class="w-8 h-8 rounded-full"
-            />
+            <img src="{{ auth()->user()->avatar }}" alt="Avatar" class="w-8 h-8 rounded-full" />
         </button>
 
         <!-- Dropdown menu -->

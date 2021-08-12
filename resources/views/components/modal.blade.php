@@ -2,10 +2,17 @@
 
 <div
     class="fixed inset-0 z-30"
+    id="modal-{{ $name }}"
     x-data="{ show: false }"
     {{ '@'.$name.'.window'}}="show = true"
     x-show="show"
     @keydown.escape.window="show = false"
+    x-init="
+        $watch('show', isOpen =>  {
+            if(!isOpen) return;
+            $nextTick(() => { document.querySelector('#modal-{{ $name }} input').focus(); });
+        });
+    "
 >
     <div
         x-show="show"
@@ -42,6 +49,6 @@
                 <x-button secondary @click="show = false">Cancel</x-button>
                 {{ $footer ?? null }}
             </div>
-        </divclass=>
+        </div>
     </div>
 </div>

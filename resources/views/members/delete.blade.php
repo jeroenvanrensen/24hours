@@ -1,12 +1,9 @@
-<x-modal name="showRemoveMemberModal">
-    <x-slot name="title">Remove member</x-slot>
+<x-modal name="remove-member" title="Remove member">
+    <p class="mb-2 text-gray-700">Are you sure you want to remove this member?</p>
+    <p class="mb-2 text-gray-700">This member won't have access to this board anymore.</p>
+    <p class="font-medium">{{ $membership->user->name }}</p>
 
-    <p class="mb-4">Are you sure you want to remove this member?</p>
-    <p class="mb-4">This member won't have access to this board anymore.</p>
-    <p class="mb-8 font-bold">{{ $membership->user->name }}</p>
-
-    <div class="flex items-center justify-end">
-        <x-button class="mr-4" secondary @click="showRemoveMemberModal = false">Cancel</x-button>
+    <x-slot name="footer">
         <x-button wire:click="destroy" color="red">Remove</x-button>
-    </div>
+    </x-slot>
 </x-modal>

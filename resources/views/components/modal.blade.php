@@ -39,7 +39,7 @@
             x-transition:leave-end="opacity-0 scale-95"
         >
             <div class="p-8 pb-8">
-                <h3 class="mb-4 text-xl font-medium">{{ $title }}</h3>
+                <h3 class="mb-4 text-xl font-semibold">{{ $title }}</h3>
                 
                 {{ $slot }}
             </div>

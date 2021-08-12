@@ -32,12 +32,7 @@ class Edit extends Component
 
     public function render()
     {
-        return view('members.edit')
-            ->layout('layouts.app', [
-                'defaultNavbar' => false,
-                'backLink' => route('members.index', $this->board),
-                'backText' => 'Members overview'
-            ]);
+        return view('members.edit');
     }
 
     public function update()

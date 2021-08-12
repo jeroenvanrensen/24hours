@@ -1,6 +1,9 @@
 <x-modal name="new-member" title="Invite member">
     @if(session()->has('success'))
-        <p class="mb-6 font-semibold text-green-600 dark:text-green-300">{{ session()->get('success') }}</p>
+        <p class="flex items-center px-4 py-3 mb-6 space-x-2 text-sm font-medium text-green-800 bg-green-100 rounded-md">
+            <x-heroicon-s-check-circle class="w-5 h-5 text-green-600" />
+            <span>{{ session()->get('success') }}</span>
+        </p>
     @endif
 
     <!-- Email -->

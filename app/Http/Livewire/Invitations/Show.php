@@ -37,12 +37,7 @@ class Show extends Component
 
     public function render()
     {
-        return view('invitations.show')
-            ->layout('layouts.app', [
-                'defaultNavbar' => false,
-                'backLink' => route('boards.index'),
-                'backText' => 'Go Home'
-            ]);
+        return view('invitations.show');
     }
 
     public function accept()

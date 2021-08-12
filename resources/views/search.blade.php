@@ -22,7 +22,7 @@
     
     <div
         x-show="focus"
-        class="absolute w-full py-1 mt-3 bg-white border border-gray-100 rounded-md shadow-lg"
+        class="absolute z-20 w-full py-1 mt-3 bg-white border border-gray-100 rounded-md shadow-lg"
         x-transition:enter="transition duration-200 ease-out"
         x-transition:enter-start="transform scale-95 opacity-0"
         x-transition:enter-end="transform scale-100 opacity-100"

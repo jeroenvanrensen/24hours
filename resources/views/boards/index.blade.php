@@ -5,6 +5,10 @@
             <h1 class="text-3xl font-bold ">My Boards</h1>
             <x-button @click="$dispatch('create-board')">New Board</x-button>
         </div>
+        
+        @if(count($boards) == 0 && count($archivedBoards) == 0)
+        <p x-data>You don't have any boards yet. <x-link href="javascript:;" @click="$dispatch('create-board')">Create one.</x-link></p>
+        @endif
     
         <div class="grid grid-cols-4 gap-8">
             @foreach($boards as $board)
@@ -48,10 +52,6 @@
         </div>
         @endif
     </x-container>
-
-    @if(count($boards) == 0)
-    <p>No Boards Found.</p>
-    @endif
 
     <livewire:boards.create />
 </div>

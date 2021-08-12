@@ -42,7 +42,7 @@
             <!-- Add link dropup -->
             <button
                 x-show="showDropup"
-                @click="showModal = true"
+                @click="$dispatch('create-link')"
                 class="flex items-center justify-center mb-2 text-white transition transform bg-gray-400 rounded-full shadow-lg h-14 w-14 hover:bg-gray-500 focus:bg-gray-500 focus:ring ring-gray-400"
                 x-transition:enter="delay-300 ease-out duration-300"
                 x-transition:enter-start="opacity-0 scale-50"

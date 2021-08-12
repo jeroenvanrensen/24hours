@@ -1,6 +1,6 @@
 <div>
     <x-modal name="create-link" title="Add a link">
-        <x-input type="text" name="url" id="url" wire:model.defer="url" placeholder="Typ or paste a link" />
+        <x-input type="text" name="url" id="url" wire:model.defer="url" placeholder="Typ or paste a url..." />
         <x-form-error name="url" />
 
         <x-slot name="footer">

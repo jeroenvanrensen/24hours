@@ -10,24 +10,33 @@
                 @endif
             </div>
     
-            <div class="flex items-center ml-4 space-x-2">
+            <div class="flex items-center ml-4 space-x-3">
                 <!-- Edit button -->
                 @can('edit', $board)
-                <x-boards.action-button href="{{ route('boards.edit', $board) }}">
-                    <x-heroicon-s-pencil class="w-4 h-4" />
-                </x-boards.action-button>
+                <x-button secondary link href="{{ route('boards.edit', $board) }}">
+                    <div class="flex items-center space-x-1">
+                        <x-heroicon-s-pencil class="w-4 h-4" />
+                        <span>Edit</span>
+                    </div>
+                </x-button>
                 @endcan
     
                 <!-- Members button -->
-                <x-boards.action-button href="{{ route('members.index', $board) }}">
-                    <x-heroicon-s-user-group class="w-4 h-4" />
-                </x-boards.action-button>
+                <x-button secondary link href="{{ route('members.index', $board) }}">
+                    <div class="flex items-center space-x-2">
+                        <x-heroicon-s-user-group class="w-4 h-4" />
+                        <span>Members</span>
+                    </div>
+                </x-button>
     
                 <!-- Archive button -->
                 @can('edit', $board)
-                <x-boards.action-button button :wire:click="$board->archived ? 'unarchive' : 'archive'">
-                    <x-heroicon-s-archive class="w-4 h-4" />
-                </x-boards.action-button>
+                <x-button secondary :wire:click="$board->archived ? 'unarchive' : 'archive'">
+                    <div class="flex items-center space-x-1">
+                        <x-heroicon-s-archive class="w-4 h-4" />
+                        <span>{{ $board->archived ? 'Unarchive' : 'Archive' }}</span>
+                    </div>
+                </x-button>
                 @endcan
             </div>
         </h1>

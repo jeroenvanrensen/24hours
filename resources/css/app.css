@@ -5,5 +5,5 @@
 @import './quill.css';
 
 .turbolinks-progress-bar {
-    @apply h-px bg-black dark:bg-white;
+    @apply h-px bg-black;
 }

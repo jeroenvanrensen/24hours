@@ -12,7 +12,7 @@ it('can scrape a page', function ($url, $title, $image) {
     expect($response->image)->toBe($image);
 })->with([
     ['http://example.com/', 'Example Domain', null],
-    ['https://beyondco.de/', 'Beyond Code', 'https://beyondco.de/img/web/homepage-invoker.png'],
+    ['https://alpinejs.dev/start-here', 'Start Here — Alpine.js', 'https://alpinejs.dev/social.jpg'],
     ['https://tailwindcss.com/', 'Tailwind CSS - Rapidly build modern websites without ever leaving your HTML.', 'https://tailwindcss.com/_next/static/media/twitter-large-card.85c0ff9e455da585949ff0aa50981857.jpg'],
     ['https://laravel.com/', 'Laravel - The PHP Framework For Web Artisans', 'https://laravel.com/img/logomark.min.svg'],
     ['https://laravel-livewire.com/', 'Livewire | Laravel Livewire', 'https://laravel-livewire.com/img/twitter.png'],

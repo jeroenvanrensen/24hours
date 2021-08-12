@@ -51,7 +51,13 @@ class ResetPassword extends Component
         );
 
         return $status == Password::PASSWORD_RESET
-            ? redirect()->route('login')->with('flash.success', 'Your password has been reset!')
+            ? $this->handleSuccess()
             : $this->addError('email', 'This password reset token is invalid.');
+    }
+
+    protected function handleSuccess()
+    {
+        session()->flash('flash.success', 'Your password has been reset!');
+        return redirect()->route('login');
     }
 }

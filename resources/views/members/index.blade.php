@@ -1,59 +1,73 @@
-<div
-    x-data="{ newMemberModal: false, showLeaveBoardMoadal: false }"
-    class="max-w-2xl mx-auto"
-    @keydown.window.escape="if(!newMemberModal && !showLeaveBoardMoadal) Turbolinks.visit('{{ route('boards.show', $board) }}');"
->
-    <x-heading small>
-        Board members
+<div>
+    <x-navbar />
 
-        <x-slot name="right">
+    <x-panel
+        @keydown.window.escape="Turbolinks.visit('{{route('boards.show', $board)}}');"
+    >
+        <h1 x-data class="flex items-center justify-between mb-10 text-3xl font-semibold">
+            Board members
+
             @can('manageMemberships', $board)
-                <x-button @click="newMemberModal = true">Add member</x-button>
+            <x-button @click="$dispatch('new-member')">Add member</x-button>
             @endcan
             @can('leave', $board)
-                <x-button color="red" @click="showLeaveBoardMoadal = true">Leave board</x-button>
+            <x-button color="red" @click="showLeaveBoardMoadal = true">Leave board</x-button>
             @endcan
-        </x-slot>
-    </x-heading>
+        </h1>
 
-    <ul>
-        <li class="mb-6">
-            <strong>{{ $board->user->name }}</strong>
-            <div>Owner</div>
-        </li>
+        <ul>
+            <li class="flex items-center mb-6 space-x-4">
+                <img src="{{ $board->user->avatar }}" alt="{{ $board->user->name }}'s avatar" class="w-10 h-10 rounded-full" />
 
-        @foreach($board->memberships as $membership)
-            <li class="mb-6">
-                <strong>{{ $membership->user->name }}</strong>
-                <div class="mb-px">{{ ucfirst($membership->role) }}</div>
-                
-                @can('manageMemberships', $board)
-                    <div class="text-sm">
-                        <a class="text-gray-500 underline focus:text-gray-400 dark:text-gray-400 dark:focus:text-gray-500" href="{{ route('members.edit', [$board, $membership]) }}">Edit / remove</a>
-                    </div>
-                @endcan
+                <div>
+                    <h5 class="font-semibold leading-5">{{ $board->user->name }}</h5>
+                    <p class="text-sm leading-5 text-gray-700">Owner</p>
+                </div>
             </li>
-        @endforeach
 
-        @foreach($board->invitations as $invitation)
-            <li class="mb-6 text-gray-500">
-                <strong>{{ $invitation->email }}</strong>
-                <div>Invited - {{ ucfirst($invitation->role) }}</div>
+            @foreach($board->memberships as $membership)
+            <li class="flex items-center mb-6 space-x-4">
+                <img src="{{ $membership->user->avatar }}" alt="{{ $membership->user->name }}'s avatar" class="w-10 h-10 rounded-full" />
+
+                <div>
+                    <h5 class="font-semibold leading-5">{{ $membership->user->name }}</h5>
+                    <p class="text-sm leading-5 text-gray-700">
+                        {{ ucfirst($membership->role) }}
+                        @can('manageMemberships', $board) &bullet; <x-link :href="route('members.edit', [$board, $membership])">Edit</x-link> @endcan
+                    </p>
+                </div>
             </li>
-        @endforeach
-    </ul>
+            @endforeach
+            
+            @foreach($board->invitations as $invitation)
+            <li class="mb-6 ml-14">
+                <h5 class="font-semibold leading-5">{{ $invitation->email }}</h5>
+                <p class="text-sm leading-5">Invited</p>
+            </li>
+            @endforeach
+        </ul>
 
-    <livewire:members.create :board="$board" />
+        <livewire:members.create :board="$board" />
 
-    <x-modal name="showLeaveBoardMoadal">
-        <x-slot name="title">Leave board</x-slot>
+        <x-modal name="showLeaveBoardMoadal">
+            <x-slot name="title">Leave board</x-slot>
 
-        <p class="mb-4">Are you sure you want to leave this board? After you have submitted you don't have access to any of the board's items anymore.</p>
-        <p class="mb-8"><strong>{{ $board->name }}</strong> by {{ $board->user->name }}</p>
+            <p class="mb-4">
+                Are you sure you want to leave this board? After you have submitted you don't have
+                access to any of the board's items anymore.
+            </p>
+            
+            <p class="mb-8">
+                <strong>{{ $board->name }}</strong> by {{ $board->user->name }}
+            </p>
 
-        <div class="flex items-center justify-end">
-            <x-button class="mr-4" @click="showLeaveBoardMoadal = false" secondary>Cancel</x-button>
-            <x-button color="red" wire:click="leave">Leave board</x-button>
-        </div>
-    </x-modal>
+            <div class="flex items-center justify-end">
+                <x-button class="mr-4" @click="showLeaveBoardMoadal = false" secondary
+                    >
+                    Cancel
+                    </x-button>
+                <x-button color="red" wire:click="leave">Leave board</x-button>
+            </div>
+        </x-modal>
+    </x-panel>
 </div>

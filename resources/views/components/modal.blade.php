@@ -9,7 +9,6 @@
     @keydown.escape.window="show = false"
     x-init="
         $watch('show', isOpen =>  {
-            if(!isOpen) return;
             $nextTick(() => { document.querySelector('#modal-{{ $name }} input').focus(); });
         });
     "

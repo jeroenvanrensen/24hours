@@ -948,6 +948,9 @@ video {
 .mr-3 {
 	margin-right: 0.75rem;
 }
+.ml-14 {
+	margin-left: 3.5rem;
+}
 .block {
 	display: block;
 }
@@ -1375,6 +1378,12 @@ video {
 .leading-3 {
 	line-height: .75rem;
 }
+.leading-4 {
+	line-height: 1rem;
+}
+.leading-5 {
+	line-height: 1.25rem;
+}
 .tracking-wide {
 	letter-spacing: 0.025em;
 }
@@ -1517,6 +1526,9 @@ video {
 }
 .opacity-50 {
 	opacity: 0.5;
+}
+.opacity-75 {
+	opacity: 0.75;
 }
 .shadow-sm {
 	--tw-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);

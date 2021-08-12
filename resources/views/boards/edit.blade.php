@@ -1,10 +1,7 @@
-<div>
+<div x-data>
     <x-navbar />
 
-    <div
-        :fullScreen="false"
-        x-data="{ showModal: false }"
-        class="max-w-xl mx-auto mt-36"
+    <x-panel
         @keydown.window.escape="Turbolinks.visit('{{ route('boards.show', $board) }}');"
     >
         <h1 class="mb-8 text-3xl font-semibold">Edit Board</h1>
@@ -40,5 +37,5 @@
                 <x-button wire:click="destroy">Delete</x-button>
             </x-slot>
         </x-modal>
-    </div>
+    </x-panel>
 </div>

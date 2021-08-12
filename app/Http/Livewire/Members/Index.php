@@ -22,12 +22,7 @@ class Index extends Component
 
     public function render()
     {
-        return view('members.index')
-            ->layout('layouts.app', [
-                'defaultNavbar' => false,
-                'backLink' => route('boards.show', $this->board),
-                'backText' => $this->board->name
-            ]);
+        return view('members.index');
     }
 
     public function leave()

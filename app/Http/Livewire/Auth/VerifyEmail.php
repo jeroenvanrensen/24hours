@@ -8,8 +8,7 @@ class VerifyEmail extends Component
 {
     public function render()
     {
-        return view('auth.verify-email')
-            ->layout('layouts.app', ['title' => 'Verify Email']);
+        return view('auth.verify-email');
     }
 
     public function request()

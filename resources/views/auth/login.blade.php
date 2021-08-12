@@ -1,25 +1,24 @@
-<div>
-    <x-auth-card>
-        <h1 class="mb-8 text-3xl font-semibold">Sign in to <span class="text-indigo-600">{{ config('app.name') }}</span></h1>
+<x-auth-card>
+    <h1 class="mb-4 text-3xl font-semibold">Sign in to {{ config('app.name') }}</h1>
+    <p class="mb-8 text-gray-700">Don't have an account yet? <x-link href="{{ route('register') }}">Create one.</x-link></p>
 
-        <!-- Email -->
-        <x-form-group>
-            <x-label for="email">Email</x-label>
-            <x-input name="email" autofocus wire:model.defer="email" />
-            <x-form-error name="email" />
-        </x-form-group>
+    <!-- Email -->
+    <x-form-group>
+        <x-label for="email">Email</x-label>
+        <x-input name="email" autofocus wire:model.defer="email" />
+        <x-form-error name="email" />
+    </x-form-group>
 
-        <!-- Password -->
-        <x-form-group>
-            <x-label for="password">Password</x-label>
-            <x-input name="password" autofocus wire:model.defer="password" />
-            <x-form-error name="password" />
-        </x-form-group>
+    <!-- Password -->
+    <x-form-group>
+        <x-label for="password">Password</x-label>
+        <x-input name="password" autofocus wire:model.defer="password" />
+        <x-form-error name="password" />
+    </x-form-group>
 
-        <!-- Submit Button -->
-        <x-card-footer>
-            <a href="{{ route('password.request') }}" class="text-sm font-medium text-indigo-600 outline-none hover:text-indigo-700 focus:text-indigo-800">Forgot your password?</a>
-            <x-button wire:click="login">Sign In</x-button>
-        </x-card-footer>
-    </x-auth-card>
-</div>
+    <!-- Submit Button -->
+    <x-card-footer>
+        <x-link href="{{ route('password.request') }}" class="text-sm">Forgot your password?</x-link>
+        <x-button wire:click="login">Sign In</x-button>
+    </x-card-footer>
+</x-auth-card>

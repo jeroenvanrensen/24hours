@@ -40,7 +40,7 @@ Route::middleware(['auth', 'verified'])->prefix('app')->group(function () {
 
     Route::get('/links/{link:uuid}', ShowLink::class)->name('links.show');
     Route::get('/notes/{note:uuid}', EditNote::class)->name('notes.edit');
-    
+
     Route::get('/search', Search::class)->name('search');
     Route::get('/profile', EditProfile::class)->name('profile.edit')->withoutMiddleware('verified');
 });

@@ -10,71 +10,29 @@ use Livewire\Component;
 
 class ResetPassword extends Component
 {
-    /**
-     * The password reset token.
-     *
-     * @var string
-     */
     public $token;
 
-    /**
-     * The user's email.
-     *
-     * @var string
-     */
     public $email;
 
-    /**
-     * The user's new password.
-     *
-     * @var string
-     */
     public $password;
 
-    /**
-     * The user's new password confirmation.
-     *
-     * @var string
-     */
     public $password_confirmation;
 
-    /**
-     * The validation rules.
-     *
-     * @var array
-     */
     protected $rules = [
         'password' => ['required', 'string', 'min:8', 'confirmed']
     ];
 
-    /**
-     * Initialize the page.
-     *
-     * @param   string  $token
-     * @return  void
-     */
     public function mount($token)
     {
         $this->token = $token;
         $this->email = request('email');
     }
 
-    /**
-     * Render the page.
-     *
-     * @return  \Illuminate\Contracts\View\View
-     */
     public function render()
     {
-        return view('auth.reset-password')
-            ->layout('layouts.app', ['title' => 'Reset Password']);
+        return view('auth.reset-password');
     }
 
-    /**
-     * Update the user's password.
-     *
-     * @return  \Illuminate\Http\RedirectResponse|void
-     */
     public function update()
     {
         $this->validate();
@@ -85,26 +43,15 @@ class ResetPassword extends Component
                 $user->forceFill([
                     'password' => Hash::make($password)
                 ])->save();
-    
+
                 $user->setRememberToken(Str::random(60));
-    
+
                 event(new PasswordReset($user));
             }
         );
 
         return $status == Password::PASSWORD_RESET
-            ? redirect()->route('login')
+            ? redirect()->route('login')->with('flash.success', 'Your password has been reset!')
             : $this->addError('email', 'This password reset token is invalid.');
-    }
-
-    /**
-     * Allow for real time validation.
-     *
-     * @param   string  $attribute
-     * @return  void
-     */
-    public function updated($attribute)
-    {
-        $this->validateOnly($attribute);
     }
 }

@@ -25,8 +25,7 @@ class Register extends Component
 
     public function render()
     {
-        return view('auth.register')
-            ->layout('layouts.app');
+        return view('auth.register');
     }
 
     public function updated($attribute)

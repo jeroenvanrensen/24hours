@@ -1,28 +1,7 @@
 <nav class="flex items-center justify-between w-full px-24 py-6 bg-gray-800 shadow">
     <a href="{{ route('boards.index') }}" class="w-10 font-medium text-white">24Hours</a>
 
-    <div class="relative w-full max-w-md">
-        <div class="absolute flex items-center h-10 pointer-events-none left-8">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5 text-gray-300"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-            >
-                <path
-                    fill-rule="evenodd"
-                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                    clip-rule="evenodd"
-                />
-            </svg>
-        </div>
-
-        <input
-            type="text"
-            class="w-full px-4 py-2 ml-4 text-gray-200 placeholder-gray-300 transition duration-200 bg-gray-600 rounded-md  pl-11 focus:text-black hover:bg-gray-500 focus:bg-white focus:placeholder-gray-500"
-            placeholder="Search..."
-        />
-    </div>
+    <livewire:search />
 
     <div class="relative w-10" x-data="{ show: false }">
         <!-- Dropdown button -->

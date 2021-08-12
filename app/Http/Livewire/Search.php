@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Livewire\Search;
+namespace App\Http\Livewire;
 
+use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class Search extends Component
@@ -12,7 +13,7 @@ class Search extends Component
 
     public function render()
     {
-        return view('search.search', [
+        return view('search', [
             'results' => $this->results
         ]);
     }
@@ -25,11 +26,11 @@ class Search extends Component
 
         $this->results = $this->getItems()
             ->flatten()
-            ->filter(fn($item) => $this->filterItem($item))
+            ->filter(fn ($item) => $this->filterItem($item))
             ->sortByDesc('updated_at');
     }
 
-    protected function getItems()
+    protected function getItems(): Collection
     {
         return collect([
             auth()->user()->visibleBoards(),
@@ -38,10 +39,10 @@ class Search extends Component
         ]);
     }
 
-    protected function filterItem($item)
+    protected function filterItem($item): bool
     {
-        foreach(['name', 'title', 'body'] as $field) {
-            if(stristr($item->$field, $this->query)) {
+        foreach (['name', 'title', 'body'] as $field) {
+            if (stristr($item->$field, $this->query)) {
                 return true;
             }
         }

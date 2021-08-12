@@ -11,7 +11,6 @@ use App\Http\Livewire\Invitations\Show as ShowInvitation;
 use App\Http\Livewire\Members\Edit as EditMember;
 use App\Http\Livewire\Members\Index as IndexMembers;
 use App\Http\Livewire\Notes\Edit as EditNote;
-use App\Http\Livewire\Search\Search;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,7 +40,6 @@ Route::middleware(['auth', 'verified'])->prefix('app')->group(function () {
     Route::get('/links/{link:uuid}', ShowLink::class)->name('links.show');
     Route::get('/notes/{note:uuid}', EditNote::class)->name('notes.edit');
 
-    Route::get('/search', Search::class)->name('search');
     Route::get('/profile', EditProfile::class)->name('profile.edit')->withoutMiddleware('verified');
 });
 

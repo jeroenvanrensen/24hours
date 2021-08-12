@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Livewire\Search\Search;
+use App\Http\Livewire\Search;
 use App\Models\Board;
 use App\Models\Link;
 use App\Models\Membership;

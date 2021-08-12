@@ -25,6 +25,7 @@
     </div>
 
     <div class="relative w-10" x-data="{ show: false }">
+        <!-- Dropdown button -->
         <button
             @click="show = true"
             class="border-2 border-transparent rounded-full  focus:outline-none ring-2 ring-transparent focus:ring-white"
@@ -36,6 +37,7 @@
             />
         </button>
 
+        <!-- Dropdown menu -->
         <div
             x-show="show"
             @click.away="show = false"
@@ -50,23 +52,21 @@
             tabindex="-1"
         >
             <a
-                href="#"
+                href="{{ route('profile.edit') }}"
                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:bg-gray-100"
             >
                 Your Profile
             </a>
             <a
-                href="#"
-                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:bg-gray-100"
-            >
-                Settings
-            </a>
-            <a
-                href="#"
+                href="javascript:;"
+                onclick="document.querySelector('#logout-form').submit()"
                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:bg-gray-100"
             >
                 Sign out
             </a>
         </div>
+
+        <!-- Logout form -->
+        <form action="{{ route('logout') }}" method="post" id="logout-form">@csrf</form>
     </div>
 </nav>

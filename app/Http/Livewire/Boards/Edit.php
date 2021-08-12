@@ -25,12 +25,7 @@ class Edit extends Component
 
     public function render()
     {
-        return view('boards.edit')
-            ->layout('layouts.app', [
-                'defaultNavbar' => false,
-                'backLink' => route('boards.show', $this->board),
-                'backText' => $this->board->name
-            ]);
+        return view('boards.edit');
     }
 
     public function update()

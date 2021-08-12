@@ -942,6 +942,9 @@ video {
 .mr-3 {
 	margin-right: 0.75rem;
 }
+.mt-36 {
+	margin-top: 9rem;
+}
 .block {
 	display: block;
 }

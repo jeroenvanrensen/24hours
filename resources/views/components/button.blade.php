@@ -1,6 +1,6 @@
-@props(['secondary' => false])
+@props(['secondary' => false, 'link' => false])
 
-<button
+<{{ $link ? 'a' : 'button' }}
     class="px-4 py-2 text-sm font-medium rounded-md focus:outline-none {{
         $secondary
             ? 'text-gray-600 bg-white border border-gray-300 shadow-sm focus:bg-gray-50 hover:bg-gray-50'
@@ -11,4 +11,4 @@
     }}
 >
     {{ $slot }}
-</button>
+</{{ $link ? 'a' : 'button' }}>

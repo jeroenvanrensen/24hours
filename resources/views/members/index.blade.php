@@ -2,17 +2,20 @@
     <x-navbar />
 
     <x-panel
-        @keydown.window.escape="Turbolinks.visit('{{route('boards.show', $board)}}');"
+        @keydown.window.escape="Turbolinks.visit('{{ route('boards.show', $board) }}');"
     >
         <h1 x-data class="flex items-center justify-between mb-10 text-3xl font-semibold">
             Board members
 
-            @can('manageMemberships', $board)
-            <x-button @click="$dispatch('new-member')">Add member</x-button>
-            @endcan
-            @can('leave', $board)
-            <x-button color="red" @click="showLeaveBoardMoadal = true">Leave board</x-button>
-            @endcan
+            <div class="space-x-3">
+                <x-button secondary link :href="route('boards.show', $board)">Back</x-button>
+                @can('manageMemberships', $board)
+                <x-button @click="$dispatch('new-member')">Add member</x-button>
+                @endcan
+                @can('leave', $board)
+                <x-button color="red" @click="showLeaveBoardMoadal = true">Leave board</x-button>
+                @endcan
+            </div>
         </h1>
 
         <ul>

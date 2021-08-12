@@ -30,16 +30,16 @@ return [
     'view_path' => resource_path('views'),
 
     /*
-|--------------------------------------------------------------------------
-| Layout
-|--------------------------------------------------------------------------
-| The default layout view that will be used when rendering a component via
-| Route::get('/some-endpoint', SomeComponent::class);. In this case the
-| the view returned by SomeComponent will be wrapped in "layouts.app"
-|
-*/
+    |--------------------------------------------------------------------------
+    | Layout
+    |--------------------------------------------------------------------------
+    | The default layout view that will be used when rendering a component via
+    | Route::get('/some-endpoint', SomeComponent::class);. In this case the
+    | the view returned by SomeComponent will be wrapped in "layouts.app"
+    |
+    */
 
-    'layout' => 'layouts.app',
+    'layout' => 'components.layout',
 
     /*
     |--------------------------------------------------------------------------

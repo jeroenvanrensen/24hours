@@ -30,7 +30,7 @@
                 href="{{ route('profile.edit') }}"
                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:bg-gray-100"
             >
-                Your Profile
+                My Profile
             </a>
             <a
                 href="javascript:;"

@@ -28,6 +28,7 @@
     </div>
     
     <div
+        style="display: none;"
         x-show="focus"
         class="absolute z-20 w-full py-1 mt-3 bg-white border border-gray-100 rounded-md shadow-lg"
         x-transition:enter="transition duration-200 ease-out"

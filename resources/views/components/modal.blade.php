@@ -6,6 +6,7 @@
     x-data="{ show: false }"
     {{ '@'.$name.'.window'}}="show = true"
     x-show="show"
+    style="display: none;"
     @keydown.escape.window="show = false"
     x-init="
         $watch('show', isOpen =>  {
@@ -38,7 +39,7 @@
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
         >
-            <div class="p-8 pb-8">
+            <div class="p-8">
                 <h3 class="mb-4 text-xl font-semibold">{{ $title }}</h3>
                 
                 {{ $slot }}

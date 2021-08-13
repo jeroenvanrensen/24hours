@@ -1,6 +1,7 @@
 <div
     x-data="search"
     @keydown.window.cmd.k.prevent="$refs.input.focus(); checkForFocus()"
+    @keydown.window.ctrl.k.prevent="$refs.input.focus(); checkForFocus()"
     @keydown.escape.window="$refs.input.blur(); checkForFocus()"
     class="relative w-full max-w-md"
 >

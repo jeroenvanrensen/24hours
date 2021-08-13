@@ -16,6 +16,12 @@ it('has a name', function () {
     expect($board->name)->toBe($name);
 });
 
+it('has an image', function () {
+    $image = faker()->imageUrl();
+    $board = Board::factory()->create(['image' => $image]);
+    expect($board->image)->toBe($image);
+});
+
 it('can be archived', function () {
     $board = Board::factory()->create(['archived' => true]);
     expect($board->archived)->toBeTrue();

@@ -15,6 +15,7 @@ class BoardFactory extends Factory
         return [
             'user_id' => User::factory(),
             'name' => $this->faker->word(),
+            'image' => $this->faker->imageUrl(),
             'archived' => false
         ];
     }

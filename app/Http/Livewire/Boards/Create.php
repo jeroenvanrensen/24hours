@@ -4,13 +4,19 @@ namespace App\Http\Livewire\Boards;
 
 use App\Models\Board;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Create extends Component
 {
+    use WithFileUploads;
+
     public $name;
 
+    public $image;
+
     protected $rules = [
-        'name' => ['required', 'string', 'max:255']
+        'name' => ['required', 'string', 'max:255'],
+        'image' => ['required', 'image', 'max:1024']
     ];
 
     public function render()
@@ -20,9 +26,14 @@ class Create extends Component
 
     public function create()
     {
-        $board = Board::create($this->validate() + [
-            'user_id' => auth()->id()
-        ]);
+        $attributes = $this->validate();
+
+        $path = $this->image->store('public');
+
+        $board = Board::create([
+            'user_id' => auth()->id(),
+            'image' => str_replace('public/', 'storage/', $path)
+        ] + $attributes);
 
         session()->flash('flash.success', 'The board was created!');
 

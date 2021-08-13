@@ -1,4 +1,4 @@
-<x-modal name="new-member" title="Invite member">
+<div>
     @if(session()->has('success'))
         <p class="flex items-center px-4 py-3 mb-6 space-x-2 text-sm font-medium text-green-800 bg-green-100 rounded-md">
             <x-heroicon-s-check-circle class="w-5 h-5 text-green-600" />
@@ -27,6 +27,6 @@
     </x-form-group>
 
     <x-slot name="footer">
-        <x-button wire:click="invite">Invite member</x-button>
+        <x-button wire:click="$emitTo('members.create', 'invite')">Invite member</x-button>
     </x-slot>
-</x-modal>
+</div>

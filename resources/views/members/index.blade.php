@@ -50,7 +50,9 @@
             @endforeach
         </ul>
 
-        <livewire:members.create :board="$board" />
+        <x-modal name="new-member" title="Invite member">
+            <livewire:members.create :board="$board" />
+        </x-modal>
 
         <x-modal name="showLeaveBoardMoadal">
             <x-slot name="title">Leave board</x-slot>

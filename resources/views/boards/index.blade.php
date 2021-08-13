@@ -48,5 +48,7 @@
         @endif
     </x-container>
 
-    <livewire:boards.create />
+    <x-modal name="create-board" title="New Board">
+        <livewire:boards.create />
+    </x-modal>
 </div>

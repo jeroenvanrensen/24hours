@@ -29,6 +29,10 @@ class Create extends Component
         'email.exists' => 'This user cannot be found.'
     ];
 
+    protected $listeners = [
+        'invite'
+    ];
+
     public function render()
     {
         return view('members.create');
@@ -40,11 +44,11 @@ class Create extends Component
 
         $this->validate();
 
-        if($this->invitationExists()) {
+        if ($this->invitationExists()) {
             return $this->addError('email', 'This user is already invited.');
         }
 
-        if($this->membershipExists()) {
+        if ($this->membershipExists()) {
             return $this->addError('email', 'This user is already a member.');
         }
 

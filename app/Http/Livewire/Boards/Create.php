@@ -19,6 +19,10 @@ class Create extends Component
         'image' => ['required', 'image', 'max:1024']
     ];
 
+    protected $listeners = [
+        'create'
+    ];
+
     public function render()
     {
         return view('boards.create');

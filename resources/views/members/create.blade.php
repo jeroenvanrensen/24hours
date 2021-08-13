@@ -1,9 +1,8 @@
 <div>
     @if(session()->has('success'))
-        <p class="flex items-center px-4 py-3 mb-6 space-x-2 text-sm font-medium text-green-800 bg-green-100 rounded-md">
-            <x-heroicon-s-check-circle class="w-5 h-5 text-green-600" />
-            <span>{{ session()->get('success') }}</span>
-        </p>
+        <x-alert :text="session()->get('success')" color="green">
+            <x-slot name="icon"><x-heroicon-s-check-circle /></x-slot>
+        </x-alert>
     @endif
 
     <!-- Email -->

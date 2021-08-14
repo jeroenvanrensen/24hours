@@ -53,7 +53,7 @@
             focus: false,
 
             checkForFocus() {
-                this.focus = document.activeElement == this.$refs.input ? true : false;
+                this.focus = document.activeElement === this.$refs.input ? true : false;
             }
         }))
     })

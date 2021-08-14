@@ -13,7 +13,7 @@
                 <x-button @click="$dispatch('new-member')">Add member</x-button>
                 @endcan
                 @can('leave', $board)
-                <x-button color="red" @click="showLeaveBoardMoadal = true">Leave board</x-button>
+                <x-button color="red" @click="$dispatch('leave-board')">Leave board</x-button>
                 @endcan
             </div>
         </h1>
@@ -54,25 +54,19 @@
             <livewire:members.create :board="$board" />
         </x-modal>
 
-        <x-modal name="showLeaveBoardMoadal">
-            <x-slot name="title">Leave board</x-slot>
-
-            <p class="mb-4">
+        <x-modal name="leave-board" title="Leave board">
+            <p class="mb-4 text-gray-700">
                 Are you sure you want to leave this board? After you have submitted you don't have
                 access to any of the board's items anymore.
             </p>
             
-            <p class="mb-8">
+            <p>
                 <strong>{{ $board->name }}</strong> by {{ $board->user->name }}
             </p>
 
-            <div class="flex items-center justify-end">
-                <x-button class="mr-4" @click="showLeaveBoardMoadal = false" secondary
-                    >
-                    Cancel
-                    </x-button>
-                <x-button color="red" wire:click="leave">Leave board</x-button>
-            </div>
+            <x-slot name="footer">
+                <x-button wire:click="leave">Leave board</x-button>
+            </x-slot>
         </x-modal>
     </x-panel>
 </div>

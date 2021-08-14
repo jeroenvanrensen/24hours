@@ -66,46 +66,97 @@
         <livewire:items.index :board="$board" />
     
         @can('manageItems', $board)
-        <div class="fixed flex-col bottom-12 right-12" x-data="{ showDropup: false }">
+        <div class="fixed flex-col w-60 bottom-12 right-12" x-data="{ showDropup: false }">
             <!-- Add link dropup -->
-            <button
-                x-show="showDropup"
-                @click="$dispatch('create-link')"
-                class="flex items-center justify-center mb-2 text-white transition transform bg-gray-400 rounded-full shadow-lg h-14 w-14 hover:bg-gray-500 focus:bg-gray-500 focus:ring ring-gray-400"
-                x-transition:enter="delay-300 ease-out duration-300"
-                x-transition:enter-start="opacity-0 scale-50"
-                x-transition:enter-end="opacity-100 scale-100"
-                x-transition:leave="ease-out duration-300"
-                x-transition:leave-start="opaicty-100 scale-100"
-                x-transition:leave-end="opacity-0 scale-50"
-            >
-                <x-heroicon-o-link class="w-6 h-6" />
-            </button>
+            <div class="relative flex items-center justify-end w-full mb-2" x-data="{ show: false }">
+                <div
+                    x-show="show"
+                    class="absolute px-2 py-1 text-sm font-medium text-center text-white bg-gray-800 rounded-md shadow-xl right-18"
+                    x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="transform opacity-0 scale-95"
+                    x-transition:enter-end="transform opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-100 delay-75"
+                    x-transition:leave-start="transform opacity-100 scale-100"
+                    x-transition:leave-end="transform opacity-0 scale-95"
+                >
+                    Add a link
+                </div>
+
+                <button
+                    @mouseenter="show = true"
+                    @mouseleave="show = false"
+                    x-show="showDropup"
+                    @click="$dispatch('create-link')"
+                    class="flex items-center justify-center text-white transition transform bg-gray-400 rounded-full shadow-lg h-14 w-14 hover:bg-gray-500 focus:bg-gray-500 focus:ring ring-gray-400"
+                    x-transition:enter="delay-300 ease-out duration-300"
+                    x-transition:enter-start="opacity-0 scale-50"
+                    x-transition:enter-end="opacity-100 scale-100"
+                    x-transition:leave="ease-out duration-300"
+                    x-transition:leave-start="opaicty-100 scale-100"
+                    x-transition:leave-end="opacity-0 scale-50"
+                >
+                    <x-heroicon-o-link class="w-6 h-6" />
+                </button>
+            </div>
         
             <!-- Create note dropup -->
-            <button
-                x-show="showDropup"
-                wire:click="createNote"
-                class="flex items-center justify-center mb-4 text-white transition transform bg-gray-400 rounded-full shadow-lg h-14 w-14 hover:bg-gray-500 focus:bg-gray-500 focus:ring ring-gray-400"
-                x-transition:enter="delay-150 ease-out duration-300"
-                x-transition:enter-start="opacity-0 scale-50"
-                x-transition:enter-end="opacity-100 scale-100"
-                x-transition:leave="delay-150 ease-out duration-300"
-                x-transition:leave-start="opaicty-100 scale-100"
-                x-transition:leave-end="opacity-0 scale-50"
-            >
-                <x-heroicon-o-pencil-alt class="w-6 h-6" />
-            </button>
+            <div class="relative flex items-center justify-end w-full mb-4" x-data="{ show: false }">
+                <div
+                    x-show="show"
+                    class="absolute px-2 py-1 text-sm font-medium text-center text-white bg-gray-800 rounded-md shadow-xl right-18"
+                    x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="transform opacity-0 scale-95"
+                    x-transition:enter-end="transform opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-100 delay-75"
+                    x-transition:leave-start="transform opacity-100 scale-100"
+                    x-transition:leave-end="transform opacity-0 scale-95"
+                >
+                    Create a new note
+                </div>
+            
+                <button
+                    @mouseenter="show = true"
+                    @mouseleave="show = false"
+                    x-show="showDropup"
+                    wire:click="createNote"
+                    class="flex items-center justify-center text-white transition transform bg-gray-400 rounded-full shadow-lg h-14 w-14 hover:bg-gray-500 focus:bg-gray-500 focus:ring ring-gray-400"
+                    x-transition:enter="delay-150 ease-out duration-300"
+                    x-transition:enter-start="opacity-0 scale-50"
+                    x-transition:enter-end="opacity-100 scale-100"
+                    x-transition:leave="delay-150 ease-out duration-300"
+                    x-transition:leave-start="opaicty-100 scale-100"
+                    x-transition:leave-end="opacity-0 scale-50"
+                >
+                    <x-heroicon-o-pencil-alt class="w-6 h-6" />
+                </button>
+            </div>
         
             <!-- Add item button -->
-            <button
-                @click="showDropup = !showDropup"
-                @click.away="showDropup = false"
-                class="flex items-center justify-center text-white transition duration-300 bg-indigo-600 rounded-full shadow-lg w-14 h-14 hover:bg-indigo-700 focus:bg-indigo-700 focus:ring focus:ring-indigo-300"
-                :class="{ 'transform rotate-45': showDropup }"
-            >
-                <x-heroicon-o-plus class="w-8 h-8" />
-            </button>
+            <div class="relative flex items-center justify-end w-full" x-data="{ show: false }">
+                <div
+                    x-show="show"
+                    class="absolute px-2 py-1 text-sm font-medium text-center text-white bg-gray-800 rounded-md shadow-xl right-18"
+                    x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="transform opacity-0 scale-95"
+                    x-transition:enter-end="transform opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-100 delay-75"
+                    x-transition:leave-start="transform opacity-100 scale-100"
+                    x-transition:leave-end="transform opacity-0 scale-95"
+                >
+                    New item
+                </div>
+
+                <button
+                    @mouseenter="show = true"
+                    @mouseleave="show = false"
+                    @click="showDropup = !showDropup"
+                    @click.away="showDropup = false"
+                    class="flex items-center justify-center text-white transition duration-300 bg-indigo-600 rounded-full shadow-lg w-14 h-14 hover:bg-indigo-700 focus:bg-indigo-700 focus:ring focus:ring-indigo-300"
+                    :class="{ 'transform rotate-45': showDropup }"
+                >
+                    <x-heroicon-o-plus class="w-8 h-8" />
+                </button>
+            </div>
         </div>
     
         <!-- Add link modal -->

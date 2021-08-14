@@ -3,10 +3,31 @@
     
     <x-container>    
         <h1 class="flex justify-between mb-10">
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center w-full space-x-4">
                 <span class="text-3xl font-bold">{{ $board->name }}</span>
                 @if($board->archived)
-                <span class="px-2 py-1 text-xs font-medium text-indigo-800 uppercase bg-indigo-100 rounded-md">Archived</span>
+                <div class="relative flex items-center w-full" x-data="{ show: false }">
+                    <span
+                        @mouseenter="show = true"
+                        @mouseleave="show = false"
+                        class="px-2 py-1 text-sm font-medium text-indigo-800 uppercase bg-indigo-100 rounded-md"
+                    >
+                        Archived
+                    </span>
+
+                    <div
+                        x-show="show"
+                        class="absolute px-1 py-px ml-24 text-xs font-medium text-indigo-800 uppercase bg-indigo-100 rounded"
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="transition ease-in duration-100"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                    >
+                        This board is archived. This means it's locked.
+                    </div>
+                </div>
                 @endif
             </div>
     

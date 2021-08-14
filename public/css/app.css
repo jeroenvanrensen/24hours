@@ -802,6 +802,12 @@ video {
 .right-0 {
 	right: 0px;
 }
+.-left-1\/2 {
+	left: -50%;
+}
+.left-1\/2 {
+	left: 50%;
+}
 .z-50 {
 	z-index: 50;
 }
@@ -911,6 +917,21 @@ video {
 .mr-2 {
 	margin-right: 0.5rem;
 }
+.-mt-16 {
+	margin-top: -4rem;
+}
+.-mt-14 {
+	margin-top: -3.5rem;
+}
+.ml-16 {
+	margin-left: 4rem;
+}
+.ml-20 {
+	margin-left: 5rem;
+}
+.ml-24 {
+	margin-left: 6rem;
+}
 .block {
 	display: block;
 }
@@ -922,6 +943,9 @@ video {
 }
 .grid {
 	display: grid;
+}
+.hidden {
+	display: none;
 }
 .h-6 {
 	height: 1.5rem;
@@ -1013,6 +1037,9 @@ video {
 	--tw-scale-x: 1;
 	--tw-scale-y: 1;
 	transform: translateX(var(--tw-translate-x)) translateY(var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+.-translate-x-1\/2 {
+	--tw-translate-x: -50%;
 }
 .rotate-45 {
 	--tw-rotate: 45deg;
@@ -1556,6 +1583,11 @@ video {
 	background-color: rgba(249, 250, 251, var(--tw-bg-opacity));
 }
 
+.hover\:bg-indigo-200:hover {
+	--tw-bg-opacity: 1;
+	background-color: rgba(199, 210, 254, var(--tw-bg-opacity));
+}
+
 .hover\:text-red-700:hover {
 	--tw-text-opacity: 1;
 	color: rgba(185, 28, 28, var(--tw-text-opacity));
@@ -1676,6 +1708,10 @@ video {
 
 .focus\:ring-offset-2:focus {
 	--tw-ring-offset-width: 2px;
+}
+
+.group:hover .group-hover\:block {
+	display: block;
 }
 
 .group:hover .group-hover\:opacity-80 {

@@ -10,6 +10,7 @@
                 src="{{ $image }}"
                 class="object-cover overflow-hidden transition duration-200 rounded-md shadow-lg group-hover:opacity-80"
                 alt="{{ $altText }}"
+                loading="lazy"
             />
             @else
             <div

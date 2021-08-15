@@ -1,8 +1,8 @@
 <div
     x-data="search"
-    @keydown.window.cmd.k.prevent="$refs.input.focus(); checkForFocus(); $store.modalOpen = true"
-    @keydown.window.ctrl.k.prevent="$refs.input.focus(); checkForFocus(); $store.modalOpen = true"
-    @keydown.escape.window.prevent="$refs.input.blur(); checkForFocus(); $store.modalOpen = false"
+    @keydown.window.cmd.k.prevent="$refs.input.focus(); checkForFocus();"
+    @keydown.window.ctrl.k.prevent="$refs.input.focus(); checkForFocus();"
+    @keydown.escape.window.prevent="$refs.input.blur(); checkForFocus();"
     class="relative w-full max-w-md"
 >
     <div class="relative">
@@ -51,6 +51,12 @@
     document.addEventListener('alpine:init', () => {
         Alpine.data('search', () => ({
             focus: false,
+
+            init() {
+                this.$watch('focus', hasFocus => {
+                    this.$store.modalOpen = hasFocus;
+                });
+            },
 
             checkForFocus() {
                 this.focus = document.activeElement === this.$refs.input ? true : false;

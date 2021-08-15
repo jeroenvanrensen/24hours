@@ -24,6 +24,8 @@ Route::get('/app/notes/{note:uuid}', App\Http\Livewire\Notes\Edit::class)->middl
 
 // Profile
 Route::get('/profile', App\Http\Livewire\Profile\Edit::class)->middleware('auth')->name('profile.edit');
+Route::get('/profile/password', App\Http\Livewire\Profile\Password::class)->middleware('auth')->name('profile.password');
+Route::get('/profile/delete', App\Http\Livewire\Profile\Delete::class)->middleware('auth')->name('profile.delete');
 
 // Standard auth
 Route::get('/login', App\Http\Livewire\Auth\Login::class)->middleware('guest')->name('login');

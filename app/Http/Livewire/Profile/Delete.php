@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
-class DeleteAccount extends Component
+class Delete extends Component
 {
     public string $email = '';
 
@@ -14,7 +14,7 @@ class DeleteAccount extends Component
 
     public function render()
     {
-        return view('profile.delete-account');
+        return view('profile.delete');
     }
 
     public function destroy()

@@ -1,8 +1,10 @@
-<x-profile-section>
-    <x-slot name="title">Update Password</x-slot>
-    <x-slot name="description">Ensure your account is using a long, random password to stay secure.</x-slot>
+<div>
+    <x-navbar />
 
-    <x-slot name="card">
+    <x-profile-section>
+        <x-slot name="title">Update Password</x-slot>
+        <x-slot name="description">Ensure your account is using a long, random password to stay secure.</x-slot>
+    
         <!-- Old Password -->
         <x-form-group>
             <x-label for="old_password">Old Password</x-label>
@@ -32,5 +34,5 @@
 
             <x-button class="ml-4" wire:click="update" loading="update">Save</x-button>
         </x-card-footer>
-    </x-slot>
-</x-profile-section>
+    </x-profile-section>
+</div>

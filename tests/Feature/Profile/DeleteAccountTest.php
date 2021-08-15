@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Livewire\Profile\DeleteAccount;
+use App\Http\Livewire\Profile\Delete;
 use App\Models\Board;
 use App\Models\Link;
 use App\Models\Note;
@@ -9,11 +9,21 @@ use Livewire\Livewire;
 
 beforeEach(fn () => $this->withoutExceptionHandling());
 
+test('a user can visit the delete account page', function () {
+    $this->actingAs(User::factory()->create());
+    $this->get(route('profile.delete'))->assertStatus(200)->assertSeeLivewire('profile.delete');
+});
+
+test('guests cannot visit the delete account page', function () {
+    $this->withExceptionHandling();
+    $this->get(route('profile.delete'))->assertRedirect(route('login'));
+});
+
 test('a user can delete their account', function () {
     $this->actingAs($user = User::factory()->create());
     expect($user->exists())->toBeTrue();
 
-    Livewire::test(DeleteAccount::class)
+    Livewire::test(Delete::class)
         ->set('email', $user->email)
         ->set('password', 'password')
         ->call('destroy')
@@ -25,7 +35,7 @@ test('a user can delete their account', function () {
 test('the email must be correct', function () {
     $this->actingAs($user = User::factory()->create());
 
-    Livewire::test(DeleteAccount::class)
+    Livewire::test(Delete::class)
         ->set('email', 'wrong-email')
         ->set('password', 'password')
         ->call('destroy')
@@ -36,7 +46,7 @@ test('the email must be correct', function () {
 test('the password must be correct', function () {
     $this->actingAs($user = User::factory()->create());
 
-    Livewire::test(DeleteAccount::class)
+    Livewire::test(Delete::class)
         ->set('email', $user->email)
         ->set('password', 'wrong-password')
         ->call('destroy')
@@ -52,7 +62,7 @@ test('all the users boards are deleted', function () {
 
     expect($board->exists())->toBeTrue();
 
-    Livewire::test(DeleteAccount::class)
+    Livewire::test(Delete::class)
         ->set('email', $user->email)
         ->set('password', 'password')
         ->call('destroy');
@@ -67,7 +77,7 @@ test('all users links are deleted', function () {
 
     expect($link->exists())->toBeTrue();
 
-    Livewire::test(DeleteAccount::class)
+    Livewire::test(Delete::class)
         ->set('email', $user->email)
         ->set('password', 'password')
         ->call('destroy');
@@ -82,7 +92,7 @@ test('all users notes are deleted', function () {
 
     expect($note->exists())->toBeTrue();
 
-    Livewire::test(DeleteAccount::class)
+    Livewire::test(Delete::class)
         ->set('email', $user->email)
         ->set('password', 'password')
         ->call('destroy');

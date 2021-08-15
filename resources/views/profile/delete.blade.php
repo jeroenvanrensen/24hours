@@ -1,8 +1,10 @@
-<x-profile-section>
-    <x-slot name="title">Delete your account</x-slot>
-    <x-slot name="description">This action cannot be undone. This will permanently delete your account, all your boards, all your notes and all your links. Please type your email and password to confirm.</x-slot>
+<div>
+    <x-navbar />
 
-    <x-slot name="card">
+    <x-profile-section>
+        <x-slot name="title">Delete your account</x-slot>
+        <x-slot name="description">This action cannot be undone. This will permanently delete your account, all your boards, all your notes and all your links. Please type your email and password to confirm.</x-slot>
+    
         <!-- Email -->
         <x-form-group>
             <x-label for="email">Email</x-label>
@@ -21,5 +23,5 @@
         <x-card-footer>
             <x-button color="red" wire:click="destroy" loading="destroy">Yes, delete my account</x-button>
         </x-card-footer>
-    </x-slot>
-</x-profile-section>
+    </x-profile-section>
+</div>

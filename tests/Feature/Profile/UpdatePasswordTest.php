@@ -7,6 +7,16 @@ use Livewire\Livewire;
 
 beforeEach(fn () => $this->withoutExceptionHandling());
 
+test('a user can visit the update password page', function () {
+    $this->actingAs(User::factory()->create());
+    $this->get(route('profile.password'))->assertStatus(200)->assertSeeLivewire('profile.password');
+});
+
+test('guests cannot visit the update password page', function () {
+    $this->withExceptionHandling();
+    $this->get(route('profile.password'))->assertRedirect(route('login'));
+});
+
 test('a user can update their password', function () {
     $this->actingAs($user = User::factory()->create());
     expect(Hash::check('new-password', $user->fresh()->password))->toBeFalse();

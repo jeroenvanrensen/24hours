@@ -24,10 +24,11 @@ Route::get('/app/notes/{note:uuid}', App\Http\Livewire\Notes\Edit::class)->middl
 
 // Profile
 Route::get('/profile', App\Http\Livewire\Profile\Edit::class)->middleware('auth')->name('profile.edit');
+Route::get('/profile/avatar', App\Http\Livewire\Profile\Avatar::class)->middleware('auth')->name('profile.avatar');
 Route::get('/profile/password', App\Http\Livewire\Profile\Password::class)->middleware('auth')->name('profile.password');
 Route::get('/profile/delete', App\Http\Livewire\Profile\Delete::class)->middleware('auth')->name('profile.delete');
 
-// Standard auth
+// Auth
 Route::get('/login', App\Http\Livewire\Auth\Login::class)->middleware('guest')->name('login');
 Route::get('/register', App\Http\Livewire\Auth\Register::class)->middleware('guest')->name('register');
 Route::post('/logout', App\Http\Controllers\Auth\Logout::class)->name('logout');

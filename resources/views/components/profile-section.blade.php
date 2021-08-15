@@ -10,6 +10,13 @@
                 </li>
                 
                 <li class="mb-1">
+                    <a class="flex items-center px-6 py-3 space-x-3 font-medium text-gray-800 rounded-md {{ request()->routeIs('profile.avatar') ? 'bg-gray-100 focus:bg-gray-200' : 'focus:bg-gray-100' }}" href="{{ route('profile.avatar') }}">
+                        <x-heroicon-o-user-circle class="w-6 h-6 text-gray-700" />
+                        <span>Avatar</span>
+                    </a>
+                </li>
+                
+                <li class="mb-1">
                     <a class="flex items-center px-6 py-3 space-x-3 font-medium text-gray-800 rounded-md {{ request()->routeIs('profile.password') ? 'bg-gray-100 focus:bg-gray-200' : 'focus:bg-gray-100' }}" href="{{ route('profile.password') }}">
                         <x-heroicon-o-key class="w-6 h-6 text-gray-700" />
                         <span>Update password</span>

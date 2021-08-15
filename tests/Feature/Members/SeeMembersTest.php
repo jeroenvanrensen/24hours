@@ -2,6 +2,7 @@
 
 use App\Http\Livewire\Members\Index;
 use App\Models\Board;
+use App\Models\Invitation;
 use App\Models\Membership;
 use App\Models\User;
 use Livewire\Livewire;
@@ -62,6 +63,48 @@ test('all members are visible on the index page', function () {
         ->assertSee('Owner')
         ->assertSee($member->name)
         ->assertSee('Member');
+});
+
+test('all invitations are visible on the index page', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    $invitation = Invitation::factory()->for($board)->create();
+
+    Livewire::test(Index::class, ['board' => $board])
+        ->assertSee($invitation->email)
+        ->assertSee(ucfirst($invitation->role))
+        ->assertSee('Invited');
+});
+
+test('the board owner can delete an invitation', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    $invitation = Invitation::factory()->for($board)->create();
+    expect($invitation->exists())->toBeTrue();
+
+    Livewire::test(Index::class, ['board' => $board])
+        ->call('deleteInvitation', $invitation)
+        ->assertRedirect(route('members.index', $board));
+
+    expect($invitation->exists())->toBeFalse();
+});
+
+test('members cannot delete invitations', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->member()->create();
+    $invitation = Invitation::factory()->for($board)->create();
+    Livewire::test(Index::class, ['board' => $board])->call('deleteInvitation', $invitation)->assertStatus(403);
+});
+
+test('viewers cannot delete invitations', function () {
+    $this->withExceptionHandling();
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->create();
+    Membership::factory()->for($user)->for($board)->viewer()->create();
+    $invitation = Invitation::factory()->for($board)->create();
+    Livewire::test(Index::class, ['board' => $board])->call('deleteInvitation', $invitation)->assertStatus(403);
 });
 
 test('a user can visit the members page when the board is archived', function () {

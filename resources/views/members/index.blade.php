@@ -8,7 +8,7 @@
             <div class="space-x-3">
                 <x-button secondary link :href="route('boards.show', $board)">Back</x-button>
                 @can('manageMemberships', $board)
-                <x-button @click="$dispatch('new-member')">Add member</x-button>
+                <x-button @click="$dispatch('new-member')">Invite member</x-button>
                 @endcan
                 @can('leave', $board)
                 <x-button color="red" @click="$dispatch('leave-board')">Leave board</x-button>
@@ -49,6 +49,7 @@
                     <p class="text-sm leading-5 text-gray-700">
                         {{ ucfirst($invitation->role) }}
                         &bullet; Invited
+                        @can('manageMemberships', $board) &bullet; <x-link button wire:click="deleteInvitation({{ $invitation->id }})">Remove</x-link> @endcan
                     </p>
                 </div>
             </li>

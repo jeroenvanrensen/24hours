@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Members;
 
 use App\Mail\BoardLeftMail;
 use App\Models\Board;
+use App\Models\Invitation;
 use App\Models\Membership;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Mail;
@@ -49,5 +50,16 @@ class Index extends Component
         session()->flash('flash.success', 'You left the board!');
 
         return redirect()->route('boards.index');
+    }
+
+    public function deleteInvitation(Invitation $invitation)
+    {
+        $this->authorize('manageMemberships', $this->board);
+
+        $invitation->delete();
+
+        session()->flash('flash.success', 'The invitation has been deleted!');
+
+        return redirect()->route('members.index', $this->board);
     }
 }

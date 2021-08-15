@@ -18,6 +18,7 @@
             placeholder="Search..."
             @focusin="focus = true"
             @focusout="focus = false"
+            @keydown.down="$refs.search1.focus()"
         />
 
         <div class="absolute top-0 flex items-center h-10 text-gray-300 pointer-events-none right-4" :class="{ 'text-gray-300': !focus, 'text-gray-400': focus }">
@@ -36,9 +37,11 @@
         x-transition:leave="transition duration-100 ease-in"
         x-transition:leave-start="transform scale-100 opacity-100"
         x-transition:leave-end="transform scale-95 opacity-0"
+        @focusin="focus = true"
+        @focusout="focus = false"
     >
         @forelse($results as $result)
-        @include('search.types.' . strtolower(class_basename($result)))
+        @include('search.types.' . strtolower(class_basename($result)), ['loop' => $loop])
         @empty
         <p class="px-4 py-2 text-gray-500 pointer-events-none">{{ empty($query) ? 'Start typing...' : 'No results found.' }}</p>
         @endforelse

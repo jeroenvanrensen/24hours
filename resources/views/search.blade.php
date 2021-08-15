@@ -18,7 +18,7 @@
             placeholder="Search..."
             @focusin="focus = true"
             @focusout="focus = false"
-            @keydown.down="$refs.search1.focus()"
+            @keydown.down.prevent="$refs.search1.focus()"
         />
 
         <div class="absolute top-0 flex items-center h-10 text-gray-300 pointer-events-none right-4" :class="{ 'text-gray-300': !focus, 'text-gray-400': focus }">

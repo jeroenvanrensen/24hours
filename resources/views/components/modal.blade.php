@@ -10,7 +10,9 @@
     @keydown.escape.window="show = false"
     x-init="
         $watch('show', isOpen =>  {
-            $nextTick(() => { document.querySelector('#modal-{{ $name }} input').focus(); });
+            if(isOpen) {
+                $nextTick(() => { document.querySelector('#modal-{{ $name }} input').focus(); });
+            }
             $store.modalOpen = isOpen;
         });
     "

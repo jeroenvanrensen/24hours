@@ -1,8 +1,8 @@
 <div
     x-data="search"
-    @keydown.window.cmd.k.prevent="$refs.input.focus(); checkForFocus();"
-    @keydown.window.ctrl.k.prevent="$refs.input.focus(); checkForFocus();"
-    @keydown.escape.window.prevent="$refs.input.blur(); checkForFocus();"
+    @keydown.window.cmd.k.prevent="$refs.input.focus()"
+    @keydown.window.ctrl.k.prevent="$refs.input.focus()"
+    @keydown.escape.window.prevent="$refs.input.blur()"
     class="relative w-full max-w-md"
 >
     <div class="relative">
@@ -17,8 +17,8 @@
             class="w-full px-4 py-2 text-gray-200 placeholder-gray-300 bg-gray-600 rounded-md hover:bg-gray-500 pl-11 focus:text-black focus:bg-white focus:placeholder-gray-500"
             :class="{ 'cursor-pointer': !focus }"
             placeholder="Search..."
-            @click="checkForFocus()"
-            @click.away="checkForFocus()"
+            @focusin="focus = true"
+            @focusout="focus = false"
         />
 
         <div class="absolute top-0 flex items-center h-10 text-gray-300 pointer-events-none right-4" :class="{ 'text-gray-300': !focus, 'text-gray-400': focus }">
@@ -56,10 +56,6 @@
                 this.$watch('focus', hasFocus => {
                     this.$store.modalOpen = hasFocus;
                 });
-            },
-
-            checkForFocus() {
-                this.focus = document.activeElement === this.$refs.input ? true : false;
             }
         }))
     })

@@ -41,9 +41,16 @@
             @endforeach
             
             @foreach($board->invitations as $invitation)
-            <li class="mb-6 ml-14">
-                <h5 class="font-semibold leading-5">{{ $invitation->email }}</h5>
-                <p class="text-sm leading-5">Invited</p>
+            <li class="flex items-center mb-6 space-x-4">
+                <img src="{{ $invitation->avatar }}" alt="{{ $invitation->email }}'s avatar" class="w-10 h-10 rounded-full" />
+
+                <div>
+                    <h5 class="font-semibold leading-5">{{ $invitation->email }}</h5>
+                    <p class="text-sm leading-5 text-gray-700">
+                        {{ ucfirst($invitation->role) }}
+                        &bullet; Invited
+                    </p>
+                </div>
             </li>
             @endforeach
         </ul>

@@ -25,6 +25,13 @@ class Invitation extends Model
         });
     }
 
+    public function getAvatarAttribute(): string
+    {
+        $email = md5($this->email);
+        $default = urlencode('https://www.w3schools.com/w3css/img_avatar2.png');
+        return "https://www.gravatar.com/avatar/$email?d=$default&s=40";
+    }
+
     public function board(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Board::class);

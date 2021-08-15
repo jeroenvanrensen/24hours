@@ -1,4 +1,4 @@
-<div>
+<div x-data @keydown.window.escape="!$store.modalOpen && Turbolinks.visit('{{ route('boards.show', $note->board) }}');">
     <x-navbar />
 
     <x-container>

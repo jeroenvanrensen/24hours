@@ -25,7 +25,7 @@
             rel="stylesheet"
         />
     </head>
-    <body>
+    <body x-data @turbolinks.window="$store.modalOpen = false">
         {{ $slot }}
 
         <x-flash />
@@ -33,6 +33,13 @@
         <script>
             document.addEventListener('alpine:init', () => {
                 Alpine.store('modalOpen', false);
+                
+                // Fix a bug where the $store.modalOpen state keeps being true
+                // after a new page visit, and then the escape key won't work
+                document.addEventListener('turbolinks:visit', () => {
+                    let event = new CustomEvent('turbolinks');
+                    window.dispatchEvent(event);
+                });
             });
         </script>
     </body>

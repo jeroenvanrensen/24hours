@@ -808,12 +808,6 @@ video {
 .right-0 {
 	right: 0px;
 }
-.bottom-0 {
-	bottom: 0px;
-}
-.left-0 {
-	left: 0px;
-}
 .z-50 {
 	z-index: 50;
 }
@@ -1022,6 +1016,9 @@ video {
 }
 .max-w-lg {
 	max-width: 32rem;
+}
+.flex-1 {
+	flex: 1 1 0%;
 }
 .transform {
 	--tw-translate-x: 0;
@@ -1594,10 +1591,6 @@ video {
 .hover\:text-indigo-700:hover {
 	--tw-text-opacity: 1;
 	color: rgba(67, 56, 202, var(--tw-text-opacity));
-}
-
-.focus\:cursor-default:focus {
-	cursor: default;
 }
 
 .focus\:cursor-text:focus {

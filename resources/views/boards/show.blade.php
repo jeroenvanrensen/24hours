@@ -6,7 +6,7 @@
             <div class="flex items-center w-full space-x-4">
                 <span class="text-3xl font-bold">{{ $board->name }}</span>
                 @if($board->archived)
-                <div class="relative flex items-center w-full" x-data="{ show: false }">
+                <div class="relative flex items-center flex-1" x-data="{ show: false }">
                     <span
                         @mouseenter="show = true"
                         @mouseleave="show = false"

@@ -1,8 +1,8 @@
 <div
     x-data="search"
-    @keydown.window.cmd.k.prevent="$refs.input.focus(); checkForFocus()"
-    @keydown.window.ctrl.k.prevent="$refs.input.focus(); checkForFocus()"
-    @keydown.escape.window.prevent="$refs.input.blur(); checkForFocus()"
+    @keydown.window.cmd.k.prevent="$refs.input.focus(); checkForFocus(); $store.modalOpen = true"
+    @keydown.window.ctrl.k.prevent="$refs.input.focus(); checkForFocus(); $store.modalOpen = true"
+    @keydown.escape.window.prevent="$refs.input.blur(); checkForFocus(); $store.modalOpen = false"
     class="relative w-full max-w-md"
 >
     <div class="relative">

@@ -1,9 +1,7 @@
-<div>
+<div x-data @keydown.window.escape="!$store.modalOpen && Turbolinks.visit('{{ route('boards.show', $board) }}');">
     <x-navbar />
 
-    <x-panel
-        @keydown.window.escape="Turbolinks.visit('{{ route('boards.show', $board) }}');"
-    >
+    <x-panel>
         <h1 x-data class="flex items-center justify-between mb-10 text-3xl font-semibold">
             Board members
 

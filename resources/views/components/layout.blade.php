@@ -29,5 +29,11 @@
         {{ $slot }}
 
         <x-flash />
+
+        <script>
+            document.addEventListener('alpine:init', () => {
+                Alpine.store('modalOpen', false);
+            });
+        </script>
     </body>
 </html>

@@ -1,9 +1,7 @@
-<div x-data>
+<div x-data @keydown.window.escape="!$store.modalOpen && Turbolinks.visit('{{ route('boards.show', $board) }}')">
     <x-navbar />
 
-    <x-panel
-        @keydown.window.escape="Turbolinks.visit('{{ route('boards.show', $board) }}');"
-    >
+    <x-panel>
         <h1 class="mb-8 text-3xl font-semibold">Edit Board</h1>
     
         <!-- Name -->

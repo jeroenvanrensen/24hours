@@ -31,6 +31,20 @@ test('the email is unique', function () {
     User::factory()->create(['email' => $email]); // same email
 })->throws(QueryException::class);
 
+it('has an avatar', function () {
+    $avatar = faker()->imageUrl();
+    $user = User::factory()->create(['avatar_path' => $avatar]);
+    expect($user->avatar)->toBe($avatar);
+});
+
+it('has a default avatar', function ($email, $avatar) {
+    $user = User::factory()->create(['email' => $email, 'avatar_path' => null]);
+    expect($user->avatar)->toBe($avatar);
+})->with([
+    ['john@example.com', 'https://www.gravatar.com/avatar/d4c74594d841139328695756648b6bd6?d=https%3A%2F%2Fwww.w3schools.com%2Fw3css%2Fimg_avatar2.png&s=40'],
+    ['jane@example.org', 'https://www.gravatar.com/avatar/18385ac57d9b171dc3fe83a5a92b68d9?d=https%3A%2F%2Fwww.w3schools.com%2Fw3css%2Fimg_avatar2.png&s=40']
+]);
+
 it('has a nullable email_verified_at column', function () {
     $date = today()->subWeek();
     $user = User::factory()->create(['email_verified_at' => $date]);
@@ -64,14 +78,6 @@ it('has a first name', function ($name, $firstname) {
     ['John Doe', 'John'],
     ['Sylvia G. Smith', 'Sylvia'],
     ['Jeroen van Rensen', 'Jeroen']
-]);
-
-it('has an avatar', function ($email, $avatar) {
-    $user = User::factory()->create(['email' => $email]);
-    expect($user->avatar)->toBe($avatar);
-})->with([
-    ['john@example.com', 'https://www.gravatar.com/avatar/d4c74594d841139328695756648b6bd6?d=https%3A%2F%2Fwww.w3schools.com%2Fw3css%2Fimg_avatar2.png&s=40'],
-    ['jane@example.org', 'https://www.gravatar.com/avatar/18385ac57d9b171dc3fe83a5a92b68d9?d=https%3A%2F%2Fwww.w3schools.com%2Fw3css%2Fimg_avatar2.png&s=40']
 ]);
 
 it('has many boards', function () {

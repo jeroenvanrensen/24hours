@@ -10,6 +10,13 @@
             <x-input type="text" name="board.name" id="board.name" wire:model.lazy="board.name" />
             <x-form-error name="board.name" />
         </x-form-group>
+
+        <!-- Image -->
+        <x-form-group>
+            <x-label for="image">Image</x-label>
+            <x-input type="file" name="image" wire:model.defer="image" />
+            <x-form-error name="image" />
+        </x-form-group>
     
         <!-- Submit Button -->
         <x-card-footer class="flex items-center justify-end">

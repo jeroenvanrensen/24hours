@@ -7,14 +7,18 @@ use App\Models\Board;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Edit extends Component
 {
-    use AuthorizesRequests;
+    use AuthorizesRequests, WithFileUploads;
+
+    public $image;
 
     public Board $board;
 
     protected $rules = [
+        'image' => ['nullable', 'file', 'image', 'max:1024'],
         'board.name' => ['required', 'string', 'max:255']
     ];
 
@@ -31,6 +35,10 @@ class Edit extends Component
     public function update()
     {
         $this->validate();
+
+        if ($this->image) {
+            $this->board->image = str_replace('public/', 'storage/', $this->image->store('public'));
+        }
 
         $this->board->save();
 

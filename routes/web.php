@@ -1,46 +1,42 @@
 <?php
 
-use App\Http\Controllers\Invitations\CheckForInvitations;
-use App\Http\Controllers\Links\Show as ShowLink;
-use App\Http\Livewire\Profile\Edit as EditProfile;
-use App\Http\Livewire\Boards\Edit as EditBoard;
-use App\Http\Livewire\Boards\Index as IndexBoards;
-use App\Http\Livewire\Boards\Show as ShowBoard;
-use App\Http\Livewire\Home;
-use App\Http\Livewire\Invitations\Show as ShowInvitation;
-use App\Http\Livewire\Members\Edit as EditMember;
-use App\Http\Livewire\Members\Index as IndexMembers;
-use App\Http\Livewire\Notes\Edit as EditNote;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+// Home
+Route::get('/', App\Http\Livewire\Home::class)->name('home')->middleware('guest');
 
-Route::get('/', Home::class)->name('home')->middleware('guest');
+// Boards
+Route::get('/app/', App\Http\Livewire\Boards\Index::class)->middleware(['auth', 'verified'])->name('boards.index');
+Route::get('/app/boards/{board:uuid}', App\Http\Livewire\Boards\Show::class)->middleware(['auth', 'verified'])->name('boards.show');
+Route::get('/app/boards/{board:uuid}/edit', App\Http\Livewire\Boards\Edit::class)->middleware(['auth', 'verified'])->name('boards.edit');
 
-Route::middleware(['auth', 'verified'])->prefix('app')->group(function () {
-    Route::get('/', IndexBoards::class)->name('boards.index');
-    Route::get('/boards/{board:uuid}', ShowBoard::class)->name('boards.show');
-    Route::get('/boards/{board:uuid}/edit', EditBoard::class)->name('boards.edit');
+// Invitations
+Route::get('/app/invitations/check', App\Http\Controllers\Invitations\CheckForInvitations::class)->middleware(['auth', 'verified'])->name('invitations.check');
+Route::get('/app/invitations/{invitation:uuid}', App\Http\Livewire\Invitations\Show::class)->name('invitations.show');
 
-    Route::get('/invitations/check', CheckForInvitations::class)->name('invitations.check');
-    Route::get('/invitations/{invitation:uuid}', ShowInvitation::class)->name('invitations.show')->withoutMiddleware(['auth', 'verified']);
+// Members
+Route::get('/app/boards/{board:uuid}/members', App\Http\Livewire\Members\Index::class)->middleware(['auth', 'verified'])->name('members.index');
+Route::get('/app/boards/{board:uuid}/members/{membership:uuid}', App\Http\Livewire\Members\Edit::class)->middleware(['auth', 'verified'])->name('members.edit');
 
-    Route::get('/boards/{board:uuid}/members', IndexMembers::class)->name('members.index');
-    Route::get('/boards/{board:uuid}/members/{membership:uuid}', EditMember::class)->name('members.edit');
+// Board items
+Route::get('/app/links/{link:uuid}', App\Http\Controllers\Links\Show::class)->middleware(['auth', 'verified'])->name('links.show');
+Route::get('/app/notes/{note:uuid}', App\Http\Livewire\Notes\Edit::class)->middleware(['auth', 'verified'])->name('notes.edit');
 
-    Route::get('/links/{link:uuid}', ShowLink::class)->name('links.show');
-    Route::get('/notes/{note:uuid}', EditNote::class)->name('notes.edit');
+// Profile
+Route::get('/profile', App\Http\Livewire\Profile\Edit::class)->middleware('auth')->name('profile.edit');
 
-    Route::get('/profile', EditProfile::class)->name('profile.edit')->withoutMiddleware('verified');
-});
+// Standard auth
+Route::get('/login', App\Http\Livewire\Auth\Login::class)->middleware('guest')->name('login');
+Route::get('/register', App\Http\Livewire\Auth\Register::class)->middleware('guest')->name('register');
+Route::post('/logout', App\Http\Controllers\Auth\Logout::class)->name('logout');
 
-require __DIR__ . '/auth.php';
+// Reset password
+Route::get('/forgot-password', App\Http\Livewire\Auth\RequestPasswordLink::class)->middleware('guest')->name('password.request');
+Route::get('/reset-password/{token}', App\Http\Livewire\Auth\ResetPassword::class)->middleware('guest')->name('password.reset');
+
+// Confirm password
+Route::get('/confirm-password', App\Http\Livewire\Auth\ConfirmPassword::class)->middleware('auth')->name('password.confirm');
+
+// Verify email
+Route::get('/verify-email', App\Http\Livewire\Auth\VerifyEmail::class)->middleware('auth')->name('verification.notice');
+Route::get('/verify-email/{id}/{hash}', App\Http\Controllers\Auth\VerifyEmailController::class)->middleware('auth')->name('verification.verify');

@@ -14,8 +14,7 @@
             x-ref="input"
             wire:model="query"
             type="text"
-            class="w-full px-4 py-2 text-gray-200 placeholder-gray-300 bg-gray-600 rounded-md hover:bg-gray-500 pl-11 focus:text-black focus:bg-white focus:placeholder-gray-500"
-            :class="{ 'cursor-pointer': !focus }"
+            class="w-full px-4 py-2 text-gray-200 placeholder-gray-300 bg-gray-600 rounded-md cursor-pointer focus:cursor-text hover:bg-gray-500 pl-11 focus:text-black focus:bg-white focus:placeholder-gray-500"
             placeholder="Search..."
             @focusin="focus = true"
             @focusout="focus = false"
@@ -29,7 +28,6 @@
     </div>
     
     <div
-        style="display: none;"
         x-show="focus"
         class="absolute z-20 w-full py-1 mt-3 bg-white border border-gray-100 rounded-md shadow-lg"
         x-transition:enter="transition duration-200 ease-out"

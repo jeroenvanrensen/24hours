@@ -5,6 +5,16 @@
         <x-slot name="title">Avatar</x-slot>
         <x-slot name="description">Update your profile picture or use the default one.</x-slot>
 
+        <x-alert text="Uploading image..." wire:loading.flex wire:target="avatar">
+            <x-slot name="icon"><x-heroicon-s-exclamation-circle /></x-slot>
+        </x-alert>
+    
+        @if($avatar)
+        <x-alert color="green" text="Image uploaded!">
+            <x-slot name="icon"><x-heroicon-s-check-circle /></x-slot>
+        </x-alert>
+        @endif
+
         <!-- Avatar -->
         <x-form-group>
             <x-label for="avatar">Upload your avatar</x-label>
@@ -19,7 +29,7 @@
             @endif
             
             <x-button wire:click="remove" secondary>Reset to default</x-button>
-            <x-button wire:click="upload">Upload</x-button>
+            <x-button wire:click="upload">Save</x-button>
         </x-card-footer>
     </x-profile-section>
 </div>

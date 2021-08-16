@@ -3,6 +3,16 @@
 
     <x-panel>
         <h1 class="mb-8 text-3xl font-semibold">Edit Board</h1>
+        
+        <x-alert text="Uploading image..." wire:loading.flex wire:target="image">
+            <x-slot name="icon"><x-heroicon-s-exclamation-circle /></x-slot>
+        </x-alert>
+    
+        @if($image)
+        <x-alert color="green" text="Image uploaded!">
+            <x-slot name="icon"><x-heroicon-s-check-circle /></x-slot>
+        </x-alert>
+        @endif
     
         <!-- Name -->
         <x-form-group>

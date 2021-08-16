@@ -4,9 +4,14 @@ use App\Http\Livewire\Boards\Edit;
 use App\Models\Board;
 use App\Models\Membership;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
+beforeEach(function () {
+    $this->withoutExceptionHandling();
+    Storage::fake();
+});
 
 test('the board owner can visit the edit board page ', function () {
     $this->actingAs($user = User::factory()->create());
@@ -76,4 +81,19 @@ it('requires a name', function () {
         ->set('board.name', null)
         ->call('update')
         ->assertHasErrors('board.name');
+});
+
+test('the board owner can update the image', function () {
+    $this->actingAs($user = User::factory()->create());
+    $board = Board::factory()->for($user)->create();
+    $initialImage = $board->image;
+    $image = UploadedFile::fake()->image('cover.jpg');
+
+    Livewire::test(Edit::class, ['board' => $board])
+        ->set('board.name', $board->name)
+        ->set('image', $image)
+        ->call('update')
+        ->assertHasNoErrors();
+
+    expect($board->fresh()->image)->not()->toBe($initialImage);
 });

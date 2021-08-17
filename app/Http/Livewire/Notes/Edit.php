@@ -10,9 +10,15 @@ class Edit extends Component
 {
     use AuthorizesRequests;
 
+    public $tab = 'write';
+
     public Note $note;
 
     public $body;
+
+    protected $queryString = [
+        'tab' => ['except' => 'write']
+    ];
 
     public function mount()
     {

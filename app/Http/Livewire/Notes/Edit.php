@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Notes;
 
 use App\Models\Note;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class Edit extends Component
@@ -47,9 +48,12 @@ class Edit extends Component
 
     protected function getTitle(): string
     {
-        $title = strtok(strip_tags(str_replace('</', "\n</", $this->body)), "\n\t");
-
-        return $title == '' ? 'No Title' : explode('\n', wordwrap($title, 255, '\n'))[0];
+        return Str::of($this->body) // Get the note's body
+            ->pipe(fn ($title) => strtok($title, "\n\t")) // Get the first line
+            ->ltrim('# ') // Remove the # for headings
+            ->pipe(fn ($title) => strip_tags($title)) // Strip tags
+            ->whenEmpty(fn () => Str::of('No Title')) // Add an empty message
+            ->pipe(fn ($title) => explode('\n', wordwrap($title, 255, '\n'))[0]); // Get the first 255 characters
     }
 
     public function destroy()

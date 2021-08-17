@@ -1222,6 +1222,12 @@ video {
 .mb-1 {
 	margin-bottom: 0.25rem;
 }
+.mt-10 {
+	margin-top: 2.5rem;
+}
+.mb-20 {
+	margin-bottom: 5rem;
+}
 .ml-5 {
 	margin-left: 1.25rem;
 }
@@ -1760,10 +1766,6 @@ video {
 .text-yellow-600 {
 	--tw-text-opacity: 1;
 	color: rgba(217, 119, 6, var(--tw-text-opacity));
-}
-.text-indigo-700 {
-	--tw-text-opacity: 1;
-	color: rgba(67, 56, 202, var(--tw-text-opacity));
 }
 .underline {
 	text-decoration: underline;

@@ -2,10 +2,10 @@
     <x-navbar />
 
     <x-panel>
-        <h1 x-data class="flex items-center justify-between mb-10 text-3xl font-semibold">
-            Board members
+        <h1 x-data class="flex items-center justify-between max-w-full mb-10 space-x-6 overflow-x-auto overflow-y-hidden text-3xl font-semibold">
+            <span class="flex-shrink-0">Board members</span>
 
-            <div class="space-x-3">
+            <div class="flex-shrink-0 space-x-3">
                 <x-button secondary link :href="route('boards.show', $board)">Back</x-button>
                 @can('manageMemberships', $board)
                 <x-button @click="$dispatch('new-member')">Invite member</x-button>

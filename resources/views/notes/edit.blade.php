@@ -4,9 +4,9 @@
     <div
         x-data
         @keydown.window.escape.prevent="!$store.modalOpen && Turbolinks.visit('{{ route('boards.show', $note->board) }}');"
-        class="max-w-4xl mx-auto mt-10 mb-20"
+        class="max-w-4xl px-6 mx-auto mt-6 mb-6 md:mt-10 md:mb-10 lg:mb-20"
     >
-        <div class="flex items-center justify-center mb-10 space-x-3">
+        <div class="flex items-center justify-center mb-6 space-x-3 md:mb-10">
             <button
                 class="px-6 py-3 text-sm font-medium rounded-md focus:outline-none {{
                     $tab === 'write'

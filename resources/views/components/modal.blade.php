@@ -34,7 +34,7 @@
         <div
             x-show="show"
             @click.away="show = false"
-            class="w-full max-w-lg overflow-hidden bg-white rounded-lg shadow-lg"
+            class="w-full max-w-lg mx-6 overflow-hidden bg-white rounded-lg shadow-lg"
             x-transition:enter="transition transform ease-out duration-300"
             x-transition:enter-start="opacity-0 scale-95"
             x-transition:enter-end="opacity-100 scale-100"

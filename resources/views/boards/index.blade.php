@@ -10,7 +10,7 @@
         <p x-data>You don't have any boards yet. <x-link href="javascript:;" @click="$dispatch('create-board')">Create one.</x-link></p>
         @endif
     
-        <div class="grid grid-cols-4 gap-8">
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
             @foreach($boards as $board)
                 <x-card
                     :link="route('boards.show', $board)"

@@ -1,8 +1,8 @@
 <div x-data @keydown.escape.window="!$store.modalOpen && Turbolinks.visit('{{ route('boards.index') }}')">
     <x-container>
-        <div class="grid grid-cols-4 gap-24">
+        <div class="md:grid md:gap-24 md:grid-cols-4">
             <div>
-                <ul class="-mx-6">
+                <ul class="md:-mx-6">
                     <li class="mb-1">
                         <a class="flex items-center px-6 py-3 space-x-3 font-medium text-gray-800 rounded-md {{ request()->routeIs('profile.edit') ? 'bg-gray-100 focus:bg-gray-200' : 'focus:bg-gray-100' }}" href="{{ route('profile.edit') }}">
                             <x-heroicon-o-identification class="w-6 h-6 text-gray-700" />

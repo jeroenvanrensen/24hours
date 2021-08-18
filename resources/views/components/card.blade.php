@@ -1,6 +1,6 @@
 <div class="relative">
     @isset($deleteButton)
-    <button x-data @click="$dispatch('{{ $deleteButton }}')" class="absolute top-0 z-10 flex items-center justify-center w-6 h-6 mt-1 bg-white rounded-full focus:bg-none focus:outline-none hover:bg-opacity-80 right-1"><x-heroicon-o-trash class="w-4 h-4 text-gray-700" /></button>
+    <button x-data @click="$dispatch('{{ $deleteButton }}')" class="absolute top-0 z-10 flex items-center justify-center w-6 h-6 mt-2 bg-white rounded-full focus:bg-none focus:outline-none hover:bg-opacity-80 right-2"><x-heroicon-o-trash class="w-4 h-4 text-gray-700" /></button>
     @endif
 
     <a class="group" href="{{ $link }}" {{ $attributes }}>

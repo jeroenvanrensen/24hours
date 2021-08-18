@@ -1,4 +1,6 @@
-<nav class="flex items-center justify-between w-full px-24 py-6 bg-gray-800 shadow">
+<nav
+    class="flex items-center justify-between w-full px-6 py-6 bg-gray-800 shadow md:px-12 lg:px-24"
+>
     <a href="{{ route('boards.index') }}" class="w-10 font-medium text-white">24Hours</a>
 
     <livewire:search />

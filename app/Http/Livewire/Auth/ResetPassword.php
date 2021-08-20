@@ -40,13 +40,8 @@ class ResetPassword extends Component
         $status = Password::reset(
             ['email' => $this->email, 'password' => $this->password, 'password_confirmation' => $this->password_confirmation, 'token' => $this->token],
             function ($user, $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password)
-                ])->save();
-
+                $user->update(['password' => Hash::make($password)]);
                 $user->setRememberToken(Str::random(60));
-
-                event(new PasswordReset($user));
             }
         );
 

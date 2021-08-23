@@ -71,7 +71,7 @@
             <div class="relative flex items-center justify-end w-full mb-1 md:mb-2" x-data="{ show: false }">
                 <div
                     x-show="show"
-                    class="absolute px-2 py-1 text-sm font-medium text-center text-white bg-gray-800 rounded-md shadow-xl right-18"
+                    class="absolute px-2 py-1 text-sm font-medium text-center text-white bg-gray-800 rounded-md shadow-xl dark:bg-gray-700 right-18"
                     x-transition:enter="transition ease-out duration-200"
                     x-transition:enter-start="transform opacity-0 scale-95"
                     x-transition:enter-end="transform opacity-100 scale-100"
@@ -87,7 +87,7 @@
                     @mouseleave="show = false"
                     x-show="showDropup"
                     @click="$dispatch('create-link')"
-                    class="flex items-center justify-center w-12 h-12 text-white transition transform bg-gray-400 rounded-full shadow-lg md:h-14 md:w-14 hover:bg-gray-500 focus:bg-gray-500 focus:ring ring-gray-400"
+                    class="flex items-center justify-center w-12 h-12 text-white transition transform bg-gray-400 rounded-full shadow-lg dark:bg-gray-600 md:h-14 md:w-14 hover:bg-gray-500 focus:bg-gray-500 focus:ring ring-gray-400"
                     x-transition:enter="delay-300 ease-out duration-300"
                     x-transition:enter-start="opacity-0 scale-50"
                     x-transition:enter-end="opacity-100 scale-100"
@@ -103,7 +103,7 @@
             <div class="relative flex items-center justify-end w-full mb-2 md:mb-4" x-data="{ show: false }">
                 <div
                     x-show="show"
-                    class="absolute px-2 py-1 text-sm font-medium text-center text-white bg-gray-800 rounded-md shadow-xl right-18"
+                    class="absolute px-2 py-1 text-sm font-medium text-center text-white bg-gray-800 rounded-md shadow-xl dark:bg-gray-700 right-18"
                     x-transition:enter="transition ease-out duration-200"
                     x-transition:enter-start="transform opacity-0 scale-95"
                     x-transition:enter-end="transform opacity-100 scale-100"
@@ -119,7 +119,7 @@
                     @mouseleave="show = false"
                     x-show="showDropup"
                     wire:click="createNote"
-                    class="flex items-center justify-center w-12 h-12 text-white transition transform bg-gray-400 rounded-full shadow-lg md:h-14 md:w-14 hover:bg-gray-500 focus:bg-gray-500 focus:ring ring-gray-400"
+                    class="flex items-center justify-center w-12 h-12 text-white transition transform bg-gray-400 rounded-full shadow-lg dark:bg-gray-600 md:h-14 md:w-14 hover:bg-gray-500 focus:bg-gray-500 focus:ring ring-gray-400"
                     x-transition:enter="delay-150 ease-out duration-300"
                     x-transition:enter-start="opacity-0 scale-50"
                     x-transition:enter-end="opacity-100 scale-100"
@@ -135,7 +135,7 @@
             <div class="relative flex items-center justify-end w-full" x-data="{ show: false }">
                 <div
                     x-show="show"
-                    class="absolute px-2 py-1 text-sm font-medium text-center text-white bg-gray-800 rounded-md shadow-xl right-18"
+                    class="absolute px-2 py-1 text-sm font-medium text-center text-white bg-gray-800 rounded-md shadow-xl dark:bg-gray-700 right-18"
                     x-transition:enter="transition ease-out duration-200"
                     x-transition:enter-start="transform opacity-0 scale-95"
                     x-transition:enter-end="transform opacity-100 scale-100"
@@ -151,7 +151,7 @@
                     @mouseleave="show = false"
                     @click="showDropup = !showDropup"
                     @click.away="showDropup = false"
-                    class="flex items-center justify-center w-12 h-12 text-white transition duration-300 bg-indigo-600 rounded-full shadow-lg md:w-14 md:h-14 hover:bg-indigo-700 focus:bg-indigo-700 focus:ring focus:ring-indigo-300"
+                    class="flex items-center justify-center w-12 h-12 text-white transition duration-300 bg-indigo-600 rounded-full shadow-lg md:w-14 md:h-14 hover:bg-indigo-700 focus:bg-indigo-700 focus:ring focus:ring-indigo-300 dark:focus:ring-indigo-400"
                     :class="{ 'transform rotate-45': showDropup }"
                 >
                     <x-heroicon-o-plus class="w-6 h-6 md:w-8 md:h-8" />

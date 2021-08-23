@@ -9,8 +9,10 @@
 >
     <x-slot name="modal">
         <x-modal name="delete-link-{{ $item->id }}" title="Delete link">
-            <p class="mb-4 text-gray-700">Are you sure you want to delete this link?</p>
-            <p class="font-semibold">{{ $item->title }}</p>
+            <p class="mb-4 text-gray-700 dark:text-gray-200">
+                Are you sure you want to delete this link?
+            </p>
+            <p class="font-semibold dark:text-white">{{ $item->title }}</p>
 
             <x-slot name="footer">
                 <x-button wire:click="deleteLink({{ $item->id }})">Delete</x-button>

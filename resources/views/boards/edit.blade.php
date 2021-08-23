@@ -30,7 +30,7 @@
     
         <!-- Submit Button -->
         <x-card-footer class="flex items-center justify-end">
-            <button @click="$dispatch('delete-board')" class="text-gray-500 hover:text-red-700 focus:text-red-700 focus:outline-none">
+            <button @click="$dispatch('delete-board')" class="text-gray-500 dark:text-gray-400 hover:text-red-700 dark:hover:text-gray-300 dark:focus:text-gray-300 focus:text-red-700 focus:outline-none">
                 <x-heroicon-o-trash class="w-6 h-6" />
             </button>
 
@@ -45,8 +45,8 @@
     
         <!-- Delete modal -->
         <x-modal name="delete-board" title="Delete board">
-            <p class="mb-6 text-gray-700">Are you sure you want to delete this board? This will delete all notes and links that belong to this board too.</p>
-            <p class="font-medium">{{ $board->name }}</p>
+            <p class="mb-6 text-gray-700 dark:text-gray-200">Are you sure you want to delete this board? This will delete all notes and links that belong to this board too.</p>
+            <p class="font-medium dark:text-white">{{ $board->name }}</p>
     
             <x-slot name="footer">
                 <x-button wire:click="destroy">Delete</x-button>

@@ -22,7 +22,7 @@
 
                 <div>
                     <h5 class="font-semibold leading-5">{{ $board->user->name }}</h5>
-                    <p class="text-sm leading-5 text-gray-700">Owner</p>
+                    <p class="text-sm leading-5 text-gray-700 dark:text-gray-300">Owner</p>
                 </div>
             </li>
 
@@ -32,7 +32,7 @@
 
                 <div>
                     <h5 class="font-semibold leading-5">{{ $membership->user->name }}</h5>
-                    <p class="text-sm leading-5 text-gray-700">
+                    <p class="text-sm leading-5 text-gray-700 dark:text-gray-300">
                         {{ ucfirst($membership->role) }}
                         @can('manageMemberships', $board) &bullet; <x-link :href="route('members.edit', [$board, $membership])">Edit</x-link> @endcan
                     </p>
@@ -46,7 +46,7 @@
 
                 <div>
                     <h5 class="font-semibold leading-5">{{ $invitation->email }}</h5>
-                    <p class="text-sm leading-5 text-gray-700">
+                    <p class="text-sm leading-5 text-gray-700 dark:text-gray-300">
                         {{ ucfirst($invitation->role) }}
                         &bullet; Invited
                         @can('manageMemberships', $board) &bullet; <x-link button wire:click="deleteInvitation({{ $invitation->id }})">Remove</x-link> @endcan
@@ -61,7 +61,7 @@
         </x-modal>
 
         <x-modal name="leave-board" title="Leave board">
-            <p class="mb-4 text-gray-700">
+            <p class="mb-4 text-gray-700 dark:text-gray-200">
                 Are you sure you want to leave this board? After you have submitted you don't have
                 access to any of the board's items anymore.
             </p>

@@ -27,7 +27,7 @@
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
     >
-        <div class="w-full h-full bg-gray-800 opacity-95"></div>
+        <div class="w-full h-full bg-black dark:bg-gray-700 opacity-40 dark:opacity-95"></div>
     </div>
 
     <div class="absolute z-40 flex items-center justify-center w-full h-full">

@@ -21,7 +21,7 @@
         </x-select>
         <x-form-error name="role" />
         @unless($errors->has('role'))
-            <div class="mt-4 mb-10 text-sm text-gray-600">Members can add, edit and delete links and notes. Viewers can only see items. Only the board owner (you) can edit the board or invite people.</div>
+            <div class="mt-4 mb-10 text-sm text-gray-600 dark:text-gray-300">Members can add, edit and delete links and notes. Viewers can only see items. Only the board owner (you) can edit the board or invite people.</div>
         @endunless
     </x-form-group>
 

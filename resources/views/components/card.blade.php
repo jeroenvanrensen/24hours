@@ -25,7 +25,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <h2 class="mt-4 text-lg font-medium">{{ $title }}</h2>
-                <p class="text-sm text-gray-500">{{ $description }}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-300">{{ $description }}</p>
             </div>
         </div>
     </a>

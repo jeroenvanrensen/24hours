@@ -10,8 +10,8 @@
             <button
                 class="px-6 py-3 text-sm font-medium rounded-md focus:outline-none {{
                     $tab === 'write'
-                        ? 'bg-indigo-100 text-indigo-800 focus:bg-indigo-100'
-                        : 'hover:bg-gray-100 text-gray-800 focus:bg-gray-100'
+                        ? 'bg-indigo-100 text-indigo-800 focus:bg-indigo-100 dark:bg-gray-600 dark:text-white dark:focus:bg-gray-600'
+                        : 'hover:bg-gray-100 text-gray-800 focus:bg-gray-100 dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:text-white'
                 }} "
                 wire:click="$set('tab', 'write')"
             >
@@ -20,8 +20,8 @@
             <button
                 class="px-6 py-3 text-sm font-medium rounded-md focus:outline-none {{
                     $tab === 'preview'
-                        ? 'bg-indigo-100 text-indigo-800 focus:bg-indigo-100'
-                        : 'hover:bg-gray-100 text-gray-800 focus:bg-gray-100'
+                        ? 'bg-indigo-100 text-indigo-800 focus:bg-indigo-100 dark:bg-gray-600 dark:text-white dark:focus:bg-gray-600'
+                        : 'hover:bg-gray-100 text-gray-800 focus:bg-gray-100 dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:text-white'
                 }} "
                 wire:click="$set('tab', 'preview')"
             >
@@ -32,7 +32,7 @@
         @if($tab === 'write')
         <textarea
             x-ref="textarea"
-            class="w-full px-4 py-3 overflow-y-hidden font-mono border border-gray-200 rounded-md shadow-sm focus:border-gray-300 focus:outline-none"
+            class="w-full px-4 py-3 overflow-y-hidden font-mono border border-gray-200 rounded-md shadow-sm dark:border-gray-600 dark:focus:border-gray-500 dark:bg-gray-800 focus:border-gray-300 focus:outline-none"
             autofocus
             wire:model="body"
             wire:ignore
@@ -40,7 +40,7 @@
             @input="$refs.textarea.style.height = $refs.textarea.scrollHeight + 'px'"
         ></textarea>
         @else
-        <div class="prose prose-indigo max-w-none"> {!! Str::markdown($body) !!} </div>
+        <div class="prose dark:prose-dark prose-indigo max-w-none"> {!! Str::markdown($body) !!} </div>
         @endif
     </div>
 </div>

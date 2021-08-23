@@ -1,178 +1,116 @@
-<div class="w-full min-h-screen bg-gray-200 dark:bg-gray-900">
-    <!-- Hero -->
-    <div class="max-w-6xl px-6 mx-auto mt-8 md:mt-32">
-        <div class="text-center">
-            <h1 class="text-3xl font-bold md:text-5xl">Bring your projects to life.</h1>
-            <p
-                class="max-w-xl mx-auto mt-4 mb-8 text-lg text-gray-700  md:mt-8 md:mb-10 dark:text-gray-400"
-                >24Hours is a productivity tool designed to keep your projects moving forward and
-                your head clear.</p
-            >
-            <x-button link href="{{ route('register') }}" class="py-3">Sign up for free</x-button>
+<div class="bg-blue-100">
+    <!-- Navbar -->
+    <nav class="flex items-center justify-between px-24 pt-8 mb-24">
+        <a href="{{ route('home') }}" class="text-xl font-semibold text-blue-800">24Hours</a>
+
+        <div class="flex items-center space-x-6">
+            <a class="flex items-center space-x-1 font-semibold text-blue-800" href="{{ route('login') }}">
+                <x-heroicon-o-login class="w-5 h-5" />
+                <span>Login</span>
+            </a>
+            <a class="flex items-center space-x-1 font-semibold text-blue-800" href="{{ route('register') }}">
+                <x-heroicon-o-user-add class="w-5 h-5" />
+                <span>Register</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero section -->
+    <div class="flex items-center mb-24">
+        <div class="relative w-1/3">
+            <div class="absolute flex flex-col justify-center h-full mr-32 -mt-4 left-24">
+                <h1 class="mb-8 text-3xl font-semibold text-blue-800">What is 24Hours?</h1>
+                <p class="text-lg font-thin">24Hours is a productivity tool designed to keep your projects moving forward and your head clear.</p>
+                <div class="mt-10">
+                    <a href="{{ route('register') }}" class="px-4 py-2 font-semibold text-white bg-blue-800 rounded-md hover:bg-blue-900">Sign up for Free</a>
+                </div>
+            </div>
+            
+            <img src="{{ asset('img/shape1.svg') }}" class="w-full" alt="" />
         </div>
 
-        <img
-            src="{{ asset('img/screenshot.png') }}"
-            class="mx-auto mt-20 rounded shadow-sm md:mt-32 md:rounded-xl"
-        />
-    </div>
-
-    <!-- Dark background -->
-    <div class="pt-32 bg-gray-800 -mt-28 md:-mt-72 md:pt-96">&nbsp;</div>
-
-    <!-- Features -->
-    <div class="max-w-5xl px-6 py-12 mx-auto md:py-24">
-        <div class="mb-8 md:mb-16 md:text-center">
-            <h2 class="font-semibold tracking-wide text-blue-800 uppercase dark:text-blue-400"
-                >Features</h2
-            >
-            <p
-                class="mt-2 mb-4 text-3xl font-bold leading-8 tracking-tight text-gray-900  md:mt-4 dark:text-white"
-                >Space to organize all your ideas.</p
-            >
-        </div>
-
-        <div class="grid-cols-2 gap-8 md:grid lg:gap-6">
-            <!-- Grid item -->
-            <x-home.feature>
-                <x-slot name="icon"
-                    ><svg
-                        class="w-6 h-6"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                        /></svg
-                ></x-slot>
-                <x-slot name="title">Organize everything</x-slot>
-                <x-slot name="description"
-                    >You can create unlimited boards to organize every project.</x-slot
-                >
-            </x-home.feature>
-
-            <!-- Grid item -->
-            <x-home.feature>
-                <x-slot name="icon"
-                    ><svg
-                        class="w-6 h-6"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                        /></svg
-                ></x-slot>
-                <x-slot name="title">Save from the web</x-slot>
-                <x-slot name="description"
-                    >Found an article you want to read later? Save it and find it easily
-                    back.</x-slot
-                >
-            </x-home.feature>
-
-            <!-- Grid item -->
-            <x-home.feature>
-                <x-slot name="icon"
-                    ><svg
-                        class="w-6 h-6"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                        /></svg
-                ></x-slot>
-                <x-slot name="title">Clean your head</x-slot>
-                <x-slot name="description"
-                    >Create notes to clear your head and write everything down in a nice
-                    editor.</x-slot
-                >
-            </x-home.feature>
-
-            <!-- Grid item -->
-            <x-home.feature>
-                <x-slot name="icon"
-                    ><svg
-                        class="w-6 h-6"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                        /></svg
-                ></x-slot>
-                <x-slot name="title">Find anything</x-slot>
-                <x-slot name="description"
-                    >Lost anything? Find it back with the powerful search feature.</x-slot
-                >
-            </x-home.feature>
-        </div>
-    </div>
-
-    <!-- Stats -->
-    <div class="py-20 bg-gray-800 md:py-24">
-        <div class="max-w-2xl px-6 mx-auto">
-            <h2 class="mb-12 text-3xl font-bold text-center text-white">24Hours in numbers</h2>
-
-            <div class="grid grid-cols-4">
-                <x-home.stat>
-                    <x-slot name="title">{{ App\Models\User::count() }}</x-slot>
-                    <x-slot name="description">Users</x-slot>
-                </x-home.stat>
-
-                <x-home.stat>
-                    <x-slot name="title">{{ App\Models\Board::count() }}</x-slot>
-                    <x-slot name="description">Boards</x-slot>
-                </x-home.stat>
-
-                <x-home.stat>
-                    <x-slot name="title">{{ App\Models\Link::count() }}</x-slot>
-                    <x-slot name="description">Links</x-slot>
-                </x-home.stat>
-
-                <x-home.stat>
-                    <x-slot name="title">{{ App\Models\Note::count() }}</x-slot>
-                    <x-slot name="description">Notes</x-slot>
-                </x-home.stat>
+        <div class="flex justify-end flex-1 mr-24">
+            <div class="w-2/3">
+                <img src="{{ asset('img/screenshot.png') }}" class="rounded-lg shadow-lg" alt="Screenshot" />
             </div>
         </div>
     </div>
 
-    <!-- CTA -->
-    <div class="py-16 text-center md:py-24">
-        <x-button link href="{{ route('register') }}" class="py-3">Sign up for free</x-button>
+    <!-- Features section -->
+    <div class="flex justify-end mb-24">
+        <div class="relative w-1/2">
+            <img src="{{ asset('img/shape2.svg') }}" alt="" class="w-full" />
+            <div class="absolute top-0 flex flex-col justify-center w-full h-full py-24 pl-64 pr-24">
+                <h1 class="mb-8 text-3xl font-semibold text-blue-800">Features</h1>
+                
+                <div class="flex mb-6 space-x-4">
+                    <x-heroicon-o-duplicate class="w-8 h-8 text-gray-700" />
+                    <div>
+                        <h4 class="mb-1 text-lg font-semibold">Organize everything</h4>
+                        <p class="text-gray-800">You can create unlimited boards to organize every project.</p>
+                    </div>
+                </div>
+                
+                <div class="flex mb-6 space-x-4">
+                    <x-heroicon-o-pencil-alt class="w-8 h-8 text-gray-700" />
+                    <div>
+                        <h4 class="mb-1 text-lg font-semibold">Clean your head</h4>
+                        <p class="text-gray-800">Create notes to clear your head and write everything down in a nice editor.</p>
+                    </div>
+                </div>
+                
+                <div class="flex mb-6 space-x-4">
+                    <x-heroicon-o-link class="w-8 h-8 text-gray-700" />
+                    <div>
+                        <h4 class="mb-1 text-lg font-semibold">Save from the web</h4>
+                        <p class="text-gray-800">Found an article you want to read later? Save it and find it easily back.</p>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <x-heroicon-o-search class="w-8 h-8 text-gray-700" />
+                    <div>
+                        <h4 class="mb-1 text-lg font-semibold">Find anything</h4>
+                        <p class="text-gray-800">Lost anything? Find it back with the powerful search feature.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Counters section -->
+    <div class="py-10 mx-24 mb-48 bg-blue-800 rounded-lg shadow-lg">
+        <h2 class="mb-12 text-2xl font-semibold text-center text-white">24Hours in numbers</h2>
+
+        <div class="grid max-w-4xl grid-cols-4 mx-auto">
+            <h3 class="font-semibold text-center text-white text-7xl">
+                <span class="block -mb-8">{{ \App\Models\User::count() }}</span>
+                <span class="text-xl">Users</span>
+            </h3>
+            <h3 class="font-semibold text-center text-white text-7xl">
+                <span class="block -mb-8">{{ \App\Models\Board::count() }}</span>
+                <span class="text-xl">Boards</span>
+            </h3>
+            <h3 class="font-semibold text-center text-white text-7xl">
+                <span class="block -mb-8">{{ \App\Models\Link::count() }}</span>
+                <span class="text-xl">Notes</span>
+            </h3>
+            <h3 class="font-semibold text-center text-white text-7xl">
+                <span class="block -mb-8">{{ \App\Models\Note::count() }}</span>
+                <span class="text-xl">Links</span>
+            </h3>
+        </div>
+    </div>
+
+    <!-- Call to action -->
+    <div class="flex justify-center mb-24">
+        <a href="{{ route('register') }}" class="px-4 py-2 font-semibold text-white bg-blue-800 rounded-md hover:bg-blue-900">Sign up for Free</a>
     </div>
 
     <!-- Footer -->
-    <div class="py-8 bg-gray-300 md:py-6 lg:py-8 dark:bg-gray-800">
-        <div class="max-w-6xl px-6 mx-auto">
-            &copy; Copyright {{ date('Y') }} by
-            <a
-                href="https://www.jeroenvanrensen.nl/"
-                class="underline focus:text-gray-500 focus:outline-none"
-                target="_blank"
-                >Jeroen van Rensen</a
-            >
-        </div>
-    </div>
+    <footer class="pb-6">
+        <p class="text-sm text-center text-gray-600">
+            Copyright &copy; {{ date('Y') }} by <a target="_blank" href="https://www.jeroenvanrensen.nl/" class="underline">Jeroen van Rensen</a>.
+        </p>
+    </footer>
 </div>

@@ -3,13 +3,13 @@
 @php
 
 $bgColor = [
-    'blue' => 'text-blue-800 bg-blue-100',
-    'green' => 'text-green-800 bg-green-100'
+    'blue' => 'text-blue-800 bg-blue-100 dark:bg-blue-900 dark:text-gray-200',
+    'green' => 'text-green-800 bg-green-100 dark:bg-green-900 dark:text-gray-200'
 ][$color];
 
 $iconColor = [
-    'blue' => 'text-blue-600',
-    'green' => 'text-green-600'
+    'blue' => 'text-blue-600 dark:text-blue-400',
+    'green' => 'text-green-600 dark:text-green-400'
 ][$color];
 
 @endphp

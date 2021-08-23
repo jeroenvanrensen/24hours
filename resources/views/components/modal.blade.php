@@ -27,14 +27,14 @@
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
     >
-        <div class="w-full h-full bg-black opacity-40"></div>
+        <div class="w-full h-full bg-gray-800 opacity-95"></div>
     </div>
 
     <div class="absolute z-40 flex items-center justify-center w-full h-full">
         <div
             x-show="show"
             @click.away="show = false"
-            class="w-full max-w-lg mx-6 overflow-hidden bg-white rounded-lg shadow-lg"
+            class="w-full max-w-lg mx-6 overflow-hidden bg-white rounded-lg shadow-lg dark:bg-black"
             x-transition:enter="transition transform ease-out duration-300"
             x-transition:enter-start="opacity-0 scale-95"
             x-transition:enter-end="opacity-100 scale-100"
@@ -48,7 +48,7 @@
                 {{ $slot }}
             </div>
 
-            <div class="flex items-center justify-end px-8 py-4 space-x-4 bg-gray-50">
+            <div class="flex items-center justify-end px-8 py-4 space-x-4 bg-gray-50 dark:bg-black dark:pb-8">
                 <x-button secondary @click="show = false">Cancel</x-button>
                 {{ $footer ?? null }}
             </div>

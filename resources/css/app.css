@@ -2,10 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-@import './quill.css';
-
 .turbolinks-progress-bar {
-    @apply h-px bg-black;
+    @apply h-px bg-white;
 }
 
 .bg-pattern {

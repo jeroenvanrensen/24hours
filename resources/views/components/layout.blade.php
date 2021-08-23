@@ -22,7 +22,7 @@
         <!-- Fonts -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Source+Code+Pro&display=swap" /> 
     </head>
-    <body x-data @turbolinks.window="$store.modalOpen = false">
+    <body x-data @turbolinks.window="$store.modalOpen = false" class="dark:bg-gray-800 dark:text-white">
         {{ $slot }}
 
         <x-flash />

@@ -1,7 +1,7 @@
 <x-auth-card>
     <h1 class="mb-4 text-3xl font-semibold">Verify your email</h1>
 
-    <p class="mb-8 text-gray-700">
+    <p class="mb-8 text-gray-700 dark:text-gray-200">
         Thanks for signing up! Before getting started, could you verify your email address by
         clicking on the link we just emailed to you? If you didn't receive the email, we will gladly
         send you another.
@@ -9,7 +9,9 @@
 
     <x-card-footer>
         @if(session()->has('success'))
-        <span class="text-sm text-gray-600">{{ session()->get('success') }}</span>
+        <span class="text-sm text-gray-600 dark:text-gray-200">
+            {{ session()->get('success') }}
+        </span>
         @endif
 
         <x-button class="ml-4" wire:click="request">Resend Verification Email</x-button>

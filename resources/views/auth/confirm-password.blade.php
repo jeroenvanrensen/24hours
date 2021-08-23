@@ -1,6 +1,6 @@
 <x-auth-card>
     <h1 class="mb-4 text-3xl font-semibold">Confirm your password</h1>
-    <p class="mb-8 text-gray-700">This is a secure area of the application. Please confirm your password before continuing.</p>
+    <p class="mb-8 text-gray-700 dark:text-gray-200">This is a secure area of the application. Please confirm your password before continuing.</p>
 
     <!-- Password -->
     <x-form-group>

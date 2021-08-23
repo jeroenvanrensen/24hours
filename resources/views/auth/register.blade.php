@@ -1,6 +1,6 @@
 <x-auth-card>
     <h1 class="mb-4 text-3xl font-semibold">Welcome to {{ config('app.name') }}</h1>
-    <p class="mb-8 text-gray-700">Already have an account? <x-link href="{{ route('login') }}">Sign in.</x-link></p>
+    <p class="mb-8 text-gray-700 dark:text-gray-200">Already have an account? <x-link href="{{ route('login') }}">Sign in.</x-link></p>
 
     <!-- Name -->
     <x-form-group>

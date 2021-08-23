@@ -1,6 +1,6 @@
 <x-auth-card>
     <h1 class="mb-4 text-3xl font-semibold">Sign in to {{ config('app.name') }}</h1>
-    <p class="mb-8 text-gray-700">Don't have an account yet? <x-link href="{{ route('register') }}">Create one.</x-link></p>
+    <p class="mb-8 text-gray-700 dark:text-gray-200">Don't have an account yet? <x-link href="{{ route('register') }}">Create one.</x-link></p>
 
     <!-- Email -->
     <x-form-group>

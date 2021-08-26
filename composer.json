@@ -29,8 +29,7 @@
         "pestphp/pest": "^1.14",
         "pestphp/pest-plugin-faker": "^1.0",
         "pestphp/pest-plugin-laravel": "^1.1",
-        "pestphp/pest-plugin-parallel": "^0.2.1",
-        "phpunit/phpunit": "^9.3.3"
+        "pestphp/pest-plugin-parallel": "^0.2.1"
     },
     "config": {
         "optimize-autoloader": true,

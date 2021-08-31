@@ -33,6 +33,7 @@
     <div class="absolute z-40 flex items-center justify-center w-full h-full">
         <div
             x-show="show"
+            x-trap="show"
             @click.away="show = false"
             class="w-full max-w-lg mx-6 overflow-hidden bg-white rounded-lg shadow-lg dark:bg-black"
             x-transition:enter="transition transform ease-out duration-300"
@@ -44,7 +45,7 @@
         >
             <div class="p-8">
                 <h3 class="mb-4 text-xl font-semibold">{{ $title }}</h3>
-                
+
                 {{ $slot }}
             </div>
 

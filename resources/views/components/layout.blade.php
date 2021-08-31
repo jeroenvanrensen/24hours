@@ -15,12 +15,13 @@
 
         <!-- Scripts -->
         <livewire:scripts />
+        <script defer src="https://unpkg.com/@alpinejs/trap@3.x.x/dist/cdn.min.js"></script>
         <script src="https://unpkg.com/alpinejs@3.2.3/dist/cdn.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.2.0/turbolinks.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/livewire/turbolinks@v0.1.x/dist/livewire-turbolinks.js"></script>
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Source+Code+Pro&display=swap" /> 
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Source+Code+Pro&display=swap" />
     </head>
     <body x-data @turbolinks.window="$store.modalOpen = false" class="dark:bg-gray-800 dark:text-white">
         {{ $slot }}
@@ -30,7 +31,7 @@
         <script>
             document.addEventListener('alpine:init', () => {
                 Alpine.store('modalOpen', false);
-                
+
                 // Fix a bug where the $store.modalOpen state keeps being true
                 // after a new page visit, and then the escape key won't work
                 document.addEventListener('turbolinks:visit', () => {

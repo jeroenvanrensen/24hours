@@ -18,6 +18,12 @@ test('authenticated users cannot visit the request password page', function () {
     $this->get(route('password.request'))->assertRedirect(RouteServiceProvider::HOME);
 });
 
+test('the email is automatically set if it is in the request', function () {
+    $email = $this->faker->email();
+    Livewire::test(RequestPasswordLink::class)->assertSet('email', '');
+    Livewire::withQueryParams(['email' => $email])->test(RequestPasswordLink::class)->assertSet('email', $email);
+});
+
 test('a user can request a new password', function () {
     Notification::fake();
     $user = User::factory()->create();

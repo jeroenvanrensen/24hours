@@ -9,6 +9,11 @@ class RequestPasswordLink extends Component
 {
     public $email;
 
+    public function mount()
+    {
+        $this->email = request('email');
+    }
+
     public function render()
     {
         return view('auth.request-password-link');
@@ -17,7 +22,7 @@ class RequestPasswordLink extends Component
     public function request()
     {
         $attributes = $this->validate([
-            'email' => ['required', 'email', 'max:255', 'exists:users']
+            'email' => ['required', 'email', 'max:255', 'exists:users'],
         ]);
 
         $status = Password::sendResetLink($attributes);

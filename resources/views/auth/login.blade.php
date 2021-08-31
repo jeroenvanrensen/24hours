@@ -18,7 +18,7 @@
 
     <!-- Submit Button -->
     <x-card-footer>
-        <x-link href="{{ route('password.request') }}" class="text-sm">Forgot your password?</x-link>
+        <x-link :href="route('password.request', ['email' => $email])" class="text-sm">Forgot your password?</x-link>
         <x-button wire:click="login">Sign In</x-button>
     </x-card-footer>
 </x-auth-card>

@@ -8,10 +8,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
-beforeEach(function () {
-    $this->withoutExceptionHandling();
-    Storage::fake();
-});
+beforeEach(fn () => Storage::fake());
 
 test('the board owner can visit the edit board page ', function () {
     $this->actingAs($user = User::factory()->create());

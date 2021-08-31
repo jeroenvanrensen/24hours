@@ -9,8 +9,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
-
 test('the board owner can archive the board', function () {
     $this->actingAs($user = User::factory()->create());
     $board = Board::factory()->for($user)->create();

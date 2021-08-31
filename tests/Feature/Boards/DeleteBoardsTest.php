@@ -11,8 +11,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
-
 test('a user can delete a board', function () {
     $this->actingAs($user = User::factory()->create());
     $board = Board::factory()->for($user)->create();

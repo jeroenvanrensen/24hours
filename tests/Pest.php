@@ -13,6 +13,7 @@
 
 uses(Tests\TestCase::class)->in('Feature', 'Unit');
 uses(Illuminate\Foundation\Testing\RefreshDatabase::class)->in('Feature', 'Unit');
+uses()->beforeEach(fn () => $this->withoutExceptionHandling())->in('Feature', 'Unit');
 
 uses()->group('auth')->in('Feature/Auth');
 uses()->group('boards')->in('Feature/Boards');

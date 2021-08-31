@@ -10,12 +10,8 @@ use App\Models\Membership;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
-use Tests\TestCase;
 
-beforeEach(function () {
-    $this->withoutExceptionHandling();
-    Mail::fake();
-});
+beforeEach(fn () => Mail::fake());
 
 test('a user can visit the accept invitation page', function () {
     $this->actingAs($user = User::factory()->create());

@@ -6,8 +6,6 @@ use App\Models\Board;
 use App\Models\Note;
 use function Pest\Faker\faker;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
-
 it('has a title', function () {
     $title = faker()->sentence();
     $note = Note::factory()->create(['title' => $title]);

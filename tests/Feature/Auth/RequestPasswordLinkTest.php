@@ -7,8 +7,6 @@ use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
-
 test('a user can visit the request password page', function () {
     $this->get(route('password.request'))
         ->assertStatus(200)

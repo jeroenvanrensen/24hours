@@ -6,8 +6,6 @@ use App\Models\Membership;
 use App\Models\User;
 use Livewire\Livewire;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
-
 test('a user can visit the single board page', function () {
     $this->actingAs($user = User::factory()->create());
     $board = Board::factory()->for($user)->create();

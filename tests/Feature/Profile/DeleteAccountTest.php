@@ -7,8 +7,6 @@ use App\Models\Note;
 use App\Models\User;
 use Livewire\Livewire;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
-
 test('a user can visit the delete account page', function () {
     $this->actingAs(User::factory()->create());
     $this->get(route('profile.delete'))->assertStatus(200)->assertSeeLivewire('profile.delete');

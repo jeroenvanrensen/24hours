@@ -8,8 +8,6 @@ use App\Models\Note;
 use App\Models\User;
 use Livewire\Livewire;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
-
 test('the board owner can delete a note from the edit page', function () {
     $this->actingAs($user = User::factory()->create());
     $board = Board::factory()->for($user)->create();

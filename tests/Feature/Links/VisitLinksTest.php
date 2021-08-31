@@ -5,8 +5,6 @@ use App\Models\Link;
 use App\Models\Membership;
 use App\Models\User;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
-
 test('the board owner can visit a link', function () {
     $this->actingAs($user = User::factory()->create());
     $board = Board::factory()->for($user)->create();

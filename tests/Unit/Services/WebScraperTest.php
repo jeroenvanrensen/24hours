@@ -2,8 +2,6 @@
 
 use App\Services\WebScraper\Scraper;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
-
 it('can scrape a page', function ($url, $title, $image) {
     $scraper = new Scraper();
     $response = $scraper->scrape($url);

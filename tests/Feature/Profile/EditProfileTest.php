@@ -4,8 +4,6 @@ use App\Http\Livewire\Profile\Edit;
 use App\Models\User;
 use Livewire\Livewire;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
-
 test('a user can visit the profile info page', function () {
     $this->actingAs(User::factory()->create());
     $this->get(route('profile.edit'))->assertStatus(200)->assertSeeLivewire('profile.edit');

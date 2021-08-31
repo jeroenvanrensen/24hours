@@ -6,8 +6,6 @@ use App\Providers\RouteServiceProvider;
 use Livewire\Livewire;
 use function Pest\Faker\faker;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
-
 test('a user can visit the login page', function () {
     $this->get(route('login'))
         ->assertStatus(200)

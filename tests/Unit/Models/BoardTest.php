@@ -8,8 +8,6 @@ use App\Models\Note;
 use App\Models\User;
 use function Pest\Faker\faker;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
-
 it('has a name', function () {
     $name = faker()->word();
     $board = Board::factory()->create(['name' => $name]);

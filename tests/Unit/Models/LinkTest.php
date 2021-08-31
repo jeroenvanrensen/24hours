@@ -6,8 +6,6 @@ use App\Models\Board;
 use App\Models\Link;
 use function Pest\Faker\faker;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
-
 it('has a url', function () {
     $url = faker()->url();
     $link = Link::factory()->create(['url' => $url]);

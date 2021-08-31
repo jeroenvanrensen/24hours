@@ -11,10 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use function Pest\Faker\faker;
 
-beforeEach(function () {
-    $this->withoutExceptionHandling();
-    Mail::fake();
-});
+beforeEach(fn () => Mail::fake());
 
 test('a board owner can invite a member', function () {
     $this->actingAs($user = User::factory()->create());
@@ -74,7 +71,7 @@ test('a user cannot be invited twice', function () {
     Invitation::create([
         'board_id' => $board->id,
         'email' => $userToBeInvited->email,
-        'role' => 'member'
+        'role' => 'member',
     ]);
     expect(Invitation::all())->toHaveCount(1);
 

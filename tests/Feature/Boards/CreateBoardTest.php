@@ -8,10 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use function Pest\Faker\faker;
 
-beforeEach(function () {
-    $this->withoutExceptionHandling();
-    Storage::fake();
-});
+beforeEach(fn () => Storage::fake());
 
 test('a user can create a new board', function () {
     $this->actingAs($user = User::factory()->create());

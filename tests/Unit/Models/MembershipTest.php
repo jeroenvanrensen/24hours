@@ -7,8 +7,6 @@ use App\Models\Membership;
 use App\Models\User;
 use Illuminate\Support\Arr;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
-
 it('has a role', function () {
     $role = Arr::random(['viewer', 'member']);
     $membership = Membership::factory()->create(['role' => $role]);

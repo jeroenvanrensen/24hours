@@ -8,10 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 
-beforeEach(function () {
-    $this->withoutExceptionHandling();
-    Mail::fake();
-});
+beforeEach(fn () => Mail::fake());
 
 test('a board owner cannot leave a board', function () {
     $this->withExceptionHandling();

@@ -5,8 +5,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
-
 test('a user can visit the update password page', function () {
     $this->actingAs(User::factory()->create());
     $this->get(route('profile.password'))->assertStatus(200)->assertSeeLivewire('profile.password');

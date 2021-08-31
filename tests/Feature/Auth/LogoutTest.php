@@ -2,8 +2,6 @@
 
 use App\Models\User;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
-
 test('a user can logout', function () {
     $this->actingAs(User::factory()->create());
     expect(auth()->check())->toBeTrue();

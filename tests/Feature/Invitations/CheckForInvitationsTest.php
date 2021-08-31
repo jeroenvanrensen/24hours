@@ -4,8 +4,6 @@ use App\Models\Board;
 use App\Models\Invitation;
 use App\Models\User;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
-
 test('a user can visit the invitations page', function () {
     $this->actingAs(User::factory()->create());
     $this->get(route('invitations.check'))->assertRedirect(route('boards.index'));

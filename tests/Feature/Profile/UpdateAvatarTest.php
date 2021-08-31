@@ -6,8 +6,6 @@ use Illuminate\Http\UploadedFile;
 use Livewire\Livewire;
 use function Pest\Faker\faker;
 
-beforeEach(fn () => $this->withoutExceptionHandling());
-
 test('a user can visit the avatar page', function () {
     $this->actingAs(User::factory()->create());
     $this->get(route('profile.avatar'))->assertStatus(200)->assertSeeLivewire('profile.avatar');

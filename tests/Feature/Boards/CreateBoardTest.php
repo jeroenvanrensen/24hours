@@ -6,13 +6,12 @@ use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
-use function Pest\Faker\faker;
 
 beforeEach(fn () => Storage::fake());
 
 test('a user can create a new board', function () {
     $this->actingAs($user = User::factory()->create());
-    $name = faker()->word();
+    $name = $this->faker->word();
     $image = UploadedFile::fake()->image('cover.jpg');
     expect(Board::all())->toHaveCount(0);
 
@@ -45,14 +44,14 @@ it('requires an image', function () {
     $this->actingAs(User::factory()->create());
 
     Livewire::test(Create::class)
-        ->set('name', faker()->word())
+        ->set('name', $this->faker->word())
         ->set('image', null)
         ->call('create')
         ->assertHasErrors('image');
 
     Livewire::test(Create::class)
-        ->set('name', faker()->word())
-        ->set('image', faker()->word())
+        ->set('name', $this->faker->word())
+        ->set('image', $this->faker->word())
         ->call('create')
         ->assertHasErrors('image');
 });

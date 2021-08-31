@@ -5,10 +5,9 @@ namespace Tests\Unit\Models;
 use App\Models\Board;
 use App\Models\Invitation;
 use Illuminate\Support\Arr;
-use function Pest\Faker\faker;
 
 it('has an email', function () {
-    $email = faker()->email();
+    $email = $this->faker->email();
     $invitation = Invitation::factory()->create(['email' => $email]);
     expect($invitation->email)->toBe($email);
 });

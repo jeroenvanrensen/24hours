@@ -9,28 +9,27 @@ use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use function Pest\Faker\faker;
 
 it('has a name', function () {
-    $name = faker()->name();
+    $name = $this->faker->name();
     $user = User::factory()->create(['name' => $name]);
     expect($user->name)->toBe($name);
 });
 
 it('has an email', function () {
-    $email = faker()->email();
+    $email = $this->faker->email();
     $user = User::factory()->create(['email' => $email]);
     expect($user->email)->toBe($email);
 });
 
 test('the email is unique', function () {
-    $email = faker()->email();
+    $email = $this->faker->email();
     User::factory()->create(['email' => $email]);
     User::factory()->create(['email' => $email]); // same email
 })->throws(QueryException::class);
 
 it('has an avatar', function () {
-    $avatar = faker()->imageUrl();
+    $avatar = $this->faker->imageUrl();
     $user = User::factory()->create(['avatar_path' => $avatar]);
     expect($user->avatar)->toBe($avatar);
 });
@@ -53,7 +52,7 @@ it('has a nullable email_verified_at column', function () {
 });
 
 it('has a password', function () {
-    $password = Hash::make($unhashed = faker()->word());
+    $password = Hash::make($unhashed = $this->faker->word());
     $user = User::factory()->create(['password' => $password]);
     expect($user->password)->toBe($password);
     expect(Hash::check($unhashed, $password))->toBeTrue();

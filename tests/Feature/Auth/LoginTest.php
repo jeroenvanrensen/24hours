@@ -4,7 +4,6 @@ use App\Http\Livewire\Auth\Login;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Livewire\Livewire;
-use function Pest\Faker\faker;
 
 test('a user can visit the login page', function () {
     $this->get(route('login'))
@@ -34,7 +33,7 @@ test('the email must be correct', function () {
     $user = User::factory()->create();
 
     Livewire::test(Login::class)
-        ->set('email', faker()->email()) // wrong email
+        ->set('email', $this->faker->email()) // wrong email
         ->set('password', 'password')
         ->call('login')
         ->assertHasErrors('email');

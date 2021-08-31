@@ -4,7 +4,6 @@ use App\Http\Livewire\Profile\Avatar;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Livewire\Livewire;
-use function Pest\Faker\faker;
 
 test('a user can visit the avatar page', function () {
     $this->actingAs(User::factory()->create());
@@ -17,7 +16,7 @@ test('guests cannot visit the avatar page', function () {
 });
 
 test('a user can reset their avatar', function () {
-    $user = User::factory()->create(['avatar_path' => faker()->imageUrl()]);
+    $user = User::factory()->create(['avatar_path' => $this->faker->imageUrl()]);
     $this->actingAs($user);
     expect($user->fresh()->avatar_path)->not()->toBeNull();
     Livewire::test(Avatar::class)->call('remove');

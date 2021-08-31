@@ -6,16 +6,15 @@ use App\Models\Link;
 use App\Models\Membership;
 use App\Models\Note;
 use App\Models\User;
-use function Pest\Faker\faker;
 
 it('has a name', function () {
-    $name = faker()->word();
+    $name = $this->faker->word();
     $board = Board::factory()->create(['name' => $name]);
     expect($board->name)->toBe($name);
 });
 
 it('has an image', function () {
-    $image = faker()->imageUrl();
+    $image = $this->faker->imageUrl();
     $board = Board::factory()->create(['image' => $image]);
     expect($board->image)->toBe($image);
 });

@@ -9,7 +9,6 @@ use App\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
-use function Pest\Faker\faker;
 
 beforeEach(fn () => Mail::fake());
 
@@ -104,7 +103,7 @@ test('users who are already members cannot be invited again', function () {
 test('non existing users can be invited', function () {
     $this->actingAs($user = User::factory()->create());
     $board = Board::factory()->for($user)->create();
-    $email = faker()->email();
+    $email = $this->faker->email();
     $role = Arr::random(['viewer', 'member']);
     expect(Invitation::all())->toHaveCount(0);
 

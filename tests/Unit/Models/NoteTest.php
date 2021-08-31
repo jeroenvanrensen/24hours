@@ -4,16 +4,15 @@ namespace Tests\Unit\Models;
 
 use App\Models\Board;
 use App\Models\Note;
-use function Pest\Faker\faker;
 
 it('has a title', function () {
-    $title = faker()->sentence();
+    $title = $this->faker->sentence();
     $note = Note::factory()->create(['title' => $title]);
     expect($note->title)->toBe($title);
 });
 
 it('has a nullable body', function () {
-    $body = faker()->paragraph();
+    $body = $this->faker->paragraph();
     $note = Note::factory()->create(['body' => $body]);
     expect($note->body)->toBe($body);
 

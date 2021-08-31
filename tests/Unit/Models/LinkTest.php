@@ -4,22 +4,21 @@ namespace Tests\Unit\Models;
 
 use App\Models\Board;
 use App\Models\Link;
-use function Pest\Faker\faker;
 
 it('has a url', function () {
-    $url = faker()->url();
+    $url = $this->faker->url();
     $link = Link::factory()->create(['url' => $url]);
     expect($link->url)->toBe($url);
 });
 
 it('has a title', function () {
-    $title = faker()->sentence();
+    $title = $this->faker->sentence();
     $link = Link::factory()->create(['title' => $title]);
     expect($link->title)->toBe($title);
 });
 
 it('has a nullable image', function () {
-    $image = faker()->imageUrl();
+    $image = $this->faker->imageUrl();
     $link = Link::factory()->create(['image' => $image]);
     expect($link->image)->toBe($image);
 

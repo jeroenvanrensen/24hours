@@ -15,18 +15,6 @@ uses(Tests\TestCase::class)->in('Feature', 'Unit');
 uses(Illuminate\Foundation\Testing\RefreshDatabase::class)->in('Feature', 'Unit');
 uses()->beforeEach(fn () => $this->withoutExceptionHandling())->in('Feature', 'Unit');
 
-uses()->group('auth')->in('Feature/Auth');
-uses()->group('boards')->in('Feature/Boards');
-uses()->group('invitations')->in('Feature/Invitations');
-uses()->group('items')->in('Feature/Items');
-uses()->group('links')->in('Feature/Links');
-uses()->group('members')->in('Feature/Members');
-uses()->group('notes')->in('Feature/Notes');
-uses()->group('profile')->in('Feature/Profile');
-uses()->group('search')->in('Feature/Search');
-uses()->group('models')->in('Unit/Models');
-uses()->group('services')->in('Unit/Services');
-
 /*
 |--------------------------------------------------------------------------
 | Expectations

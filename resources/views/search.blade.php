@@ -3,7 +3,7 @@
     @keydown.window.cmd.k.prevent="$refs.input.focus()"
     @keydown.window.ctrl.k.prevent="$refs.input.focus()"
     @keydown.escape.window.prevent="$refs.input.blur()"
-    class="relative w-full max-w-md"
+    class="relative w-full max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg"
 >
     <div class="relative">
         <div class="absolute top-0 flex items-center h-10 pointer-events-none left-4" :class="{ 'text-gray-300': !focus, 'text-gray-400 dark:text-gray-300': focus }">
@@ -27,7 +27,7 @@
             </div>
         </div>
     </div>
-    
+
     <div
         x-show="focus"
         class="absolute z-20 w-full py-1 mt-3 bg-white border border-gray-100 rounded-md shadow-lg dark:border-transparent dark:bg-black"

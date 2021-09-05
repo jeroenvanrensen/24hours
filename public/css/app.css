@@ -1012,6 +1012,12 @@ video {
 .col-span-3 {
 	grid-column: span 3 / span 3;
 }
+.col-span-4 {
+	grid-column: span 4 / span 4;
+}
+.col-span-2 {
+	grid-column: span 2 / span 2;
+}
 .mx-24 {
 	margin-left: 6rem;
 	margin-right: 6rem;
@@ -1031,6 +1037,18 @@ video {
 .mx-4 {
 	margin-left: 1rem;
 	margin-right: 1rem;
+}
+.-mx-4 {
+	margin-left: -1rem;
+	margin-right: -1rem;
+}
+.-mx-3 {
+	margin-left: -0.75rem;
+	margin-right: -0.75rem;
+}
+.-mx-2 {
+	margin-left: -0.5rem;
+	margin-right: -0.5rem;
 }
 .mb-24 {
 	margin-bottom: 6rem;
@@ -1309,6 +1327,21 @@ video {
 	margin-right: calc(0.5rem * var(--tw-space-x-reverse));
 	margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
 }
+.space-y-2 > :not([hidden]) ~ :not([hidden]) {
+	--tw-space-y-reverse: 0;
+	margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+	margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
+}
+.space-y-3 > :not([hidden]) ~ :not([hidden]) {
+	--tw-space-y-reverse: 0;
+	margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
+	margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
+}
+.space-y-1 > :not([hidden]) ~ :not([hidden]) {
+	--tw-space-y-reverse: 0;
+	margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
+	margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
+}
 .overflow-hidden {
 	overflow: hidden;
 }
@@ -1486,6 +1519,10 @@ video {
 .py-6 {
 	padding-top: 1.5rem;
 	padding-bottom: 1.5rem;
+}
+.px-3 {
+	padding-left: 0.75rem;
+	padding-right: 0.75rem;
 }
 .pt-8 {
 	padding-top: 2rem;
@@ -2237,6 +2274,10 @@ video {
 		right: 2rem;
 	}
 
+	.md\:col-span-2 {
+		grid-column: span 2 / span 2;
+	}
+
 	.md\:mx-12 {
 		margin-left: 3rem;
 		margin-right: 3rem;
@@ -2270,6 +2311,10 @@ video {
 
 	.md\:mb-10 {
 		margin-bottom: 2.5rem;
+	}
+
+	.md\:mb-0 {
+		margin-bottom: 0px;
 	}
 
 	.md\:block {
@@ -2312,13 +2357,48 @@ video {
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 	}
 
+	.md\:grid-cols-5 {
+		grid-template-columns: repeat(5, minmax(0, 1fr));
+	}
+
+	.md\:grid-cols-3 {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
 	.md\:gap-24 {
 		gap: 6rem;
+	}
+
+	.md\:space-x-3 > :not([hidden]) ~ :not([hidden]) {
+		--tw-space-x-reverse: 0;
+		margin-right: calc(0.75rem * var(--tw-space-x-reverse));
+		margin-left: calc(0.75rem * calc(1 - var(--tw-space-x-reverse)));
+	}
+
+	.md\:space-y-2 > :not([hidden]) ~ :not([hidden]) {
+		--tw-space-y-reverse: 0;
+		margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+		margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
 	}
 
 	.md\:px-12 {
 		padding-left: 3rem;
 		padding-right: 3rem;
+	}
+
+	.md\:px-6 {
+		padding-left: 1.5rem;
+		padding-right: 1.5rem;
+	}
+
+	.md\:py-3 {
+		padding-top: 0.75rem;
+		padding-bottom: 0.75rem;
+	}
+
+	.md\:px-4 {
+		padding-left: 1rem;
+		padding-right: 1rem;
 	}
 }
 
@@ -2330,6 +2410,10 @@ video {
 
 	.lg\:right-12 {
 		right: 3rem;
+	}
+
+	.lg\:col-span-3 {
+		grid-column: span 3 / span 3;
 	}
 
 	.lg\:mx-24 {
@@ -2357,6 +2441,21 @@ video {
 	.lg\:px-24 {
 		padding-left: 6rem;
 		padding-right: 6rem;
+	}
+}
+
+@media (min-width: 1280px) {
+
+	.xl\:col-span-5 {
+		grid-column: span 5 / span 5;
+	}
+
+	.xl\:col-span-4 {
+		grid-column: span 4 / span 4;
+	}
+
+	.xl\:grid-cols-5 {
+		grid-template-columns: repeat(5, minmax(0, 1fr));
 	}
 }
 

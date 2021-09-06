@@ -72,7 +72,9 @@ test('a user cannot be invited twice', function () {
         'email' => $userToBeInvited->email,
         'role' => 'member',
     ]);
+
     expect(Invitation::all())->toHaveCount(1);
+    Mail::assertQueued(InvitationMail::class, 1);
 
     Livewire::test(Create::class, ['board' => $board])
         ->set('email', $userToBeInvited->email)
@@ -81,7 +83,7 @@ test('a user cannot be invited twice', function () {
         ->assertHasErrors('email');
 
     expect(Invitation::all())->toHaveCount(1);
-    Mail::assertNothingQueued();
+    Mail::assertQueued(InvitationMail::class, 1);
 });
 
 test('users who are already members cannot be invited again', function () {
@@ -132,11 +134,15 @@ it('requires an existing role', function () {
         ->call('invite')
         ->assertHasNoErrors('role');
 
+    Invitation::truncate();
+
     Livewire::test(Create::class, ['board' => $board])
         ->set('email', $userToBeInvited->email)
         ->set('role', 'viewer')
         ->call('invite')
         ->assertHasNoErrors('role');
+
+    Invitation::truncate();
 
     Livewire::test(Create::class, ['board' => $board])
         ->set('email', $userToBeInvited->email)

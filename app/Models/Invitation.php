@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Mail\InvitationMail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class Invitation extends Model
@@ -13,15 +15,19 @@ class Invitation extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'board_id' => 'integer'
+        'board_id' => 'integer',
     ];
 
-    protected static function boot(): void
+    public static function boot(): void
     {
         parent::boot();
 
-        static::creating(function ($board) {
-            $board->uuid = Str::uuid();
+        static::creating(function ($invitation) {
+            $invitation->uuid = Str::uuid();
+        });
+
+        static::created(function ($invitation) {
+            Mail::to($invitation->email)->queue(new InvitationMail($invitation));
         });
     }
 
@@ -29,7 +35,7 @@ class Invitation extends Model
     {
         $email = md5($this->email);
         $default = urlencode('https://www.w3schools.com/w3css/img_avatar2.png');
-        return "https://www.gravatar.com/avatar/$email?d=$default&s=40";
+        return "https://www.gravatar.com/avatar/{$email}?d={$default}&s=40";
     }
 
     public function board(): \Illuminate\Database\Eloquent\Relations\BelongsTo

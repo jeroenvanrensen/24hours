@@ -2,13 +2,10 @@
 
 namespace App\Http\Livewire\Members;
 
-use App\Mail\InvitationMail;
 use App\Models\Board;
 use App\Models\Invitation;
-use App\Models\Membership;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
 class Create extends Component
@@ -16,21 +13,22 @@ class Create extends Component
     use AuthorizesRequests;
 
     public $email;
+
     public $role = 'member';
 
     public Board $board;
 
     protected $rules = [
         'email' => ['required', 'email', 'max:255'],
-        'role' => ['required', 'in:member,viewer', 'max:255']
+        'role' => ['required', 'in:member,viewer', 'max:255'],
     ];
 
     protected $messages = [
-        'email.exists' => 'This user cannot be found.'
+        'email.exists' => 'This user cannot be found.',
     ];
 
     protected $listeners = [
-        'invite'
+        'invite',
     ];
 
     public function render()
@@ -42,8 +40,6 @@ class Create extends Component
     {
         $this->authorize('edit', $this->board);
 
-        $this->validate();
-
         if ($this->invitationExists()) {
             return $this->addError('email', 'This user is already invited.');
         }
@@ -52,32 +48,21 @@ class Create extends Component
             return $this->addError('email', 'This user is already a member.');
         }
 
-        $invitation = Invitation::create([
-            'board_id' => $this->board->id,
-            'email' => $this->email,
-            'role' => $this->role
-        ]);
+        Invitation::create(['board_id' => $this->board->id] + $this->validate());
 
-        Mail::to($this->email)->queue(new InvitationMail($invitation));
-
-        session()->flash('success', $this->email . ' has been invited to this board!');
-
+        session()->flash('success', "{$this->email} has been invited to this board!");
         $this->reset(['email', 'role']);
     }
 
-    protected function invitationExists()
+    protected function invitationExists(): bool
     {
-        return Invitation::query()
-            ->where('board_id', $this->board->id)
-            ->where('email', $this->email)
-            ->first();
+        return $this->board->invitations()->where('email', $this->email)->exists();
     }
 
-    protected function membershipExists()
+    protected function membershipExists(): bool
     {
-        return Membership::query()
-            ->where('board_id', $this->board->id)
-            ->where('user_id', User::where('email', $this->email)->first()->id ?? null)
-            ->first();
+        $userId = User::where('email', $this->email)->first()?->id;
+
+        return $this->board->memberships()->where('user_id', $userId)->exists();
     }
 }

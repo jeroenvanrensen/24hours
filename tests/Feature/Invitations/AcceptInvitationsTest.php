@@ -90,7 +90,7 @@ test('the board owner will get an email when someone accepts an invitation', fun
     $boardOwner = User::factory()->create();
     $board = Board::factory()->for($boardOwner)->create();
     $invitation = Invitation::factory()->for($board)->create(['email' => $user->email]);
-    Mail::assertNothingQueued();
+    Mail::assertNotQueued(InvitationAcceptedMail::class);
 
     Livewire::test(Show::class, ['invitation' => $invitation])
         ->call('accept')
@@ -106,7 +106,7 @@ test('all board members will get an email when someone accepts an invitation', f
     $board = Board::factory()->create();
     Membership::factory()->for($alreadyBoardMember)->for($board)->create();
     $invitation = Invitation::factory()->for($board)->create(['email' => $user->email]);
-    Mail::assertNothingQueued();
+    Mail::assertNotQueued(InvitationAcceptedMail::class);
 
     Livewire::test(Show::class, ['invitation' => $invitation])->call('accept')->assertRedirect(route('boards.show', $board));
 
@@ -146,7 +146,7 @@ test('the board owner gets an email when someone denies an invitation', function
     $board = Board::factory()->for($boardOwner)->create();
     $invitation = Invitation::factory()->for($board)->create(['email' => $user->email]);
 
-    Mail::assertNothingQueued();
+    Mail::assertNotQueued(InvitationAcceptedMail::class);
     Livewire::test(Show::class, ['invitation' => $invitation])->call('deny')->assertRedirect(route('invitations.check'));
     Mail::assertQueued(InvitationDeniedMail::class, fn ($mail) => $mail->hasTo($boardOwner->email));
 });

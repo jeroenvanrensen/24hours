@@ -9,6 +9,9 @@
         <!-- Title -->
         <title>{{ config('app.name') }}</title>
 
+        <!-- Favicon -->
+        <link rel="icon" href="{{ asset('favicon.svg') }}" />
+
         <!-- Styles -->
         <link rel="stylesheet" href="{{ asset('css/app.css') }}" />
         <livewire:styles />

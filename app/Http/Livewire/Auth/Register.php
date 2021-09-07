@@ -20,7 +20,7 @@ class Register extends Component
     protected $rules = [
         'name' => ['required', 'string', 'max:255'],
         'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-        'password' => ['required', 'string', 'min:8', 'confirmed']
+        'password' => ['required', 'string', 'min:8', 'confirmed'],
     ];
 
     public function render()
@@ -30,7 +30,7 @@ class Register extends Component
 
     public function updated($attribute)
     {
-        if ($attribute == 'password') {
+        if ($attribute === 'password') {
             return;
         }
 
@@ -39,9 +39,9 @@ class Register extends Component
 
     public function register()
     {
-        $user = User::create(array_merge($this->validate(), [
-            'password' => Hash::make($this->password)
-        ]));
+        $user = User::create([
+            'password' => Hash::make($this->password),
+        ] + $this->validate());
 
         auth()->login($user);
 

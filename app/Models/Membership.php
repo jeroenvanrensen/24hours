@@ -4,27 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Membership extends Model
 {
     use HasFactory;
 
+    use HasUuids;
+
     protected $guarded = [];
 
     protected $casts = [
         'board_id' => 'integer',
-        'user_id' => 'integer'
+        'user_id' => 'integer',
     ];
-
-    protected static function boot(): void
-    {
-        parent::boot();
-
-        static::creating(function ($board) {
-            $board->uuid = Str::uuid();
-        });
-    }
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Board;
 use App\Models\Invitation;
+use App\Observers\BoardObserver;
 use App\Observers\InvitationObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -27,6 +29,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Board::observe(BoardObserver::class);
         Invitation::observe(InvitationObserver::class);
     }
 }

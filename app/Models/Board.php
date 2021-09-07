@@ -6,58 +6,52 @@ use App\Mail\BoardArchivedMail;
 use App\Mail\BoardUnarchivedMail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 
 class Board extends Model
 {
     use HasFactory;
 
+    use HasUuids;
+
     protected $guarded = [];
 
     protected $casts = [
         'user_id' => 'integer',
-        'archived' => 'boolean'
+        'archived' => 'boolean',
     ];
 
-    protected static function boot(): void
-    {
-        parent::boot();
-
-        static::creating(function ($board) {
-            $board->uuid = Str::uuid();
-        });
-    }
-
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function links(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function links(): HasMany
     {
         return $this->hasMany(Link::class);
     }
 
-    public function notes(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function notes(): HasMany
     {
         return $this->hasMany(Note::class);
     }
 
-    public function invitations(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function invitations(): HasMany
     {
         return $this->hasMany(Invitation::class);
     }
 
-    public function memberships(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function memberships(): HasMany
     {
         return $this->hasMany(Membership::class);
     }
 
     public function getItemsAttribute(): Collection
     {
-        return $this->notes->push($this->links)->flatten();
+        return collect([$this->notes, $this->links])->flatten();
     }
 
     public function archive(): void
